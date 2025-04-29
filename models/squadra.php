@@ -24,6 +24,7 @@ class squadra
             s.id,
             s.nome_squadra,
             s.vendita,
+            s.rate,
             pres.nome AS nome_pres,
             pres.cognome AS cognome_pres,
             vice.nome AS nome_vice,

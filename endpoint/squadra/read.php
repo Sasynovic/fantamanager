@@ -30,6 +30,7 @@ if ($num > 0) {
             "presidente" => $nome_pres . ' ' . $cognome_pres,
             "vicepresidente" => $nome_vice . ' ' . $cognome_vice,
             "stadio" => $nome_stadio,
+            "rate" => $rate,
             "vendita" => $vendita
         );
 
