@@ -12,8 +12,8 @@ $database = new database();
 $db = $database->getConnection();
 
 $competizione = new competizione($db);
-if (isset($_GET['id_divisione'])) {
-    $id_divisione = $_GET['id_divisione'];
+if (isset($_GET['id'])) {
+    $id_divisione = $_GET['id'];
     $stmt = $competizione->readDivision($id_divisione);
 } else {
     $stmt = $competizione->read();

@@ -13,7 +13,9 @@ $database = new database();
 $db = $database->getConnection();
 $squadra = new squadra($db);
 
-$stmt = $squadra->read();
+$vendita_filter = isset($_GET['vendita']) ? intval($_GET['vendita']) : null;
+$stmt = $squadra->read($vendita_filter);
+
 $num = $stmt->rowCount();
 
 if ($num > 0) {
@@ -27,7 +29,8 @@ if ($num > 0) {
             "nome_squadra" => $nome_squadra,
             "presidente" => $nome_pres . ' ' . $cognome_pres,
             "vicepresidente" => $nome_vice . ' ' . $cognome_vice,
-            "stadio" => $nome_stadio
+            "stadio" => $nome_stadio,
+            "vendita" => $vendita
         );
 
         $squadre_arr["squadre"][] = $squadra_item;
