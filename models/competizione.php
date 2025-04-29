@@ -34,7 +34,7 @@ class competizione
                         SELECT  *
                         FROM " . $this->table_name . " c
                         LEFT JOIN `divisione` d ON c.id_divisione = d.id
-                        LEFT JOIN `squadra` s ON c.id = s.id_competizione
+                        LEFT JOIN `squadre` s ON c.id = s.id
                         WHERE c.id_divisione = :id_divisione
                         ORDER BY c.id ASC";
 
