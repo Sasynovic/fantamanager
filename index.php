@@ -2,109 +2,125 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Squadre di Calcio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <title>Home - Divisioni e Competizioni</title>
     <style>
-        .competizioni { display: none; }
-        .flag { width: 20px; height: auto; margin-left: 8px; }
-        .squadra { border: 1px solid #ccc; margin: 10px 0; padding: 10px; border-radius: 5px; }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 40px;
+            background: linear-gradient(135deg, #1e1e2f, #323251);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff; display: flex; flex-direction: column; align-items: center;
+        }
+
+        h1 { font-size: 2em; margin-bottom: 30px; text-align: center; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); }
+
+        .box {
+            width: 90%; max-width: 1000px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px; padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+        }
+
+        .divisione {
+            cursor: pointer; padding: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            margin: 10px 0; border-radius: 10px;
+        }
+
+        .competizioni { display: none; padding-left: 20px; }
+        .competizione { margin: 5px 0; }
+
+        input[type="text"] {
+            padding: 8px; border-radius: 8px;
+            border: none; width: 70%; margin-right: 10px;
+        }
+
+        .controls {
+            display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.15);
+            border: none; border-radius: 10px;
+            padding: 8px 12px;
+            color: white; font-weight: bold;
+            cursor: pointer; transition: background 0.3s;
+        }
+
+        button:hover { background: rgba(255, 255, 255, 0.3); }
     </style>
 </head>
 <body>
+<h1>Benvenuto in Fantamanager</h1>
 
-<div class="container">
-    <main id="squadre-container">
-        <h1>Squadre</h1>
-        <p>Caricamento in corso...</p>
-    </main>
+<div class="controls">
+    <input type="text" id="searchTeam" placeholder="Cerca squadra...">
+    <button onclick="searchTeam()">Cerca Squadra</button>
 
-    <aside class="elenco">
-        <ul id="divisioni-container"></ul>
-    </aside>
+    <input type="text" id="searchCoach" placeholder="Cerca allenatore...">
+    <button onclick="searchCoach()">Cerca Allenatore</button>
+
+    <div>
+        <button onclick="window.location.href='albo.php'">Vai all'Albo d'Oro</button>
+        <button onclick="window.location.href='trattative.php'">Trattative di Mercato</button>
+        <button onclick="window.location.href='vendita.php'">Squadre in Vendita</button>
+    </div>
+</div>
+
+<div class="box" id="divisioniContainer">
+    <!-- Divisioni caricate dinamicamente -->
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        caricaSquadre();
-        caricaDivisioni();
+        fetch('endpoint/divisione/read.php')
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('divisioniContainer');
+                data.divisioni.forEach(div => {
+                    const divEl = document.createElement('div');
+                    divEl.className = 'divisione';
+                    divEl.textContent = div.nome_divisione;
+                    divEl.dataset.id = div.id;
+
+                    const compList = document.createElement('div');
+                    compList.className = 'competizioni';
+                    divEl.addEventListener('click', () => {
+                        if (compList.childElementCount === 0) {
+                            fetch(`endpoint/competizione/read.php?id_divisione=${div.id}`)
+                                .then(res => res.json())
+                                .then(compData => {
+                                    compData.competizioni.forEach(c => {
+                                        const comp = document.createElement('div');
+                                        comp.className = 'competizione';
+                                        comp.innerHTML = `<a href="competizione.php?id=${c.id}" style="color:white;">${c.nome_competizione}</a>`;
+                                        compList.appendChild(comp);
+                                    });
+                                    compList.style.display = 'block';
+                                });
+                        } else {
+                            compList.style.display = compList.style.display === 'block' ? 'none' : 'block';
+                        }
+                    });
+
+                    container.appendChild(divEl);
+                    container.appendChild(compList);
+                });
+            });
     });
 
-    async function caricaSquadre() {
-        try {
-            const res = await fetch('endpoint/squadra/read.php'); // Endpoint da adattare
-            const data = await res.json();
-            const container = document.getElementById('squadre-container');
-            container.innerHTML = '<h1>Squadre</h1>';
-
-            if (!data.squadre) {
-                container.innerHTML += '<p>Errore nel recupero delle squadre.</p>';
-                return;
-            }
-
-            data.squadre.forEach(squadra => {
-                const div = document.createElement('div');
-                div.className = 'squadra';
-                div.innerHTML = `
-                    <h3>${squadra.nome_squadra}</h3>
-                    <p><strong>Presidente:</strong> ${squadra.presidente}</p>
-                    <p><strong>Vice Presidente:</strong> ${squadra.vicepresidente}</p>
-                    <p><strong>Stadio:</strong> ${squadra.stadio}</p>
-                `;
-                container.appendChild(div);
-            });
-        } catch (error) {
-            document.getElementById('squadre-container').innerHTML += '<p>Errore di connessione.</p>';
-            console.error(error);
-        }
+    function searchTeam() {
+        const nome = document.getElementById('searchTeam').value;
+        window.location.href = `ricerca_squadra.php?nome=${encodeURIComponent(nome)}`;
     }
 
-    async function caricaDivisioni() {
-        try {
-            const res = await fetch('endpoint/divisione/read.php'); // Endpoint da adattare
-            const data = await res.json();
-            const lista = document.getElementById('divisioni-container');
-
-            if (!data.divisioni) return;
-
-            for (const divisione of data.divisioni) {
-                const li = document.createElement('li');
-                const div = document.createElement('div');
-                div.className = 'divisione';
-                div.innerHTML = `
-                    <span>${divisione.nome_divisione}</span>
-                    <img src="public/flag/${divisione.bandiera}" alt="Bandiera" class="flag">
-                `;
-                li.appendChild(div);
-
-                const ulCompetizioni = document.createElement('ul');
-                ulCompetizioni.className = 'competizioni';
-                li.appendChild(ulCompetizioni);
-
-                div.addEventListener('click', () => {
-                    ulCompetizioni.style.display = ulCompetizioni.style.display === 'block' ? 'none' : 'block';
-                });
-
-                // Recupero delle competizioni per la divisione
-                const competizioniRes = await fetch(`api/competizioni?divisione_id=${divisione.id}`); // Endpoint da adattare
-                const competizioniData = await competizioniRes.json();
-
-                if (competizioniData.competizioni) {
-                    competizioniData.competizioni.forEach(comp => {
-                        const compLi = document.createElement('li');
-                        compLi.className = 'competizione';
-                        compLi.innerHTML = `<a href="competizione.php?id=${comp.id}">${comp.nome_competizione}</a>`;
-                        ulCompetizioni.appendChild(compLi);
-                    });
-                }
-
-                lista.appendChild(li);
-            }
-        } catch (error) {
-            console.error('Errore nel caricamento delle divisioni:', error);
-        }
+    function searchCoach() {
+        const nome = document.getElementById('searchCoach').value;
+        window.location.href = `ricerca_presidente.php?nome=${encodeURIComponent(nome)}`;
     }
 </script>
-
 </body>
 </html>
