@@ -12,30 +12,40 @@ $database = new database();
 $db = $database->getConnection();
 $partecipazione = new partecipazione($db);
 
-if(isset($_GET['id'])) {
-    $id_competizione = $_GET['id'];
-    $stmt = $partecipazione->readCompetizione($id_competizione);
-} else {
-    $stmt = $partecipazione->read();
-}
-
+$id_competizione = isset($_GET['id_competizione']) ? $_GET['id_competizione'] : null;
+$stmt = $partecipazione->read($id_competizione);
 $num = $stmt->rowCount();
 
 if ($num > 0) {
     $partecipazioni_arr = array();
+    // Recupero nome competizione solo dalla prima riga
+    $first_row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Estrai i campi una volta
+    extract($first_row);
+
+    $partecipazioni_arr["nome_competizione"] = $nomeDivisione . " " . $nomeCompetizione;
     $partecipazioni_arr["squadre"] = array();
 
+
+
+    // Inserisci la prima squadra
+    $partecipazioni_arr["squadre"][] = array(
+        "id" => $id,
+        "nome_squadra" => $nome_squadra,
+        "presidente" => $nome_pres . ' ' . $cognome_pres,
+        "vicepresidente" => $nome_vice . ' ' . $cognome_vice
+    );
+
+    // Continua con il resto dei risultati
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         extract($row);
-        $partecipazione_item = array(
+        $partecipazioni_arr["squadre"][] = array(
             "id" => $id,
             "nome_squadra" => $nome_squadra,
             "presidente" => $nome_pres . ' ' . $cognome_pres,
-            "vicepresidente" => $nome_vice . ' ' . $cognome_vice,
-            "stadio" => $nome_stadio
+            "vicepresidente" => $nome_vice . ' ' . $cognome_vice
         );
-
-        $partecipazioni_arr["squadre"][] = $partecipazione_item;
     }
 
     http_response_code(200);
