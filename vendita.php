@@ -122,21 +122,41 @@
             .then(([calciatori, albo]) => {
                 let html = `<h2>Dettagli Squadra</h2>`;
 
-                html += "<h3>⚽ Giocatori:</h3><ul style='list-style: none; padding-left: 0;'>";
+                const ruoli = {
+                    P: [],
+                    D: [],
+                    C: [],
+                    A: [],
+                    Altro: []
+                };
+
+                // Raggruppa calciatori per ruolo
                 if (calciatori.associazioni?.length) {
                     calciatori.associazioni.forEach(a => {
-                        const ruolo = a.ruolo?.toLowerCase() || "altro";
-                        const classeRuolo = ["P", "D", "C", "A"].includes(ruolo) ? ruolo : "altro";
-                        html += `<li style="margin-bottom: 6px;">
-                        <span style="font-weight: bold;">${a.nome_calciatore}</span> –
-                        <span class="ruolo-badge ${classeRuolo}">${a.ruolo_calciatore}</span> –
-                        💰 ${a.costo_calciatore} crediti
-                    </li>`;
+                        const ruolo = a.ruolo_calciatore || "Altro";
+                        if (ruoli[ruolo]) {
+                            ruoli[ruolo].push(a);
+                        } else {
+                            ruoli.Altro.push(a);
+                        }
                     });
-                } else {
-                    html += "<li>Nessun calciatore associato.</li>";
                 }
-                html += "</ul>";
+
+                html += "<h3>⚽ Giocatori:</h3>";
+                for (const [ruolo, lista] of Object.entries(ruoli)) {
+                    if (lista.length === 0) continue;
+
+                    let classe = ruolo.toLowerCase();
+                    html += `<h4 class="${classe}">${ruolo} (${lista.length})</h4><ul style='list-style: none; padding-left: 0;'>`;
+
+                    lista.forEach(a => {
+                        html += `<li style="margin-bottom: 6px;">
+                <span style="font-weight: bold;">${a.nome_calciatore}</span> –💰 ${a.costo_calciatore} crediti
+            </li>`;
+                    });
+
+                    html += "</ul>";
+                }
 
                 html += "<h3>🏆 Albo d'Oro:</h3><ul style='list-style: none; padding-left: 0;'>";
                 if (albo.albo?.length) {

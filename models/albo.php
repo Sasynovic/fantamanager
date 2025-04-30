@@ -23,11 +23,14 @@ class albo
                 a.anno,
                 a.id_competizione,
                 a.id_squadra,
+                c.id_divisione AS id_divisione,
                 c.nome_competizione AS nome_competizione,
-               s.nome_squadra AS nome_squadra
-            FROM  " . $this->table_name . " a
+                s.nome_squadra AS nome_squadra,
+                d.nome_divisione AS nome_divisione
+            FROM  ".$this->table_name." a
             LEFT JOIN competizione c ON a.id_competizione = c.id
-            LEFT JOIN squadre s ON a.id_squadra = s.id";
+            LEFT JOIN squadre s ON a.id_squadra = s.id
+            LEFT JOIN divisione d ON c.id_divisione = d.id";
 
         if ($id_squadra_filter !== null) {
             $query .= " WHERE a.id_squadra = :id_squadra";

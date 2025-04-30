@@ -35,7 +35,7 @@ if ($num > 0) {
             "id" => $id,
             "anno" => $anno,
             "id_competizione" => $id_competizione,
-            "nome_competizione" => $nome_competizione,
+            "nome_competizione" => $nome_divisione .' '. $nome_competizione,
             "nome_squadra" => $nome_squadra,
             "id_squadra" => $id_squadra
         );
