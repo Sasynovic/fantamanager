@@ -14,34 +14,26 @@ class competizione
         $this->conn = $db;
     }
 
-    public function read()
+    public function read($id_divisione = null)
     {
         $query =  "
                         SELECT  *
                         FROM " . $this->table_name . " c
-                        LEFT JOIN `divisione` d ON c.id_divisione = d.id
-                        ORDER BY c.id ASC";
+                        LEFT JOIN divisione d ON c.id_divisione = d.id
+                        ";
+        if ($id_divisione) {
+            $query .= " WHERE c.id_divisione = :id_divisione";
+        }
+        $query .= " ORDER BY c.id ASC";
 
         $stmt = $this->conn->prepare($query);
+        if ($id_divisione) {
+            $stmt->bindParam(':id_divisione', $id_divisione);
+        }
         $stmt->execute();
+
 
         return $stmt;
     }
 
-    public function readDivision($id_divisione)
-    {
-        $query =  "
-                        SELECT  *
-                        FROM " . $this->table_name . " c
-                        LEFT JOIN `divisione` d ON c.id_divisione = d.id
-                        LEFT JOIN `squadre` s ON c.id = s.id
-                        WHERE c.id_divisione = :id_divisione
-                        ORDER BY c.id ASC";
-
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':id_divisione', $id_divisione);
-        $stmt->execute();
-
-        return $stmt;
-    }
 }
