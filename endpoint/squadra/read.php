@@ -14,7 +14,11 @@ $db = $database->getConnection();
 $squadra = new squadra($db);
 
 $vendita_filter = isset($_GET['vendita']) ? intval($_GET['vendita']) : null;
-$stmt = $squadra->read($vendita_filter);
+$nome_squadra_filter = isset($_GET['nome_squadra']) ? $_GET['nome_squadra'] : null;
+$nome_presidente_filter = isset($_GET['nome_presidente']) ? $_GET['nome_presidente'] : null;
+
+$stmt = $squadra->read($vendita_filter, $nome_squadra_filter, $nome_presidente_filter);
+
 
 $num = $stmt->rowCount();
 
