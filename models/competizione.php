@@ -17,7 +17,11 @@ class competizione
     public function read($id_divisione = null)
     {
         $query =  "
-                        SELECT  *
+                        SELECT  
+                            c.id, 
+                            c.id_divisione AS id_divisione, 
+                            c.nome_competizione, 
+                            d.nome_divisione
                         FROM " . $this->table_name . " c
                         LEFT JOIN divisione d ON c.id_divisione = d.id
                         ";
