@@ -17,7 +17,7 @@ class squadra
         $this->conn = $db;
     }
 
-    public function read($vendita_filter = null, $nome_squadra_filter = null, $nome_presidente_filter = null)
+    public function read($vendita_filter = null, $nome_squadra_filter = null, $nome_presidente_filter = null, $id_squadra_filter = null)
     {
         $query =  "
     SELECT 
@@ -52,6 +52,10 @@ class squadra
         if (!empty($nome_presidente_filter)) {
             $query .= " AND (pres.nome LIKE :nome_presidente OR pres.cognome LIKE :nome_presidente)";
             $params[':nome_presidente'] = "%" . $nome_presidente_filter . "%";
+        }
+        if ($id_squadra_filter !== null) {
+            $query .= " AND s.id = :id_squadra";
+            $params[':id_squadra'] = $id_squadra_filter;
         }
 
         $query .= " ORDER BY s.id ASC";
