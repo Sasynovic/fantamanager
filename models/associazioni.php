@@ -26,6 +26,8 @@ class associazioni
                 a.costo_calciatore,
                 s.nome_squadra AS nome_squadra,
                 c.nome AS nome_calciatore,
+                 c.fvm,
+                c.eta,
                 c.ruolo AS ruolo_calciatore
             FROM  " . $this->table_name . " a
             LEFT JOIN squadre s ON a.id_squadra = s.id

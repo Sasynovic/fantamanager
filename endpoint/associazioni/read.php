@@ -32,7 +32,9 @@ if ($num > 0) {
             "nome_squadra" => $nome_squadra,
             "nome_calciatore" => $nome_calciatore,
             "ruolo_calciatore" => $ruolo_calciatore,
-            "costo_calciatore" => $costo_calciatore
+            "costo_calciatore" => $costo_calciatore,
+            "eta" => $eta,
+            "fvm" => $fvm,
         );
 
         $associazioni_arr["associazioni"][] = $associazioni_item;
