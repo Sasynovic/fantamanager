@@ -18,44 +18,33 @@ function visualizzaDettagli(id) {
 
     Promise.all([
         fetch(`https://barrettasalvatore.it/endpoint/associazioni/read.php?id_squadra=${id}`).then(res => res.json()),
-        fetch(`https://barrettasalvatore.it/endpoint/albo/read.php?id_squadra=${id}`).then(res => res.json())
+        fetch(`https://barrettasalvatore.it/endpoint/albo/read.php?id_squadra=${id}`).then(res => res.json()),
+        fetch (`https://barrettasalvatore.it/endpoint/scambi/read.php?id=${id}`).then(res => res.json())
     ])
-        .then(([calciatori, albo]) => {
+        .then(([calciatori, albo, scambi]) => {
             let html = `<h2>Dettagli Squadra</h2>`;
 
             const ruoli = {
-                P: [],
-                D: [],
-                C: [],
-                A: [],
-                Altro: []
+                P: [], D: [], C: [], A: [], Altro: []
             };
 
-            // Raggruppa calciatori per ruolo
             if (calciatori.associazioni?.length) {
                 calciatori.associazioni.forEach(a => {
                     const ruolo = a.ruolo_calciatore || "Altro";
-                    if (ruoli[ruolo]) {
-                        ruoli[ruolo].push(a);
-                    } else {
-                        ruoli.Altro.push(a);
-                    }
+                    (ruoli[ruolo] || ruoli.Altro).push(a);
                 });
             }
 
             html += "<h3>⚽ Giocatori:</h3>";
             for (const [ruolo, lista] of Object.entries(ruoli)) {
-                if (lista.length === 0) continue;
-
+                if (!lista.length) continue;
                 let classe = ruolo.toLowerCase();
                 html += `<h4 class="${classe}">${ruolo} (${lista.length})</h4><ul style='list-style: none; padding-left: 0;'>`;
-
                 lista.forEach(a => {
                     html += `<li style="margin-bottom: 6px;">
-                <span style="font-weight: bold;">${a.nome_calciatore}</span> –💰 ${a.costo_calciatore} crediti
+                <span style="font-weight: bold;">${a.nome_calciatore}</span> –💰 ${a.costo_calciatore} crediti -  ${a.eta} anni -  ${a.fvm} fvm
             </li>`;
                 });
-
                 html += "</ul>";
             }
 
@@ -69,10 +58,20 @@ function visualizzaDettagli(id) {
             }
             html += "</ul>";
 
+            html += "<h3>🔁 Ultimi Scambi:</h3><ul style='list-style: none; padding-left: 0;'>";
+            if (scambi.scambi?.length) {
+                scambi.scambi.forEach(s => {
+                    html += `<li> <strong>${s.nome_calciatore}</strong> ${s.tipo === "acquisto" ? "acquistato da" : "ceduto a"} <em>${s.nome_squadra_ricevente}</em> fino a 📅 ${s.data} – </li>`;
+                });
+            } else {
+                html += "<li>Nessuno scambio recente.</li>";
+            }
+            html += "</ul>";
+
             contenuto.innerHTML = html;
         })
-        .catch(err => {
-            contenuto.innerHTML = `<p>Errore nel caricamento dei dettagli: ${err}</p>`;
+        .catch(error => {
+            contenuto.innerHTML = `<p class='error'>Errore: ${error.message}</p>`;
         });
 }
 
@@ -102,12 +101,18 @@ fetch("https://barrettasalvatore.it/endpoint/squadra/read.php?vendita=1")
         data.squadre.forEach(sq => {
             const rate = parseInt(sq.rate) || 0;
             const id = sq.id;
+            const numeroWhatsapp = "+393371447208"; // ← inserisci il tuo numero
+            const messaggio = `Salve, vorrei maggiori informazioni per acquistare la squadra ${encodeURIComponent(sq.nome_squadra)}.`;
+            const linkWhatsapp = `https://wa.me/${numeroWhatsapp}?text=${messaggio}`;
+
             tabella += `<tr>
                         <td>${sq.nome_squadra}</td>
                         <td>${sq.stadio}</td>
                         <td>${generaStelle(rate)}</td>
                         <td>
-                            ${creaBottone("Acquista")}
+                            <a href="${linkWhatsapp}" target="_blank">
+                                ${creaBottone("Acquista")}
+                            </a>
                             ${creaBottone("Dettagli", '', `visualizzaDettagli(${id})`)}
                         </td>
                     </tr>`;
