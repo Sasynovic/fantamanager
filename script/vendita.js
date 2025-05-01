@@ -58,15 +58,43 @@ function visualizzaDettagli(id) {
             }
             html += "</ul>";
 
-            html += "<h3>🔁 Ultimi Scambi:</h3><ul style='list-style: none; padding-left: 0;'>";
-            if (scambi.scambi?.length) {
-                scambi.scambi.forEach(s => {
-                    html += `<li> <strong>${s.nome_calciatore}</strong> ${s.tipo === "acquisto" ? "acquistato da" : "ceduto a"} <em>${s.nome_squadra_ricevente}</em> fino a 📅 ${s.data} – </li>`;
+            html += "<h3>🔁 Trattative recenti:</h3>";
+            if (scambi.trattive?.length) {
+                scambi.trattive.forEach(trattativa => {
+                    html += `<div style="margin-bottom: 1em; border: 1px solid #ccc; border-radius: 8px; padding: 10px;">`;
+                    html += `<p style="white-space: pre-line;"><strong>📝 Descrizione:</strong><br>${trattativa.descrizione}</p>`;
+                    html += `<p><strong>📅 Fine:</strong> ${trattativa.data_fine || 'N/D'}</p>`;
+
+                    if (trattativa.scambi?.length) {
+                        html += `<table style="width: 100%; border-collapse: collapse; font-size: 0.9em; margin-top: 0.5em;">
+                <thead>
+                    <tr>
+                        <th style="text-align: left; padding: 6px;">Calciatore</th>
+                        <th style="text-align: left; padding: 6px;">Da</th>
+                        <th style="text-align: left; padding: 6px;">A</th>
+                        <th style="text-align: left; padding: 6px;">Credito</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+                        trattativa.scambi.forEach(s => {
+                            html += `<tr>
+                    <td style="padding: 6px;">${s.nome_calciatore ?? '💸 Solo credito'}</td>
+                    <td style="padding: 6px;">${s.nome_squadra_cedente}</td>
+                    <td style="padding: 6px;">${s.nome_squadra_ricevente}</td>
+                    <td style="padding: 6px;">${s.credito_debito} 💰</td>
+                </tr>`;
+                        });
+                        html += `</tbody></table>`;
+                    } else {
+                        html += "<p>Nessuno scambio registrato per questa trattativa.</p>";
+                    }
+
+                    html += `</div>`;
                 });
             } else {
-                html += "<li>Nessuno scambio recente.</li>";
+                html += "<p>Nessuna trattativa recente.</p>";
             }
-            html += "</ul>";
+
 
             contenuto.innerHTML = html;
         })
