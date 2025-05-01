@@ -70,4 +70,57 @@ class squadra
         return $stmt;
     }
 
+
+    public function create()
+    {
+        $query = "INSERT INTO " . $this->table_name . " 
+            (nome_squadra, id_pres, id_vice, id_stadio, vendita, rate)
+            VALUES (:nome_squadra, :id_pres, :id_vice, :id_stadio, :vendita, :rate)";
+
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(":nome_squadra", $this->nome_squadra);
+        $stmt->bindParam(":id_pres", $this->id_pres);
+        $stmt->bindParam(":id_vice", $this->id_vice);
+        $stmt->bindParam(":id_stadio", $this->id_stadio);
+        $stmt->bindParam(":vendita", $this->vendita);
+        $stmt->bindParam(":rate", $this->rate);
+
+        return $stmt->execute();
+    }
+
+    public function update()
+    {
+        $query = "UPDATE " . $this->table_name . " 
+            SET nome_squadra = :nome_squadra, 
+                id_pres = :id_pres, 
+                id_vice = :id_vice, 
+                id_stadio = :id_stadio,
+                vendita = :vendita,
+                rate = :rate
+            WHERE id = :id";
+
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(":nome_squadra", $this->nome_squadra);
+        $stmt->bindParam(":id_pres", $this->id_pres);
+        $stmt->bindParam(":id_vice", $this->id_vice);
+        $stmt->bindParam(":id_stadio", $this->id_stadio);
+        $stmt->bindParam(":vendita", $this->vendita);
+        $stmt->bindParam(":rate", $this->rate);
+        $stmt->bindParam(":id", $this->id);
+
+        return $stmt->execute();
+    }
+
+    public function delete()
+    {
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":id", $this->id);
+        return $stmt->execute();
+    }
+
+
+
 }
