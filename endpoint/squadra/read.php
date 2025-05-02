@@ -35,8 +35,15 @@ if ($num > 0) {
             "presidente" => $nome_pres . ' ' . $cognome_pres,
             "vicepresidente" => $nome_vice . ' ' . $cognome_vice,
             "stadio" => $nome_stadio,
+            "livello_stadio" => $livello_stadio,
+            "costo_manutenzione" => $costo_manutenzione,
+            "bonus_casa_nazionale" => $bonus_casa_n,
+            "bonus_casa_uefa" => $bonus_casa_u,
+            "guadagno_crediti_campionato" => $guadagno_crediti_campionato,
+            "guadagno_crediti_coppa" => $guadagno_crediti_coppa,
             "rate" => $rate,
-            "vendita" => $vendita
+            "vendita" => $vendita,
+            "prezzo" => "6"
         );
 
         $squadre_arr["squadre"][] = $squadra_item;

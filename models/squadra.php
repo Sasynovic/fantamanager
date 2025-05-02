@@ -29,7 +29,13 @@ class squadra
         pres.cognome AS cognome_pres,
         vice.nome AS nome_vice,
         vice.cognome AS cognome_vice,
-        st.nome_stadio
+        st.nome_stadio,
+        st.livello_stadio,
+        st.costo_manutenzione,
+        st.bonus_casa_n,
+        st.bonus_casa_u,
+        st.guadagno_crediti_coppa,
+        st.guadagno_crediti_campionato
     FROM " . $this->table_name . " s
     LEFT JOIN presidenti pres ON s.id_pres = pres.id
     LEFT JOIN presidenti vice ON s.id_vice = vice.id
