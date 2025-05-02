@@ -43,7 +43,7 @@ if ($num > 0) {
             "guadagno_crediti_coppa" => $guadagno_crediti_coppa,
             "rate" => $rate,
             "vendita" => $vendita,
-            "prezzo" => "6"
+            "prezzo" => $costo_iscrizione
         );
 
         $squadre_arr["squadre"][] = $squadra_item;
