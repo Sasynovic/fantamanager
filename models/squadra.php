@@ -26,6 +26,7 @@ class squadra
         s.vendita,
         s.rate,
         s.costo_iscrizione,
+        s.valore_fvm,
         pres.nome AS nome_pres,
         pres.cognome AS cognome_pres,
         vice.nome AS nome_vice,

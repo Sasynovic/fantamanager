@@ -34,6 +34,7 @@ if ($num > 0) {
             "nome_squadra" => $nome_squadra,
             "presidente" => $nome_pres . ' ' . $cognome_pres,
             "vicepresidente" => $nome_vice . ' ' . $cognome_vice,
+            "valore_fvm" => $valore_fvm,
             "stadio" => $nome_stadio,
             "livello_stadio" => $livello_stadio,
             "costo_manutenzione" => $costo_manutenzione,
