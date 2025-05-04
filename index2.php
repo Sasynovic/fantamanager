@@ -6,21 +6,22 @@
     <style>
         body {
             font-family: "Segoe UI", sans-serif;
-            background-color: #eef1f5;
+            background-color: #f4f6f9;
             margin: 0;
             padding: 0;
         }
 
         header {
-            background-color: red;
+            background-color: #dc3545;
             color: white;
             padding: 2rem 1rem;
             text-align: center;
             border-radius: 0 0 30px 30px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         main {
-            padding: 2rem 1rem;
+            padding: 2rem;
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -34,41 +35,54 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 2rem;
+            padding: 1rem 0;
+        }
+
+        .circle-card {
+            background-color: white;
+            border-radius: 50%;
+            width: 160px;
+            height: 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            margin: 0 auto;
+        }
+
+        .circle-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            background-color: #f9f9f9;
+        }
+
+        .circle-card img {
+            height: 50%;
+            margin-bottom: 0.5rem;
+        }
+
+        .circle-card span {
+            font-weight: bold;
+            text-align: center;
         }
 
         .card {
             background-color: white;
-            border-radius: 8px;
+            border-radius: 16px;
             padding: 1rem;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease;
         }
 
         .card:hover {
-            transform: scale(1.03);
-        }
-
-        .card img {
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
-            margin-bottom: 0.5rem;
-        }
-
-        .card span,
-        .card h3 {
-            display: block;
-            font-weight: bold;
-            font-size: 1rem;
-        }
-
-        .card p {
-            font-size: 0.9rem;
-            color: #555;
+            transform: translateY(-5px);
         }
 
         footer {
@@ -76,6 +90,26 @@
             padding: 2rem 1rem;
             text-align: center;
             color: #777;
+        }
+
+        .buttons {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .buttons button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            margin: 0.3rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .buttons button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
@@ -95,6 +129,8 @@
     <!-- SEZIONE NEWS -->
     <section>
         <h2>Ultime Notizie</h2>
+            <button>Vedi Tutte</button>
+        </div>
         <div class="grid" id="news-container"></div>
     </section>
 </main>
@@ -119,8 +155,9 @@
             }
 
             data.divisioni.forEach(div => {
-                const card = document.createElement("div");
-                card.className = "card";
+                const link = document.createElement("a");
+                link.href = `divisione.php?id_divisione=${div.id}`;
+                link.className = "circle-card";
 
                 const img = document.createElement("img");
                 img.src = div.bandiera
@@ -131,9 +168,9 @@
                 const label = document.createElement("span");
                 label.textContent = div.nome_divisione;
 
-                card.appendChild(img);
-                card.appendChild(label);
-                container.appendChild(card);
+                link.appendChild(img);
+                link.appendChild(label);
+                container.appendChild(link);
             });
 
         } catch (err) {
