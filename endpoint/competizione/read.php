@@ -24,9 +24,7 @@ if ($num > 0) {
         extract($row);
         $competizione_item = array(
             "id" => $id,
-            "nome_competizione" => $nome_competizione,
-            "id_divisione" => $id_divisione,
-            "nome_divisione" => $nome_divisione
+            "nome_competizione" => $nome_divisione . " " . $nome_competizione . " " . $anno
         );
 
         $competizioni_arr["competizioni"][] = $competizione_item;
