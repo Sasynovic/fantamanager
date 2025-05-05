@@ -1,126 +1,78 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Divisioni e Competizioni</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0; padding: 40px;
-            background: linear-gradient(135deg, #1e1e2f, #323251);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #fff; display: flex; flex-direction: column; align-items: center;
-        }
+<link rel="stylesheet" href="style.css">
+<div class="main-container">
 
-        h1 { font-size: 2em; margin-bottom: 30px; text-align: center; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); }
+    <aside class="left">
+        <div class="heading">
+            <h2>Fantacalcio</h2>
+            <h3>Fantamanager</h3>
+        </div>
+        <div class="menu">
+            <ul class="menu-list">
+                <li class="menu-option" onclick="location.href='index.php'">DASHBOARD</li>
+                <li class="menu-option">RICERCA</li>
+                <li class="menu-option">ALBO D'ORO</li>
+                <li class="menu-option" onclick="location.href='vendita.php'">SQUADRE IN VENDITA</li>
+                <li class="menu-option">TOOL SCAMBI</li>
+                <li class="menu-option">CONTATTI</li>
+            </ul>
+        </div>
+    </aside>
 
-        .box {
-            width: 90%; max-width: 1000px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px; padding: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(10px);
-            margin-bottom: 20px;
-        }
+    <div class="actual-selection">
+    <header >
+        <h1>DASHBOARD</h1>
+    </header>
 
-        .divisione {
-            cursor: pointer; padding: 10px;
-            background: rgba(255, 255, 255, 0.15);
-            margin: 10px 0; border-radius: 10px;
-        }
 
-        .competizioni { display: none; padding-left: 20px; }
-        .competizione { margin: 5px 0; }
-
-        input[type="text"] {
-            padding: 8px; border-radius: 8px;
-            border: none; width: 70%; margin-right: 10px;
-        }
-
-        .controls {
-            display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;
-        }
-
-        button {
-            background: rgba(255, 255, 255, 0.15);
-            border: none; border-radius: 10px;
-            padding: 8px 12px;
-            color: white; font-weight: bold;
-            cursor: pointer; transition: background 0.3s;
-        }
-
-        button:hover { background: rgba(255, 255, 255, 0.3); }
-    </style>
-</head>
-<body>
-<h1>Benvenuto in Fantamanager</h1>
-
-<div class="controls">
-    <input type="text" id="searchTeam" placeholder="Cerca squadra...">
-    <button onclick="searchTeam()">Cerca Squadra</button>
-
-    <input type="text" id="searchCoach" placeholder="Cerca allenatore...">
-    <button onclick="searchCoach()">Cerca Allenatore</button>
-
-    <div>
-        <button onclick="window.location.href='albo.php'">Vai all'Albo d'Oro</button>
-        <button onclick="window.location.href='trattative.php'">Trattative di Mercato</button>
-        <button onclick="window.location.href='vendita.php'">Squadre in Vendita</button>
-    </div>
+    <main>
+        <!-- SEZIONE DIVISIONI -->
+        <section>
+            <h2>Elenco Divisioni</h2>
+            <div class="grid" id="divisioni-container"></div>
+        </section>
+    </main>
 </div>
-
-<div class="box" id="divisioniContainer">
-    <!-- Divisioni caricate dinamicamente -->
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        fetch('endpoint/divisione/read.php')
-            .then(res => res.json())
-            .then(data => {
-                const container = document.getElementById('divisioniContainer');
-                data.divisioni.forEach(div => {
-                    const divEl = document.createElement('div');
-                    divEl.className = 'divisione';
-                    divEl.textContent = div.nome_divisione;
-                    divEl.dataset.id = div.id;
+    async function caricaDivisioni() {
+        const container = document.getElementById("divisioni-container");
+        container.innerHTML = "<p>Caricamento...</p>";
 
-                    const compList = document.createElement('div');
-                    compList.className = 'competizioni';
-                    divEl.addEventListener('click', () => {
-                        if (compList.childElementCount === 0) {
-                            fetch(`endpoint/competizione/read.php?id_divisione=${div.id}`)
-                                .then(res => res.json())
-                                .then(compData => {
-                                    compData.competizioni.forEach(c => {
-                                        const comp = document.createElement('div');
-                                        comp.className = 'competizione';
-                                        comp.innerHTML = `<a href="competizione.php?id=${c.id}" style="color:white;">${c.nome_competizione}</a>`;
-                                        compList.appendChild(comp);
-                                    });
-                                    compList.style.display = 'block';
-                                });
-                        } else {
-                            compList.style.display = compList.style.display === 'block' ? 'none' : 'block';
-                        }
-                    });
+        try {
+            const res = await fetch("https://barrettasalvatore.it/endpoint/divisione/read.php");
+            const data = await res.json();
 
-                    container.appendChild(divEl);
-                    container.appendChild(compList);
-                });
+            container.innerHTML = "";
+            if (!data.divisioni || data.divisioni.length === 0) {
+                container.innerHTML = "<p>Nessuna divisione trovata.</p>";
+                return;
+            }
+
+            data.divisioni.forEach(div => {
+                const link = document.createElement("a");
+                link.href = `divisione.php?id_divisione=${div.id}`;
+                link.className = "circle-card";
+
+                const img = document.createElement("img");
+                img.src = div.bandiera
+                    ? `https://barrettasalvatore.it/public/flag/${div.bandiera}`
+                    : "https://via.placeholder.com/48?text=NA";
+                img.alt = div.nome_divisione;
+
+                const label = document.createElement("span");
+                label.textContent = div.nome_divisione;
+
+                link.appendChild(img);
+                link.appendChild(label);
+                container.appendChild(link);
             });
-    });
 
-    function searchTeam() {
-        const nome = document.getElementById('searchTeam').value;
-        window.location.href = `ricerca_squadra.php?nome=${encodeURIComponent(nome)}`;
+        } catch (err) {
+            container.innerHTML = "<p>Errore nel caricamento delle divisioni.</p>";
+            console.error(err);
+        }
     }
+    caricaDivisioni();
 
-    function searchCoach() {
-        const nome = document.getElementById('searchCoach').value;
-        window.location.href = `ricerca_presidente.php?nome=${encodeURIComponent(nome)}`;
-    }
 </script>
-</body>
-</html>
