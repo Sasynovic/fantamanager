@@ -25,16 +25,26 @@ if ($num > 0) {
     extract($first_row);
 
     $partecipazioni_arr["nome_competizione"] = $nomeDivisione . " " . $nomeCompetizione;
+    $partecipazioni_arr["id_competizione"] = $id_competizione;
     $partecipazioni_arr["squadre"] = array();
-
-
 
     // Inserisci la prima squadra
     $partecipazioni_arr["squadre"][] = array(
         "id" => $id,
         "nome_squadra" => $nome_squadra,
         "presidente" => $nome_pres . ' ' . $cognome_pres,
-        "vicepresidente" => $nome_vice . ' ' . $cognome_vice
+        "vicepresidente" => $nome_vice . ' ' . $cognome_vice,
+        "posizione" => $Pos ?? 0,
+        "penalizzazione" => $Pen ?? 0,
+        "giocate" => $G ?? 0,
+        "vittorie" => $V ?? 0,
+        "pareggi" => $N ?? 0,
+        "sconfitte" => $P ?? 0,
+        "gol_fatti" => $Gf ?? 0,
+        "gol_subiti" => $Gs ?? 0,
+        "differenza_reti" => $Dr ?? 0,
+        "punti" => $Pt ?? 0,
+        "punti_totali" => $PtTotali ?? 0
     );
 
     // Continua con il resto dei risultati
@@ -44,7 +54,18 @@ if ($num > 0) {
             "id" => $id,
             "nome_squadra" => $nome_squadra,
             "presidente" => $nome_pres . ' ' . $cognome_pres,
-            "vicepresidente" => $nome_vice . ' ' . $cognome_vice
+            "vicepresidente" => $nome_vice . ' ' . $cognome_vice,
+            "posizione" => $Pos ?? 0,
+            "penalizzazione" => $Pen ?? 0,
+            "giocate" => $G ?? 0,
+            "vittorie" => $V ?? 0,
+            "pareggi" => $N ?? 0,
+            "sconfitte" => $P ?? 0,
+            "gol_fatti" => $Gf ?? 0,
+            "gol_subiti" => $Gs ?? 0,
+            "differenza_reti" => $Dr ?? 0,
+            "punti" => $Pt ?? 0,
+            "punti_totali" => $PtTotali ?? 0
         );
     }
 

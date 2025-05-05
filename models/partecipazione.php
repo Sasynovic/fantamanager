@@ -22,6 +22,18 @@ class partecipazione
                             p.id, 
                             p.id_squadra AS id_squadra,
                             p.id_competizione AS id_competizione, 
+                            p.Pos AS Pos,
+                            p.Pen AS Pen,
+                            p.G AS G,
+                            p.V AS V,
+                            p.N AS N,
+                            p.P AS P,
+                            p.Gf AS Gf,
+                            p.Gs AS Gs,
+                            p.Dr AS Dr,
+                            p.Pt AS Pt,
+                            p.PtTotali AS PtTotali,
+                                
                             
                             c.nome_competizione AS nomeCompetizione,
                             d.nome_divisione AS nomeDivisione,
