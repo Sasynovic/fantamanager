@@ -1,0 +1,416 @@
+.circle-card {
+    background-color: #152137;
+    border-radius: 50%;
+    width: 160px;
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    margin: 0 auto;
+}
+
+.circle-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    background-color: #152137;
+}
+
+.circle-card img {
+    height: 50%;
+    margin-bottom: 0.5rem;
+}
+
+.circle-card span {
+    font-weight: bold;
+    text-align: center;
+}
+
+.actual-selection {
+    padding: 2rem 1rem;
+    background-color: #101d30;
+    width: 80%;
+}
+
+.main-container{
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+* {
+    font-family: "Segoe UI", sans-serif;
+    color: white;
+    margin : 0;
+    padding: 0;
+}
+
+.left {
+    background-color:#0e1b2e;
+    padding: 2rem 1rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 20%;
+    top: 0;
+    left: 0;
+}
+.heading {
+    text-align: center;
+    margin-bottom: 0;
+}
+.heading h2 {
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+.heading h3 {
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+.menu {
+    margin-top: 2rem;
+}
+.menu-list{
+    list-style: none;
+    padding: 0;
+}
+.menu-option {
+    padding: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+.menu-option:hover {
+    color: #1b7d4f;
+    background-color: #32436c;
+    transition: background-color 0.5s ease;
+}
+.menu-option:active {
+    background-color: #1b7d4f;
+    color: #32436c;
+    transition: background-color 0.5s ease;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+/*header{*/
+/*    background-color: #152137;*/
+/*    padding: 1rem;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    gap: 1rem;*/
+/*}*/
+
+header img {
+    height: 60px;
+    border-radius: 50%;
+}
+
+.actual-selection {
+    padding: 2rem 1rem;
+    background-color: #101d30;
+    width: 80%;
+}
+
+.main-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.divisione-info {
+    background-color: #152137;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.team-card {
+    background-color: #152137;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.competizione-card {
+    background-color: #152137;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.competizione-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    background-color: #1a2845;
+}
+
+.competizione-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.competizione-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.competizione-teams {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.competizione-selector {
+    margin-bottom: 1.5rem;
+    background-color: #152137;
+    padding: 1rem;
+    border-radius: 8px;
+    display: none;
+}
+
+.competizione-selector select {
+    background-color: #0e1b2e;
+    color: white;
+    padding: 0.5rem;
+    border: 1px solid #32436c;
+    border-radius: 4px;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.team-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.team-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #32436c;
+    padding-bottom: 0.5rem;
+}
+
+.team-logo {
+    width: 50%;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.team-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.team-manager {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.team-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #32436c;
+}
+
+.tab {
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    font-weight: bold;
+    border-bottom: 3px solid transparent;
+}
+
+.tab.active {
+    color: #1b7d4f;
+    border-bottom: 3px solid #1b7d4f;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.classifica-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.classifica-table th, .classifica-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #32436c;
+}
+
+.classifica-table th {
+    background-color: #0e1b2e;
+}
+
+.classifica-table tr:hover {
+    background-color: #1a2845;
+}
+
+.team-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.team-row img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+}
+
+.error-message {
+    background-color: rgba(255, 0, 0, 0.1);
+    border-left: 4px solid red;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Stili per la sezione news */
+.news-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.news-item {
+    background-color: #152137;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border-left: 4px solid #1b7d4f;
+}
+
+.news-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    background-color: #1a2845;
+}
+
+.news-header {
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid #32436c;
+}
+
+.news-header h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.news-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: #aaa;
+}
+
+.news-date {
+    display: flex;
+    align-items: center;
+    color: #aaa;
+}
+
+.news-date::before {
+    content: "📅";
+    margin-right: 0.3rem;
+}
+
+.news-author {
+    display: flex;
+    align-items: center;
+    color: #aaa;
+}
+
+.news-author::before {
+    content: "👤";
+    margin-right: 0.3rem;
+}
+
+.news-content {
+    line-height: 1.6;
+    color: #e0e0e0;
+}
+
+/* Stile per news più recenti */
+.news-item:first-child {
+    border-left: 4px solid #25a56a;
+    background-color: #193152;
+}
+
+.news-item:first-child .news-header h3 {
+    color: #25a56a;
+}
+
+/* Stile per news non lette (può essere aggiunto dinamicamente) */
+.news-item.unread {
+    position: relative;
+}
+
+.news-item.unread::after {
+    content: "";
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 10px;
+    height: 10px;
+    background-color: #25a56a;
+    border-radius: 50%;
+}
+
+#header-competizioni{
+    display: flex;
+    justify-content: space-evenly;
+    gap: 15px;
+}
