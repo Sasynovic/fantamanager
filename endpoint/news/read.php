@@ -14,9 +14,10 @@ $db = $database->getConnection();
 $news = new news($db);
 
 $id_competizione_filter = isset($_GET['id_competizione']) ? intval($_GET['id_competizione']) : null;
+$search = isset($_GET['search']) ? $_GET['search'] : null;
 $limit = isset($_GET['limit']) ? intval($_GET['limit']) : null;
 
-$stmt = $news->read($id_competizione_filter, $limit);
+$stmt = $news->read($id_competizione_filter, $limit, $search);
 $num = $stmt->rowCount();
 
 if ($num > 0) {
