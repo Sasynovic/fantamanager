@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <title>Squadre in Vendita</title>
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
         body {
             margin: 0; padding: 40px;
             background: linear-gradient(135deg, #1e1e2f, #323251);
