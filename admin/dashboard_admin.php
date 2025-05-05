@@ -74,14 +74,24 @@ if (!isset($_SESSION['admin_id'])) {
 </head>
 <body>
 
-<div class="navbar">
+<?php
+
+    function adminNav(){
+        echo '<div class="navbar">
     <h1>Admin Dashboard</h1>
     <div class="menu">
+        <a href="gestione_news.php">Gestione News</a>
+        <a href="gestione_presidenti.php">Gestione Presidenti</a>
         <a href="gestione_squadre.php">Gestione Squadre</a>
-        <a href="scambi_admin.php">Visualizza Scambi</a>
         <a href="logout.php">Logout</a>
     </div>
-</div>
+</div>';
+    }
+
+adminNav();
+?>
+
+
 
 <div class="content">
     <h2>Benvenuto Admin!</h2>
