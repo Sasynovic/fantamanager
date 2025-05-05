@@ -55,18 +55,18 @@ class news
 
     public function read($id_competizione = null, $limit = null, $search = null) {
         $query = "
-        SELECT  
-            n.id,
-            n.titolo,
-            n.contenuto,
-            n.data_pubblicazione,
-            n.autore,
-            n.id_competizione,
-            n.visibile
-        FROM " . $this->table_name . " n
-        LEFT JOIN competizione c ON n.id_competizione = c.id
-        WHERE 1=1
-    ";
+                        SELECT  
+                            n.id,
+                            n.titolo,
+                            n.contenuto,
+                            n.data_pubblicazione,
+                            n.autore,
+                            n.id_competizione,
+                            n.visibile
+                        FROM " . $this->table_name . " n
+                        LEFT JOIN competizione c ON n.id_competizione = c.id
+                        WHERE 1=1
+                    ";
 
         if ($id_competizione !== null) {
             $query .= " AND n.id_competizione = :id_competizione";

@@ -17,7 +17,7 @@ class squadra
         $this->conn = $db;
     }
 
-    public function read($vendita_filter = null, $nome_squadra_filter = null, $nome_presidente_filter = null, $id_squadra_filter = null)
+    public function read($vendita_filter = null, $nome_squadra_filter = null, $nome_presidente_filter = null, $id_squadra_filter = null, $limit = null)
     {
         $query =  "
     SELECT 
@@ -67,6 +67,10 @@ class squadra
         }
 
         $query .= " ORDER BY s.id ASC";
+        if ($limit !== null) {
+            $query .= " LIMIT :limit";
+            $params[':limit'] = (int)$limit;
+        }
 
         $stmt = $this->conn->prepare($query);
 

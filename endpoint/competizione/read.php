@@ -13,21 +13,25 @@ $db = $database->getConnection();
 
 $competizione = new competizione($db);
 $id_divisione = isset($_GET['id_divisione']) ? $_GET['id_divisione'] : null;
-$stmt = $competizione->read($id_divisione);
+$limit = isset($_GET['limit']) ? $_GET['limit'] : null;
+
+$stmt = $competizione->read($id_divisione, $limit);
 $num = $stmt->rowCount();
 
 if ($num > 0) {
     $competizioni_arr = array();
-    $competizioni_arr["competizioni"] = array();
+    $competizioni_arr["competizione"] = array();
 
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         extract($row);
         $competizione_item = array(
             "id" => $id,
-            "nome_competizione" => $nome_divisione . " " . $nome_competizione . " " . $anno
+            "nome_competizione" => $nome_divisione . " " . $nome_competizione,
+            "anno" => $anno,
+            "id_divisione" => $id_divisione
         );
 
-        $competizioni_arr["competizioni"][] = $competizione_item;
+        $competizioni_arr["competizione"][] = $competizione_item;
     }
 
     http_response_code(200);
