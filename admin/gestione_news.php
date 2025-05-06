@@ -131,6 +131,7 @@ $nomeSezione = "news";
             <button id="cancel-form" class="btn btn-outline">Annulla</button>
         </div>
     </div>
+    <div id="pagination" class="pagination"></div>
 </div>
 
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
@@ -171,6 +172,7 @@ $nomeSezione = "news";
             addForm: document.getElementById('add-form'),
             cancelForm: document.getElementById('cancel-form'),
             submitForm: document.getElementById('submit'),
+            pagination: document.getElementById('pagination'),
             cardAll: document.querySelector('.card-all')
         }, {
             // Callback personalizzati
@@ -179,6 +181,7 @@ $nomeSezione = "news";
                 // Personalizzazione del rendering di ciascun presidente
                 return `
                 <div class="card-meta">
+                    <span>Titolo: ${item.titolo}</span>
                     <span>Contenuto: ${item.contenuto}</span>
                     <span>Autore: ${item.autore}</span>
                     <span>Competizione: ${item.nome_competizione}</span>

@@ -158,8 +158,10 @@ $nomeSezione = "squadra";
             <button id="cancel-form" class="btn btn-outline">Annulla</button>
         </div>
     </div>
-</div>
 
+    <div id="pagination" class="pagination"></div>
+
+</div>
 
 <script src="CRUDManager.js" defer></script>
 <script>
@@ -180,6 +182,7 @@ $nomeSezione = "squadra";
             addForm: document.getElementById('add-form'),
             cancelForm: document.getElementById('cancel-form'),
             submitForm: document.getElementById('submit'),
+            pagination: document.getElementById('pagination'),
             cardAll: document.querySelector('.card-all')
         }, {
             // Callback personalizzati
@@ -213,6 +216,16 @@ $nomeSezione = "squadra";
             `;
             },
             beforeCreate: function(data) {
+                //controlliamo se presidente e vice non sono uguali
+                if (data.id_pres === data.id_vice) {
+                    alert("Il presidente e il vice non possono essere la stessa persona.");
+                    return false; // Non procedere con la creazione
+                }
+                // il valore fvm deve essere un numero positivo
+                if (isNaN(data.valore_fvm) || data.valore_fvm <= 0) {
+                    alert("Il valore fvm deve essere un numero positivo.");
+                    return false; // Non procedere con la creazione
+                }
                 console.log('Dati prima della creazione:', data);
                 // Qui è possibile validare o manipolare i dati prima dell'invio
                 return true; // Procedi con la creazione
