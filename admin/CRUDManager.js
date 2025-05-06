@@ -288,6 +288,8 @@ class CRUDManager {
      * @param {Object} data - Dati dell'elemento da creare
      */
     createItem(data) {
+        console.log("Dati creatItem:", data);
+
         fetch(this.apiUrl.create, {
             method: this.apiMethod.create,
             headers: this.apiHeaders,
