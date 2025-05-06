@@ -14,8 +14,9 @@ $db = $database->getConnection();
 $competizione = new competizione($db);
 $id_divisione = isset($_GET['id_divisione']) ? $_GET['id_divisione'] : null;
 $limit = isset($_GET['limit']) ? $_GET['limit'] : null;
+$search = isset($_GET['search']) ? $_GET['search'] : null;
 
-$stmt = $competizione->read($id_divisione, $limit);
+$stmt = $competizione->read($id_divisione, $limit, $search);
 $num = $stmt->rowCount();
 
 if ($num > 0) {
