@@ -150,6 +150,7 @@ class CRUDManager {
         this.elements.addForm.classList.remove('hidden');
         this.elements.cardAll.classList.add('hidden');
         this.elements.toggleAddForm.classList.add('hidden');
+        this.elements.pagination.classList.add('hidden');
 
         window.scrollTo({
             top: this.elements.addForm.offsetTop - 20,
@@ -166,6 +167,7 @@ class CRUDManager {
         this.elements.addForm.classList.add('hidden');
         this.elements.cardAll.classList.remove('hidden');
         this.elements.toggleAddForm.classList.remove('hidden');
+        this.elements.pagination.classList.remove('hidden');
     }
 
     /**
