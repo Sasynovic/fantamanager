@@ -14,7 +14,6 @@ $nomeSezione = "competizione";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestione <?php echo $nomeSezione?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style2.css">
 </head>
 <body>
 
@@ -60,7 +59,7 @@ $nomeSezione = "competizione";
 
         <div class="form-group">
             <label for="divisione">Divisione</label>
-            <select id="divisione" name="divisione" class="form-control">
+            <select id="divisione" name="id_divisione" class="form-control">
                 <option value="">Seleziona una divisione</option>
             </select>
         </div>
@@ -92,12 +91,12 @@ $nomeSezione = "competizione";
 
         <div class="form-group">
             <label for="nome_competizione">Nome <?php echo $nomeSezione?></label>
-            <input type="text" id="nome_competizione" placeholder="Inserisci nome <?php echo $nomeSezione?>">
+            <input type="text" name="nome_competizione" placeholder="Inserisci nome <?php echo $nomeSezione?>">
         </div>
 
         <div class="form-group">
             <label for="stagione">Stagione Sportiva</label>
-            <select id="stagione" name="stagione" class="form-control">
+            <select id="stagione" name="id_stagione" class="form-control">
                 <option value="">Seleziona una stagione</option>
             </select>
         </div>
@@ -125,7 +124,6 @@ $nomeSezione = "competizione";
                 .catch(error => console.error('Errore nel caricamento delle stagioni sportive:', error));
         </script>
 
-
         <div class="btn-group">
             <button id="submit" class="btn btn-primary">Inserisci <?php echo $nomeSezione?></button>
             <button id="cancel-form" class="btn btn-outline">Annulla</button>
@@ -139,8 +137,6 @@ $nomeSezione = "competizione";
     /**
      * Implementazione per la gestione dei presidenti
      */
-
-// Creiamo un'istanza del CRUDManager per i presidenti
     let crudManager;
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -190,28 +186,6 @@ $nomeSezione = "competizione";
             },
             afterLoad: function(items) {
                 console.log(`Caricati ${items.length} <?php echo $nomeSezione?>`);
-            }
-        });
-
-        // Inizializza la gestione del form
-        document.getElementById("submit").addEventListener("click", function(e) {
-            e.preventDefault();
-
-            // Determina se è una creazione o un aggiornamento
-            const isUpdate = this.dataset.mode === 'update';
-
-            // Raccolta dati dal form
-            const formData = {
-                nome: document.getElementById("nome").value.trim(),
-                cognome: document.getElementById("cognome").value.trim()
-            };
-
-            // Aggiungi l'ID se è un aggiornamento
-            if (isUpdate) {
-                formData.id = document.querySelector('input[name="id"]').value;
-                crudManager.updateItem(formData);
-            } else {
-                crudManager.createItem(formData);
             }
         });
 
