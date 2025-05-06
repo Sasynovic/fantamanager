@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Dashboard Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <link rel="stylesheet" href="style2.css">
 </head>
 
 <style>
@@ -52,7 +52,7 @@
     }
 </style>
 <div class="navbar">
-    <h1>Admin Dashboard</h1>
+    <a href="dashboard_admin.php">Admin Dashboard</a>
     <div class="menu">
         <a href="gestione_news.php">Gestione News</a>
         <a href="gestione_presidenti.php">Gestione Presidenti</a>
