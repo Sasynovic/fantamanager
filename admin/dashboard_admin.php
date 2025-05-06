@@ -6,7 +6,5 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 require_once 'heading.php';
-
-
 ?>
 
