@@ -127,6 +127,7 @@ $nomeSezione = "competizione";
             <button id="cancel-form" class="btn btn-outline">Annulla</button>
         </div>
     </div>
+    <div id="pagination" class="pagination"></div>
 </div>
 
 
@@ -149,6 +150,7 @@ $nomeSezione = "competizione";
             addForm: document.getElementById('add-form'),
             cancelForm: document.getElementById('cancel-form'),
             submitForm: document.getElementById('submit'),
+            pagination: document.getElementById('pagination'),
             cardAll: document.querySelector('.card-all')
         }, {
             // Callback personalizzati
