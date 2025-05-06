@@ -24,14 +24,14 @@ try {
         http_response_code(200);
         echo json_encode([
             "success" => true,
-            "message" => "Squadra eliminata con successo.",
+            "message" => "Presidente eliminata con successo.",
             "status" => "success"
         ]);
     } else {
         http_response_code(404);
         echo json_encode([
             "success" => false,
-            "message" => "Nessuna squadra trovata con questo ID.",
+            "message" => "Nessuna presidente trovata con questo ID.",
             "status" => "error"
         ]);
     }
