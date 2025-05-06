@@ -17,6 +17,53 @@ class squadra
         $this->conn = $db;
     }
 
+    public function count($vendita_filter = null, $search = null, $nome_presidente_filter = null, $id_squadra_filter = null)
+    {
+        $query = "SELECT COUNT(*) as total 
+                        FROM " . $this->table_name . "  s
+                        LEFT JOIN presidenti pres ON s.id_pres = pres.id
+                        LEFT JOIN presidenti vice ON s.id_vice = vice.id
+                        LEFT JOIN stadio st ON s.id_stadio = st.id
+                        WHERE 1=1
+                        ";
+
+        // Aggiunta dinamica dei filtri
+        if ($vendita_filter !== null) {
+            $query .= " AND vendita = :vendita";
+        }
+        if ($id_squadra_filter !== null) {
+            $query .= " AND id = :id_squadra";
+        }
+        if (!empty($search)) {
+            $query .= " AND nome_squadra LIKE :search";
+        }
+        if (!empty($nome_presidente_filter)) {
+            $query .= " AND (pres.nome LIKE :nome_presidente OR pres.cognome LIKE :nome_presidente)";
+        }
+
+        $stmt = $this->conn->prepare($query);
+
+        if ($search) {
+            $search_term = "%$search%";
+            $stmt->bindParam(':search', $search_term, PDO::PARAM_STR);
+        }
+        if (!empty($nome_presidente_filter)) {
+            $search_term = "%$nome_presidente_filter%";
+            $stmt->bindParam(':nome_presidente', $search_term, PDO::PARAM_STR);
+        }
+        if ($vendita_filter !== null) {
+            $stmt->bindParam(':vendita', $vendita_filter, PDO::PARAM_BOOL);
+        }
+        if ($id_squadra_filter !== null) {
+            $stmt->bindParam(':id_squadra', $id_squadra_filter, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row['total'];
+    }
+
     public function create(string $nome_squadra,int $id_pres, int $id_vice= null , bool $vendita, int $id_stadio, int $valore_fvm): bool {
 
         if (empty($nome_squadra)) {
@@ -69,7 +116,7 @@ class squadra
         }
     }
 
-    public function read($vendita_filter = null, $nome_squadra_filter = null, $nome_presidente_filter = null, $id_squadra_filter = null, $limit = null)
+    public function read($vendita_filter = null, $search = null, $nome_presidente_filter = null, $id_squadra_filter = null, $limit = 10, $offset = 0)
     {
         $query =  "
                             SELECT 
@@ -104,9 +151,9 @@ class squadra
             $params[':vendita'] = $vendita_filter;
         }
 
-        if (!empty($nome_squadra_filter)) {
-            $query .= " AND s.nome_squadra LIKE :nome_squadra";
-            $params[':nome_squadra'] = "%" . $nome_squadra_filter . "%";
+        if (!empty($search)) {
+            $query .= " AND s.nome_squadra LIKE :search";
+            $params['search'] = "%" . $search . "%";
         }
 
         if (!empty($nome_presidente_filter)) {
@@ -119,15 +166,15 @@ class squadra
         }
 
         $query .= " ORDER BY s.id ASC";
-        if ($limit !== null) {
-            $query .= " LIMIT " . intval($limit);
-        }
+        $query .= " LIMIT :limit OFFSET :offset";
 
         $stmt = $this->conn->prepare($query);
 
         foreach ($params as $key => $val) {
             $stmt->bindValue($key, $val);
         }
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
 
         $stmt->execute();
         return $stmt;

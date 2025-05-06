@@ -12,6 +12,37 @@ class news
         $this->conn = $db;
     }
 
+    public function count($id_competizione = null, $search = null)
+    {
+        $query = "SELECT COUNT(*) as total 
+                        FROM " . $this->table_name . " n
+                        LEFT JOIN competizione c ON n.id_competizione = c.id
+                        LEFT JOIN divisione d ON c.id_divisione = d.id
+                         WHERE 1=1";
+
+        if ($id_competizione !== null) {
+            $query .= " AND n.id_competizione = :id_competizione";
+        }
+        if ($search !== null) {
+            $query .= " AND (n.titolo LIKE :search OR n.contenuto LIKE :search)";
+        }
+
+        $stmt = $this->conn->prepare($query);
+
+        if ($search) {
+            $search_term = "%$search%";
+            $stmt->bindParam(':search', $search_term, PDO::PARAM_STR);
+        }
+        if ($id_competizione !== null) {
+            $stmt->bindParam(':id_competizione', $id_competizione, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row['total'];
+    }
+
     public function create(string $titolo,string $contenuto,int $id_competizione,string $autore,bool $visibile = true): bool {
 
         if (empty($titolo)) {
@@ -53,7 +84,7 @@ class news
         }
     }
 
-    public function read($id_competizione = null, $limit = null, $search = null) {
+    public function read($id_competizione = null, $search = null, $limit = null, $offset = 0) {
         $query = "
                         SELECT  
                             n.id,
@@ -80,11 +111,7 @@ class news
         }
 
         $query .= " ORDER BY n.data_pubblicazione DESC";
-
-        if ($limit !== null) {
-            $query .= " LIMIT " . intval($limit);
-        }
-
+        $query .= " LIMIT :limit OFFSET :offset";
 
         $stmt = $this->conn->prepare($query);
 
@@ -95,6 +122,9 @@ class news
             $search = "%$search%";
             $stmt->bindParam(':search', $search, PDO::PARAM_STR);
         }
+
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
             return $stmt;

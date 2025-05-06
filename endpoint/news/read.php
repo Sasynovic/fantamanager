@@ -13,37 +13,59 @@ $database = new database();
 $db = $database->getConnection();
 $news = new news($db);
 
+// Parametri di paginazione
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$limit = isset($_GET['limit']) ? max(1, intval($_GET['limit'])) : 10;
+$offset = ($page - 1) * $limit;
+
+// Parametro di ricerca
 $id_competizione_filter = isset($_GET['id_competizione']) ? intval($_GET['id_competizione']) : null;
 $search = isset($_GET['search']) ? $_GET['search'] : null;
-$limit = isset($_GET['limit']) ? intval($_GET['limit']) : null;
 
-$stmt = $news->read($id_competizione_filter, $limit, $search);
+// Conta il totale dei record
+$total_records = $news->count($id_competizione_filter,$search);
+
+// Recupera i record paginati
+$stmt = $news->read($id_competizione_filter, $search, $limit, $offset);
 $num = $stmt->rowCount();
 
 if ($num > 0) {
-    $squadre_arr = array();
-    $squadre_arr["news"] = array();
+    $response = [
+        'presidenti' => [],
+        'pagination' => [
+            'total_items' => (int)$total_records,
+            'current_page' => (int)$page,
+            'items_per_page' => (int)$limit,
+            'total_pages' => ceil($total_records / $limit),
+            'has_next_page' => ($page * $limit) < $total_records,
+            'has_previous_page' => $page > 1
+        ]
+    ];
 
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        extract($row);
-        $squadra_item = array(
-            "id" => $id,
-            "titolo" => $titolo,
-            "contenuto" => $contenuto,
-            "data_pubblicazione" => $data_pubblicazione,
-            "autore" => $autore,
-            "id_competizione" => $id_competizione,
-            "nome_competizione" => $nome_divisione . ' ' . $nome_competizione,
-            "visibile" => $visibile
-        );
-
-        $squadre_arr["news"][] = $squadra_item;
+        $response['news'][] = [
+            "id" => $row['id'],
+            "titolo" => $row['titolo'],
+            "contenuto" => $row['contenuto'],
+            "data_pubblicazione" => $row['data_pubblicazione'],
+            "autore" => $row['autore'],
+            "id_competizione" => $row['id_competizione'],
+            "nome_competizione" => $row['nome_divisione'] . ' ' . $row['nome_competizione'],
+            "visibile" => $row['visibile']
+        ];
     }
 
     http_response_code(200);
-    echo json_encode($squadre_arr);
-
+    echo json_encode($response);
 } else {
     http_response_code(404);
-    echo json_encode(array("message" => "Nessuna squadra trovata."));
+    echo json_encode([
+        'message' => 'Nessun news trovato.',
+        'pagination' => [
+            'total_items' => 0,
+            'current_page' => (int)$page,
+            'items_per_page' => (int)$limit,
+            'total_pages' => 0
+        ]
+    ]);
 }

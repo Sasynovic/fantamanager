@@ -15,6 +15,8 @@ $presidenti = new presidenti($db);
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $limit = isset($_GET['limit']) ? max(1, intval($_GET['limit'])) : 10;
 $offset = ($page - 1) * $limit;
+
+// Parametro di ricerca
 $search = isset($_GET['search']) ? $_GET['search'] : null;
 
 // Conta il totale dei record
