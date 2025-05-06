@@ -4,7 +4,6 @@ if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php"); // reindirizza se non loggato
     exit;
 }
-
 require_once 'heading.php';
 ?>
 <!DOCTYPE html>
@@ -53,8 +52,6 @@ require_once 'heading.php';
                 <button id="search-button" class="btn btn-primary">Applica filtri</button>
             </div>
         </div>
-
-
 
         <ul id="news-list" class="news-grid"></ul>
     </div>
