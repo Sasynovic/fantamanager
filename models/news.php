@@ -62,9 +62,13 @@ class news
                             n.data_pubblicazione,
                             n.autore,
                             n.id_competizione,
-                            n.visibile
+                            n.visibile,
+                            c.nome_competizione,
+                            d.nome_divisione
+                        
                         FROM " . $this->table_name . " n
                         LEFT JOIN competizione c ON n.id_competizione = c.id
+                        LEFT JOIN divisione d ON c.id_divisione = d.id
                         WHERE 1=1
                     ";
 

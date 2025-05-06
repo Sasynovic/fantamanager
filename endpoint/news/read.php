@@ -33,6 +33,7 @@ if ($num > 0) {
             "data_pubblicazione" => $data_pubblicazione,
             "autore" => $autore,
             "id_competizione" => $id_competizione,
+            "nome_competizione" => $nome_divisione . ' ' . $nome_competizione,
             "visibile" => $visibile
         );
 
