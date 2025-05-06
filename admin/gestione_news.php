@@ -4,6 +4,8 @@ if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php"); // reindirizza se non loggato
     exit;
 }
+
+require_once 'heading.php';
 ?>
 <!DOCTYPE html>
 <html lang="it">
@@ -16,11 +18,7 @@ if (!isset($_SESSION['admin_id'])) {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-            <div class="menu">
-                <a href="dashboard_admin.php">Dashboard</a>
-                <a href="gestione_news.php">Gestione Notizie</a>
-                <a href="logout.php">Logout</a>
-            </div>
+
 <div class="app-container">
     <div class="header">
         <h1>Gestione Notizie</h1>

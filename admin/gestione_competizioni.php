@@ -4,7 +4,7 @@ if (!isset($_SESSION['admin_id'])) {
     header("Location: login.php"); // reindirizza se non loggato
     exit;
 }
-
+require_once 'heading.php';
 $nomeSezione = "competizione";
 ?>
 <!DOCTYPE html>
@@ -17,11 +17,7 @@ $nomeSezione = "competizione";
     <link rel="stylesheet" href="style2.css">
 </head>
 <body>
-<div class="menu">
-    <a href="dashboard_admin.php">Dashboard</a>
-    <a href="gestione_news.php">Gestione <?php echo $nomeSezione?></a>
-    <a href="logout.php">Logout</a>
-</div>
+
 <div class="app-container">
     <div class="header">
         <h1>Gestione <?php echo $nomeSezione?></h1>
@@ -63,14 +59,72 @@ $nomeSezione = "competizione";
         </div>
 
         <div class="form-group">
-            <label for="nome">Nome</label>
-            <input type="text" id="nome" placeholder="Nome <?php echo $nomeSezione?>">
+            <label for="divisione">Divisione</label>
+            <select id="divisione" name="divisione" class="form-control">
+                <option value="">Seleziona una divisione</option>
+            </select>
+        </div>
+
+        <script>
+            let urlDiv = `${window.location.protocol}//${window.location.host}/endpoint/divisione/read.php`;
+
+            fetch(urlDiv)
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('divisione');
+                    const divisioni = data.divisioni;
+
+                    if (Array.isArray(divisioni)) {
+                        divisioni.forEach(divisione => {
+                            const option = document.createElement('option');
+                            option.value = divisione.id;
+                            option.textContent = divisione.nome_divisione;
+                            select.appendChild(option);
+                        });
+                    } else {
+                        console.error("Il campo 'divisioni' non è un array:", divisioni);
+                    }
+                })
+                .catch(error => console.error('Errore nel caricamento delle divisioni:', error));
+        </script>
+
+
+
+        <div class="form-group">
+            <label for="nome_competizione">Nome <?php echo $nomeSezione?></label>
+            <input type="text" id="nome_competizione" placeholder="Inserisci nome <?php echo $nomeSezione?>">
         </div>
 
         <div class="form-group">
-            <label for="cognome">Cognome</label>
-            <input type="text" id="cognome" placeholder="Cognome <?php echo $nomeSezione?>">
+            <label for="stagione">Stagione Sportiva</label>
+            <select id="stagione" name="stagione" class="form-control">
+                <option value="">Seleziona una stagione</option>
+            </select>
         </div>
+
+        <script>
+            const stagioneUrl = `${window.location.protocol}//${window.location.host}/endpoint/stagioni_sportive/read.php`;
+
+            fetch(stagioneUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const selectS = document.getElementById('stagione');
+                    const stagioni = data.stagioni_sportive;
+
+                    if (Array.isArray(stagioni)) {
+                        stagioni.forEach(stagione => {
+                            const option = document.createElement('option');
+                            option.value = stagione.id;
+                            option.textContent = stagione.stagione;
+                            selectS.appendChild(option);
+                        });
+                    } else {
+                        console.error("Il campo 'stagioni_sportive' non è un array:", stagioni);
+                    }
+                })
+                .catch(error => console.error('Errore nel caricamento delle stagioni sportive:', error));
+        </script>
+
 
         <div class="btn-group">
             <button id="submit" class="btn btn-primary">Inserisci <?php echo $nomeSezione?></button>
@@ -78,6 +132,7 @@ $nomeSezione = "competizione";
         </div>
     </div>
 </div>
+
 
 <script src="CRUDManager.js" defer></script>
 <script>
