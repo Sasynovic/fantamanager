@@ -14,19 +14,16 @@ $db = $database->getConnection();
 $squadra = new squadra($db);
 
 $vendita_filter = isset($_GET['vendita']) ? intval($_GET['vendita']) : null;
-$nome_squadra_filter = isset($_GET['nome_squadra']) ? $_GET['nome_squadra'] : null;
+$nome_squadra_filter = isset($_GET['search']) ? $_GET['search'] : null;
 $nome_presidente_filter = isset($_GET['nome_presidente']) ? $_GET['nome_presidente'] : null;
 $id_squadra_filter = isset($_GET['id_squadra']) ? intval($_GET['id_squadra']) : null;
 $limit = isset($_GET['limit']) ? $_GET['limit'] : null;
 
 $stmt = $squadra->read($vendita_filter, $nome_squadra_filter, $nome_presidente_filter, $id_squadra_filter, $limit);
-
-
 $num = $stmt->rowCount();
 
 if ($num > 0) {
-    $squadre_arr = array();
-    $squadre_arr["squadre"] = array();
+    $squadre_arr["squadra"] = array();
 
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         extract($row);
@@ -48,7 +45,7 @@ if ($num > 0) {
             "prezzo" => $costo_iscrizione
         );
 
-        $squadre_arr["squadre"][] = $squadra_item;
+        array_push($squadre_arr["squadra"], $squadra_item);
     }
 
     http_response_code(200);

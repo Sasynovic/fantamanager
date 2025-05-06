@@ -17,32 +17,84 @@ class squadra
         $this->conn = $db;
     }
 
+    public function create(string $nome_squadra,int $id_pres, int $id_vice= null , bool $vendita, int $id_stadio, int $valore_fvm): bool {
+
+        if (empty($nome_squadra)) {
+            throw new InvalidArgumentException("Il nome_squadra non può essere vuoto");
+        }
+        if ($id_pres <= 0) {
+            throw new InvalidArgumentException("ID presidente non valido");
+        }
+        if ($id_vice <= 0 && $id_vice !== null) {
+            throw new InvalidArgumentException("ID vice presidente non valido");
+        }
+        if ($vendita !== true && $vendita !== false) {
+            throw new InvalidArgumentException("Il campo vendita deve essere un booleano");
+        }
+        if( $id_stadio <= 0) {
+            throw new InvalidArgumentException("ID stadio non valido");
+        }
+        if ($valore_fvm <= 0) {
+            throw new InvalidArgumentException("Il valore_fvm deve essere maggiore di zero");
+        }
+
+        // Query SQL con named parameters
+        $query = "
+        INSERT INTO " . $this->table_name . " 
+        (nome_squadra, id_pres, id_vice, vendita ,id_stadio, valore_fvm)
+        VALUES 
+        (:nome_squadra, :id_pres, :id_vice, :vendita, :id_stadio, :valore_fvm)
+    ";
+
+        $stmt = $this->conn->prepare($query);
+
+        // Binding parametri con tipi espliciti
+        $stmt->bindParam(':nome_squadra', $nome_squadra, PDO::PARAM_STR);
+        $stmt->bindParam(':id_pres', $id_pres, PDO::PARAM_INT);
+        if ($id_vice === null) {
+            $stmt->bindValue(':id_vice', null, PDO::PARAM_NULL);
+        } else {
+            $stmt->bindValue(':id_vice', $id_vice, PDO::PARAM_INT);
+        }
+        $stmt->bindParam(':vendita', $vendita, PDO::PARAM_BOOL);
+        $stmt->bindParam(':id_stadio', $id_stadio, PDO::PARAM_INT);
+        $stmt->bindParam(':valore_fvm', $valore_fvm, PDO::PARAM_INT);
+
+        try {
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            // Log dell'errore (in un sistema reale)
+            error_log("Errore durante la creazione della news: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function read($vendita_filter = null, $nome_squadra_filter = null, $nome_presidente_filter = null, $id_squadra_filter = null, $limit = null)
     {
         $query =  "
-    SELECT 
-        s.id,
-        s.nome_squadra,
-        s.vendita,
-        s.rate,
-        s.costo_iscrizione,
-        s.valore_fvm,
-        pres.nome AS nome_pres,
-        pres.cognome AS cognome_pres,
-        vice.nome AS nome_vice,
-        vice.cognome AS cognome_vice,
-        st.nome_stadio,
-        st.livello_stadio,
-        st.costo_manutenzione,
-        st.bonus_casa_n,
-        st.bonus_casa_u,
-        st.guadagno_crediti_coppa,
-        st.guadagno_crediti_campionato
-    FROM " . $this->table_name . " s
-    LEFT JOIN presidenti pres ON s.id_pres = pres.id
-    LEFT JOIN presidenti vice ON s.id_vice = vice.id
-    LEFT JOIN stadio st ON s.id_stadio = st.id
-    WHERE 1=1";
+                            SELECT 
+                                s.id,
+                                s.nome_squadra,
+                                s.vendita,
+                                s.rate,
+                                s.costo_iscrizione,
+                                s.valore_fvm,
+                                pres.nome AS nome_pres,
+                                pres.cognome AS cognome_pres,
+                                vice.nome AS nome_vice,
+                                vice.cognome AS cognome_vice,
+                                st.nome_stadio,
+                                st.livello_stadio,
+                                st.costo_manutenzione,
+                                st.bonus_casa_n,
+                                st.bonus_casa_u,
+                                st.guadagno_crediti_coppa,
+                                st.guadagno_crediti_campionato
+                            FROM " . $this->table_name . " s
+                            LEFT JOIN presidenti pres ON s.id_pres = pres.id
+                            LEFT JOIN presidenti vice ON s.id_vice = vice.id
+                            LEFT JOIN stadio st ON s.id_stadio = st.id
+                            WHERE 1=1";
 
         // Aggiunta dinamica dei filtri
         $params = [];
@@ -68,8 +120,7 @@ class squadra
 
         $query .= " ORDER BY s.id ASC";
         if ($limit !== null) {
-            $query .= " LIMIT :limit";
-            $params[':limit'] = (int)$limit;
+            $query .= " LIMIT " . intval($limit);
         }
 
         $stmt = $this->conn->prepare($query);
@@ -82,57 +133,25 @@ class squadra
         return $stmt;
     }
 
-
-    public function create()
-    {
-        $query = "INSERT INTO " . $this->table_name . " 
-            (nome_squadra, id_pres, id_vice, id_stadio, vendita, rate)
-            VALUES (:nome_squadra, :id_pres, :id_vice, :id_stadio, :vendita, :rate)";
-
-        $stmt = $this->conn->prepare($query);
-
-        $stmt->bindParam(":nome_squadra", $this->nome_squadra);
-        $stmt->bindParam(":id_pres", $this->id_pres);
-        $stmt->bindParam(":id_vice", $this->id_vice);
-        $stmt->bindParam(":id_stadio", $this->id_stadio);
-        $stmt->bindParam(":vendita", $this->vendita);
-        $stmt->bindParam(":rate", $this->rate);
-
-        return $stmt->execute();
-    }
-
-    public function update()
-    {
-        $query = "UPDATE " . $this->table_name . " 
-            SET nome_squadra = :nome_squadra, 
-                id_pres = :id_pres, 
-                id_vice = :id_vice, 
-                id_stadio = :id_stadio,
-                vendita = :vendita,
-                rate = :rate
-            WHERE id = :id";
-
-        $stmt = $this->conn->prepare($query);
-
-        $stmt->bindParam(":nome_squadra", $this->nome_squadra);
-        $stmt->bindParam(":id_pres", $this->id_pres);
-        $stmt->bindParam(":id_vice", $this->id_vice);
-        $stmt->bindParam(":id_stadio", $this->id_stadio);
-        $stmt->bindParam(":vendita", $this->vendita);
-        $stmt->bindParam(":rate", $this->rate);
-        $stmt->bindParam(":id", $this->id);
-
-        return $stmt->execute();
-    }
-
-    public function delete()
+    public function delete($id)
     {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = :id";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":id", $this->id);
-        return $stmt->execute();
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        try {
+            if (!$stmt->execute()) {
+                return false;
+            }
+
+            // Verifica se effettivamente è stata eliminata una riga
+            return ($stmt->rowCount() > 0);
+
+        } catch (PDOException $e) {
+            // Log dell'errore (opzionale)
+            error_log("Errore eliminazione: " . $e->getMessage());
+            return false;
+        }
     }
-
-
 
 }

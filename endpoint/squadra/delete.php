@@ -1,36 +1,45 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
+header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-require_once '../../config/database.php';
-require_once '../../models/squadra.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
+require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../models/squadra.php';
 use component\database;
 
-// Recupera i dati JSON della richiesta
-$data = json_decode(file_get_contents("php://input"));
+try {
+    $database = new database();
+    $db = $database->getConnection();
+    $squadra = new squadra($db);
 
-// Verifica se l'ID è presente nella richiesta
-if (!isset($data->id)) {
-    echo json_encode(["success" => false, "message" => "ID della squadra mancante"]);
-    exit;
+    $id = isset($_GET['id']) ? $_GET['id'] : die(json_encode([
+        "message" => "ID squadra mancante",
+        "status" => "error"
+    ]));
+
+    $result = $squadra->delete($id);
+
+    if ($result) {
+        http_response_code(200);
+        echo json_encode([
+            "success" => true,
+            "message" => "Presidente eliminata con successo.",
+            "status" => "success"
+        ]);
+    } else {
+        http_response_code(404);
+        echo json_encode([
+            "success" => false,
+            "message" => "Nessuna presidente trovata con questo ID.",
+            "status" => "error"
+        ]);
+    }
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        "success" => false,
+        "message" => "Errore del server: " . $e->getMessage(),
+        "status" => "error"
+    ]);
 }
-
-$id = $data->id;
-$database = new database();
-$db = $database->getConnection();
-$squadra = new squadra($db);
-
-// Imposta l'ID della squadra
-$squadra->id = $id;
-
-// Esegui la cancellazione della squadra e gestisci il risultato
-if ($squadra->delete()) {
-    echo json_encode(["success" => true, "message" => "Squadra eliminata con successo", "data" => $squadra]);
-} else {
-    echo json_encode(["success" => false, "message" => "Errore nell'eliminazione della squadra"]);
-}
-
-exit;
