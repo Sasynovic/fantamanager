@@ -176,8 +176,10 @@ class squadra
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
 
-        $stmt->execute();
-        return $stmt;
+        if ($stmt->execute()) {
+            return $stmt;
+        }
+        return null;
     }
 
     public function delete($id)
