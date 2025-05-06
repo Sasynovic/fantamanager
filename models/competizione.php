@@ -67,7 +67,7 @@ class competizione
         if ($search) {
             $query .= " AND c.nome_competizione LIKE :search";
         }
-        $query .= " ORDER BY c.id ASC";
+        $query .= " ORDER BY c.id DESC";
 
         if ($limit !== null) {
             $query .= " LIMIT " . intval($limit); // safe cast
@@ -91,4 +91,23 @@ class competizione
         return null;
     }
 
-}
+    public function delete($id) {
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        try {
+            if (!$stmt->execute()) {
+                return false;
+            }
+
+            // Verifica se effettivamente è stata eliminata una riga
+            return ($stmt->rowCount() > 0);
+
+        } catch (PDOException $e) {
+            // Log dell'errore (opzionale)
+            error_log("Errore eliminazione: " . $e->getMessage());
+            return false;
+        }
+
+}}
