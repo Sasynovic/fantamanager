@@ -1,5 +1,6 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
+
 require_once '../../config/database.php';
 require_once '../../models/competizione.php';
 use component\database;
@@ -45,7 +46,11 @@ try {
     }
 
     // Chiamata al metodo create
-    $result = $competizione->create($data->id_divisione, $data->nome_competizione, $data->id_stagione);
+    $result = $competizione->create(
+        $data->id_divisione,
+        $data->nome_competizione,
+        $data->id_stagione
+    );
 
     if ($result) {
         http_response_code(201);
