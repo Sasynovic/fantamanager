@@ -1,5 +1,4 @@
 <?php
-
 use component\database;
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -12,30 +11,51 @@ $database = new database();
 $db = $database->getConnection();
 $presidenti = new presidenti($db);
 
-$limit = isset($_GET['limit']) ? $_GET['limit'] : null;
+// Parametri di paginazione
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$limit = isset($_GET['limit']) ? max(1, intval($_GET['limit'])) : 10;
+$offset = ($page - 1) * $limit;
 $search = isset($_GET['search']) ? $_GET['search'] : null;
 
-$stmt = $presidenti->read($limit, $search);
+// Conta il totale dei record
+$total_records = $presidenti->count($search);
+
+// Recupera i record paginati
+$stmt = $presidenti->read($limit, $offset, $search);
 $num = $stmt->rowCount();
 
 if ($num > 0) {
-    $presidenti_arr = array();
-    $presidenti_arr["presidenti"] = array();
+    $response = [
+        'presidenti' => [],
+        'pagination' => [
+            'total_items' => (int)$total_records,
+            'current_page' => (int)$page,
+            'items_per_page' => (int)$limit,
+            'total_pages' => ceil($total_records / $limit),
+            'has_next_page' => ($page * $limit) < $total_records,
+            'has_previous_page' => $page > 1
+        ]
+    ];
 
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        extract($row);
-        $presidente_item = array(
-            "id" => $id,
-            "nome" => $nome,
-            "cognome" => $cognome
-        );
-
-        array_push($presidenti_arr["presidenti"], $presidente_item);
+        $response['presidenti'][] = [
+            "id" => $row['id'],
+            "nome" => $row['nome'],
+            "cognome" => $row['cognome']
+        ];
     }
 
     http_response_code(200);
-    echo json_encode($presidenti_arr);
+    echo json_encode($response);
 } else {
     http_response_code(404);
-    echo json_encode(array("message" => "Nessun presidente trovato."));
+    echo json_encode([
+        'message' => 'Nessun presidente trovato.',
+        'pagination' => [
+            'total_items' => 0,
+            'current_page' => (int)$page,
+            'items_per_page' => (int)$limit,
+            'total_pages' => 0
+        ]
+    ]);
 }

@@ -12,6 +12,27 @@ class presidenti
         $this->conn = $db;
     }
 
+    public function count($search = null)
+    {
+        $query = "SELECT COUNT(*) as total FROM " . $this->table_name . " WHERE 1=1";
+
+        if ($search) {
+            $query .= " AND (nome LIKE :search OR cognome LIKE :search)";
+        }
+
+        $stmt = $this->conn->prepare($query);
+
+        if ($search) {
+            $search_term = "%$search%";
+            $stmt->bindParam(':search', $search_term, PDO::PARAM_STR);
+        }
+
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row['total'];
+    }
+
     public function create(string $nome,string $cognome){
         if (empty($nome)) {
             throw new InvalidArgumentException("Il nome non può essere vuoto");
@@ -39,31 +60,32 @@ class presidenti
 
     }
 
-    public function read($limit = null, $search = null )
+    public function read($limit = 10, $offset = 0, $search = null)
     {
-        $query =  "SELECT
-                        p.id,
-                        p.nome,
-                        p.cognome
-                        FROM " . $this->table_name . " p
-                         WHERE 1=1";
+        $query = "SELECT
+                p.id,
+                p.nome,
+                p.cognome
+              FROM " . $this->table_name . " p
+              WHERE 1=1";
+
         if ($search) {
             $query .= " AND (p.nome LIKE :search OR p.cognome LIKE :search)";
         }
-        $query .= " ORDER BY p.id ASC";
-        if ($limit) {
-            $query .= " LIMIT :limit";
-        }
 
+        $query .= " ORDER BY p.id ASC";
+        $query .= " LIMIT :limit OFFSET :offset";
 
         $stmt = $this->conn->prepare($query);
+
         if ($search) {
-            $search = "%$search%";
-            $stmt->bindParam(':search', $search, PDO::PARAM_STR);
+            $search_term = "%$search%";
+            $stmt->bindParam(':search', $search_term, PDO::PARAM_STR);
         }
-        if ($limit) {
-            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-        }
+
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+
         $stmt->execute();
 
         return $stmt;
