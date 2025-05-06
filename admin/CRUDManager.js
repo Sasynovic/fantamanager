@@ -44,6 +44,7 @@ class CRUDManager {
             addForm: document.getElementById('add-form'),
             cancelForm: document.getElementById('cancel-form'),
             submitForm: document.getElementById('submit-form'),
+            pagination: document.getElementById('pagination'),
             cardAll: document.querySelector('.card-all'),
             ...elements
         };
@@ -216,6 +217,10 @@ class CRUDManager {
             .then(data => {
                 // Convenzione: i dati vengono restituiti in un array con lo stesso nome dell'endpoint_type
                 const items = data[this.endpoint_type] || [];
+
+                if (this.updatePagination && typeof this.updatePagination === 'function' && data.pagination) {
+                    this.updatePagination(data.pagination);
+                }
 
                 this.renderItems(items);
 
@@ -486,4 +491,39 @@ class CRUDManager {
                 });
         }
     }
+
+    updatePagination(pagination) {
+        const container = this.elements.pagination;
+        container.innerHTML = ''; // pulisci
+
+        const { current_page, total_pages } = pagination;
+
+        // Bottone "Precedente"
+        const prevButton = document.createElement('button');
+        prevButton.textContent = '« Precedente';
+        prevButton.disabled = current_page === 1;
+        prevButton.classList.add('btn', 'btn-secondary');
+        prevButton.addEventListener('click', () => {
+            this.loadData({ page: current_page - 1 });
+        });
+        container.appendChild(prevButton);
+
+        // Info pagina corrente
+        const pageInfo = document.createElement('span');
+        pageInfo.textContent = ` Pagina ${current_page} di ${total_pages} `;
+        pageInfo.style.margin = '0 10px';
+        container.appendChild(pageInfo);
+
+        // Bottone "Successivo"
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Successivo »';
+        nextButton.disabled = current_page === total_pages;
+        nextButton.classList.add('btn', 'btn-secondary');
+        nextButton.addEventListener('click', () => {
+            this.loadData({ page: current_page + 1 });
+        });
+        container.appendChild(nextButton);
+    }
+
+
 }
