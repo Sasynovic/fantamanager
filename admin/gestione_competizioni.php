@@ -87,8 +87,6 @@ $nomeSezione = "competizione";
                 .catch(error => console.error('Errore nel caricamento delle divisioni:', error));
         </script>
 
-
-
         <div class="form-group">
             <label for="nome_competizione">Nome <?php echo $nomeSezione?></label>
             <input type="text" name="nome_competizione" placeholder="Inserisci nome <?php echo $nomeSezione?>">
