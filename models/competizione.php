@@ -14,7 +14,7 @@ class competizione
         $this->conn = $db;
     }
 
-    public function create(int $id_divisione, string $nome_competizione, int $id_sta){
+    public function create(int $id_divisione, string $nome_competizione, int $id_stagione){
 
         if (empty($id_divisione)) {
             throw new InvalidArgumentException("Il campo idDivisione non può essere vuoto");
@@ -22,20 +22,20 @@ class competizione
         if (empty($nome_competizione)) {
             throw new InvalidArgumentException("Il campo nomeCompetizione non può essere vuoto");
         }
-        if (empty($idStagione)) {
+        if (empty($id_stagione)) {
             throw new InvalidArgumentException("Il campo idStagione non può essere vuoto");
         }
 
         $query = "INSERT INTO " . $this->table_name . " 
         (id_divisione, nome_competizione, id_stagione)
         VALUES 
-        (:id_divisione, :nome_competizione, :idStagione);";
+        (:id_divisione, :nome_competizione, :id_stagione);";
 
         $stmt = $this->conn->prepare($query);
 
         $stmt->bindParam(':id_divisione', $id_divisione);
         $stmt->bindParam(':nome_competizione', $nome_competizione);
-        $stmt->bindParam(':idStagione', $idStagione);
+        $stmt->bindParam(':id_stagione', $id_stagione);
 
         try {
             return $stmt->execute();
