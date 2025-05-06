@@ -65,7 +65,7 @@ class competizione
             $query .= " AND c.id_divisione = :id_divisione";
         }
         if ($search) {
-            $query .= "AND c.nome_competizione LIKE :search";
+            $query .= " AND c.nome_competizione LIKE :search";
         }
         $query .= " ORDER BY c.id ASC";
 
@@ -78,9 +78,11 @@ class competizione
         if ($id_divisione !== null) {
             $stmt->bindParam(':id_divisione', $id_divisione, PDO::PARAM_INT);
         }
-        if($search) {
+        if ($search) {
+            $search = "%$search%";
             $stmt->bindParam(':search', $search, PDO::PARAM_STR);
         }
+
 
         if ($stmt->execute()) {
             return $stmt;
