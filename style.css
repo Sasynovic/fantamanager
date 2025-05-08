@@ -86,7 +86,7 @@ body {
 }
 
 .main-body {
-    height: 80%;
+    height: 74%;
     position: relative; /* Aggiunto */
 }
 
@@ -368,6 +368,7 @@ body {
     font-weight: bold;
     font-size: 1.1rem;
     letter-spacing: 0.5px;
+    width: 33%;
 }
 
 
@@ -453,6 +454,16 @@ body {
     .competizioni-table__cell {
         padding: 12px 8px;
     }
+    .main-menu{
+        display: none;
+    }
+    .main-content{
+        width: 100%;
+    }
+    *{
+        font-size: 0.8rem;
+    }
+
 }
 
 .comp-button
@@ -470,3 +481,32 @@ body {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     }
+
+
+select {
+    background-color: var(--blu-scuro, #1a2c56);
+    color: white;
+    border: 2px solid var(--accento, #3c74f5);
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 15px;
+}
+
+select:hover {
+    background-color: var(--blu, #294582);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
+select:focus {
+    outline: none;
+    border-color: white;
+}
