@@ -59,7 +59,7 @@ if ($num > 0) {
 } else {
     http_response_code(404);
     echo json_encode([
-        'message' => 'Nessun news trovato.',
+        'message' => 'Nessun vincitore trovato.',
         'pagination' => [
             'total_items' => 0,
             'current_page' => (int)$page,
