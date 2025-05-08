@@ -86,7 +86,9 @@ class competizione
                             c.nome_competizione, 
                             
                             d.nome_divisione,
-                            ss.stagione AS anno
+                            ss.stagione AS anno,
+                            ss.attiva
+                            
                         FROM " . $this->table_name . " c
                         LEFT JOIN divisione d ON c.id_divisione = d.id
                         LEFT JOIN stagioni_sportive ss ON c.id_stagione = ss.id
