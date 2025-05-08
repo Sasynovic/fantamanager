@@ -15,7 +15,43 @@ class albo
         $this->conn = $db;
     }
 
-    public function read($id_squadra_filter = null, $anno_filter = null, $id_competizione_filter = null)
+    public function count($id_squadra_filter = null, $anno_filter = null, $id_competizione_filter = null){
+        $query = "SELECT COUNT(*) as total 
+                        FROM " . $this->table_name . " a
+                        LEFT JOIN competizione c ON a.id_competizione = c.id
+                        LEFT JOIN squadre s ON a.id_squadra = s.id
+                        LEFT JOIN divisione d ON c.id_divisione = d.id
+                         WHERE 1=1";
+
+        if ($id_squadra_filter !== null) {
+            $query .= " AND a.id_squadra = :id_squadra";
+        }
+        if ($anno_filter !== null) {
+            $query .= " AND a.anno = :anno";
+        }
+        if ($id_competizione_filter !== null) {
+            $query .= " AND a.id_competizione = :id_competizione";
+        }
+
+        $stmt = $this->conn->prepare($query);
+
+        if ($id_squadra_filter !== null) {
+            $stmt->bindParam(":id_squadra", $id_squadra_filter, PDO::PARAM_INT);
+        }
+        if ($anno_filter !== null) {
+            $stmt->bindParam(":anno", $anno_filter, PDO::PARAM_INT);
+        }
+        if ($id_competizione_filter !== null) {
+            $stmt->bindParam(":id_competizione", $id_competizione_filter, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row['total'];
+    }
+
+    public function read($id_squadra_filter = null, $anno_filter = null, $id_competizione_filter = null,$limit = null, $offset = 0)
     {
         $query = "
             SELECT  
@@ -42,6 +78,8 @@ class albo
             $query .= " WHERE a.id_competizione = :id_competizione";
         }
         $query .= " ORDER BY anno DESC, nome_competizione ASC";
+        $query .= " LIMIT :limit OFFSET :offset";
+
         $stmt = $this->conn->prepare($query);
 
         if ($id_squadra_filter !== null) {
@@ -53,6 +91,10 @@ class albo
         if ($id_competizione_filter !== null) {
             $stmt->bindParam(":id_competizione", $id_competizione_filter, PDO::PARAM_INT);
         }
+
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+
         $stmt->execute();
         return $stmt;
     }}
