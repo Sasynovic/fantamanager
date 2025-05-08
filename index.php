@@ -22,13 +22,13 @@
                             <a href="index.php">Dashboard</a>
                         </li>
                         <li class="menu-item">
-                            <a href="index.php">Albo d'oro</a>
+                            <a href="albo.php">Albo d'oro</a>
                         </li>
                         <li class="menu-item">
                             <a href="index.php">Squadre in vendita</a>
                         </li>
                         <li class="menu-item">
-                            <a href="index.php">Tool scambi</a>
+                            <a href="tool.php">Tool scambi</a>
                         </li>
                         <li class="menu-item">
                             <a href="index.php">Regolamento</a>
