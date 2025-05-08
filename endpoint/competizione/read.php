@@ -45,6 +45,7 @@ if ($num > 0) {
             "nome_competizione" => $row['nome_divisione'] . " " . $row['nome_competizione'],
             "anno" => $row['anno'],
             "id_divisione" => $row['id_divisione'],
+            "attiva" => $row['attiva']
         ];
     }
 
