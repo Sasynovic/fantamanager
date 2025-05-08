@@ -4,60 +4,134 @@
     <meta charset="UTF-8">
     <title>Albo d'Oro</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0; padding: 40px;
-            background: linear-gradient(135deg, #1e1e2f, #323251);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #fff; display: flex; flex-direction: column; align-items: center;
-        }
-        h1 {
-            font-size: 2em; margin-bottom: 20px;
-            text-align: center;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-        }
-        select {
-            padding: 10px; margin-bottom: 20px;
-            border-radius: 5px; border: none;
-            background-color: #444; color: white;
-        }
-        .table-container {
-            width: 90%; max-width: 1000px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px; padding: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(10px);
-            overflow-x: auto;
-        }
-        table {
-            width: 100%; border-collapse: collapse; color: #fff;
-        }
-        th, td {
-            padding: 12px 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        th {
-            background-color: rgba(255, 255, 255, 0.15); font-weight: 600;
-        }
-        tr:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-        button{
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            border-radius: 10px;
-            padding: 8px 12px;
-            margin: 0 5px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-    </style>
+    <link href="style.css" rel="stylesheet">
 </head>
+
+
+<style>
+    /* [TUTTI GLI STILI PRECEDENTI RIMANGONO INVARIATI...] */
+
+    /* STILE SPECIFICO PER L'ALBO D'ORO */
+    .main-body-content {
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+    .albo-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 0 20px;
+    }
+
+    .albo-header h1 {
+        font-size: 2.2rem;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    #filtroCompetizione {
+        background-color: var(--blu-scuro);
+        color: white;
+        border: 2px solid var(--accento);
+        border-radius: 30px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 15px;
+    }
+
+    #filtroCompetizione:hover {
+        background-color: var(--blu);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    }
+
+    #filtroCompetizione:focus {
+        outline: none;
+        border-color: white;
+    }
+
+    .table-container {
+        background-color: var(--blu-scuro);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        margin: 0 auto;
+        max-width: 95%;
+    }
+
+    #alboTable {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: var(--blu-scuro);
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    #alboTable thead {
+        background: linear-gradient(135deg, var(--accento), var(--blu));
+    }
+
+    #alboTable th {
+        padding: 15px;
+        text-align: left;
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    #alboTable td {
+        padding: 12px 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        color: #eee;
+    }
+
+    #alboTable tr:nth-child(even) {
+        background-color: rgba(41, 69, 130, 0.2);
+    }
+
+    #alboTable tr:hover {
+        background-color: rgba(60, 116, 245, 0.15);
+    }
+
+    #alboTable tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .albo-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        #filtroCompetizione {
+            width: 100%;
+        }
+
+        #alboTable th, #alboTable td {
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+    }
+</style>
 <body>
 
-<button onclick="window.location.href='index.php'">Torna alla Home</button>
+
 
 <h1>🏆 Albo d'Oro</h1>
 
@@ -141,8 +215,5 @@
                 '<tr><td colspan="3">Errore nel caricamento dei dati.</td></tr>';
         });
 </script>
-
-
-
 </body>
 </html>

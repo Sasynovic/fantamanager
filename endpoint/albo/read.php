@@ -13,39 +13,58 @@ $database = new database();
 $db = $database->getConnection();
 $albo = new albo($db);
 
-// Filtro per ID squadra
+// Parametri di paginazione
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$limit = isset($_GET['limit']) ? max(1, intval($_GET['limit'])) : 10;
+$offset = ($page - 1) * $limit;
+
+// Filtri ricerca
 $id_squadra_filter = isset($_GET['id_squadra']) ? intval($_GET['id_squadra']) : null;
-// Filtro per ID competizione
 $id_competizione_filter = isset($_GET['id_competizione']) ? intval($_GET['id_competizione']) : null;
-// Filtro per anno
 $anno_filter = isset($_GET['anno']) ? intval($_GET['anno']) : null;
 
+// Conta il totale dei record
+$total_records = $albo->count($id_squadra_filter, $anno_filter, $id_competizione_filter);
+
 // Richiama read con o senza filtro
-$stmt = $albo->read($id_squadra_filter, $anno_filter, $id_competizione_filter);
+$stmt = $albo->read($id_squadra_filter, $anno_filter, $id_competizione_filter, $limit, $offset);
 
 $num = $stmt->rowCount();
 
 if ($num > 0) {
-    $albo_arr = array();
-    $albo_arr["albo"] = array();
+    $response = [
+        'albo' => [],
+        'pagination' => [
+            'total_items' => (int)$total_records,
+            'current_page' => (int)$page,
+            'items_per_page' => (int)$limit,
+            'total_pages' => ceil($total_records / $limit),
+            'has_next_page' => ($page * $limit) < $total_records,
+            'has_previous_page' => $page > 1
+        ]
+    ];
 
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        extract($row);
-        $albo_item = array(
-            "id" => $id,
-            "anno" => $anno,
-            "id_competizione" => $id_competizione,
-            "nome_competizione" => $nome_divisione .' '. $nome_competizione,
-            "nome_squadra" => $nome_squadra,
-            "id_squadra" => $id_squadra
-        );
-
-        $albo_arr["albo"][] = $albo_item;
+       $response['albo'][] = [
+            "id" => $row['id'],
+            "anno" => $row['anno'],
+            "id_competizione" => $row['id_competizione'],
+            "nome_competizione" => $row['nome_divisione'] .' '. $row['nome_competizione'],
+            "nome_squadra" => $row['nome_squadra'],
+            "id_squadra" => $row['id_squadra'],
+           ];
     }
-
     http_response_code(200);
-    echo json_encode($albo_arr);
+    echo json_encode($response);
 } else {
     http_response_code(404);
-    echo json_encode(array("message" => "Nessuna associazione trovata."));
+    echo json_encode([
+        'message' => 'Nessun news trovato.',
+        'pagination' => [
+            'total_items' => 0,
+            'current_page' => (int)$page,
+            'items_per_page' => (int)$limit,
+            'total_pages' => 0
+        ]
+    ]);
 }
