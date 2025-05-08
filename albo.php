@@ -308,9 +308,10 @@
         const tbody = document.querySelector('#alboTable tbody');
         tbody.innerHTML = '';
 
+        const filtroID = parseInt(filtro);
         const datiFiltrati = filtro === 'Tutte'
             ? alboData
-            : alboData.filter(r => r.id_competizione === filtro || r.nome_competizione === filtro);
+            : alboData.filter(r => r.id_competizione === filtroID || r.nome_competizione === filtro);
 
         if (datiFiltrati.length === 0) {
             const tr = document.createElement('tr');
@@ -427,7 +428,7 @@
         currentFilter = competizioneId;
         currentPage = page;
 
-        let urlAlbo = `${window.location.protocol}//${window.location.host}/endpoint/albo/read.php?page=${page}&items_per_page=${itemsPerPage}`;
+        let urlAlbo = `${window.location.protocol}//${window.location.host}/endpoint/albo/read.php?limit=${itemsPerPage}&page=${page}`;
 
         if (competizioneId !== 'Tutte') {
             urlAlbo += `&id_competizione=${competizioneId}`;
