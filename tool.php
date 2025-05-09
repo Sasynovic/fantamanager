@@ -44,6 +44,21 @@
             background-color: #f21a3c;
         }
 
+        .data-prestito-container select, .data-credito-container select {
+            width: 100%;
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .data-input {
+            width: 100%;
+            padding: 6px;
+            margin-top: 4px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
         /* Nuovi stili per gli elementi di scambio */
         .player-select-container {
             margin-top: 20px;
@@ -57,6 +72,7 @@
             border: 1px solid #ddd;
             border-radius: 8px;
             padding: 10px;
+            height: 100%;
         }
 
         .team-header {
@@ -79,8 +95,7 @@
             background-color: #f9f9f9;
             border-radius: 8px;
             padding: 10px;
-            min-height: 100px;
-            max-height: 300px;
+            height: 100%;
             overflow-y: auto;
         }
 
@@ -91,27 +106,48 @@
 
         .selected-player {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 5px 8px;
-            margin-bottom: 5px;
+            flex-direction: column;
+            margin-bottom: 15px;
             border-radius: 5px;
         }
 
-        .selected-playerP {
+        .selected-player-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 8px;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .selected-playerP .selected-player-info {
             background-color: #f8ab29;
         }
 
-        .selected-playerD {
+        .selected-playerD .selected-player-info {
             background-color: #63c623;
         }
 
-        .selected-playerC {
+        .selected-playerC .selected-player-info {
             background-color: #2e6be6;
         }
 
-        .selected-playerA {
+        .selected-playerA .selected-player-info {
             background-color: #f21a3c;
+        }
+
+        .prestito-select-container {
+            padding: 5px;
+            border-radius: 0 0 5px 5px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+
+        .prestito-select-container select {
+            width: 100%;
+            padding: 5px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
         }
 
         .remove-player {
@@ -122,6 +158,87 @@
             cursor: pointer;
             font-size: 16px;
         }
+        .main-body{
+            display: flex;
+            justify-content: center;
+        }
+        @media (max-width: 768px) {
+            .player-select-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .team-container {
+                width: 100%;
+            }
+        }
+
+        .credito-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .credito-box {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .credito-box input,
+        .credito-box select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .finalizza-container {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .finalizza-button {
+            background-color: #2e6be6;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .finalizza-button:hover {
+            background-color: #1c4cad;
+        }
+
+        .risultato-trattativa {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            display: none;
+        }
+
+        .success {
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+            color: #3c763d;
+        }
+
+        .error {
+            background-color: #f2dede;
+            border-color: #ebccd1;
+            color: #a94442;
+        }
+
     </style>
 </head>
 
@@ -176,20 +293,22 @@
         <div class="main-body">
             <div class="main-body-content" id="main-body-content" style="position: relative;">
 
+                <div class="tool-container">
+
                 <div class="select-container">
-                    <select id="selectDivisione" name="selectDivisione" class="form-control">
+                    <select id="selectDivisione" name="selectDivisione" class="player-select">
                         <option value="" disabled selected>Seleziona una divisione</option>
                     </select>
 
-                    <select id="selectCompetizione" name="selectCompetizione" class="form-control">
+                    <select id="selectCompetizione" name="selectCompetizione" class="player-select">
                         <option value="" disabled selected>Seleziona una competizione</option>
                     </select>
 
-                    <select id="selectSquadra1" name="selectSquadra1" class="form-control">
+                    <select id="selectSquadra1" name="selectSquadra1" class="player-select">
                         <option value="" disabled selected>Seleziona squadra 1</option>
                     </select>
 
-                    <select id="selectSquadra2" name="selectSquadra2" class="form-control">
+                    <select id="selectSquadra2" name="selectSquadra2" class="player-select">
                         <option value="" disabled selected>Seleziona squadra 2</option>
                     </select>
                 </div>
@@ -220,8 +339,36 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="credito-container">
+                    <div class="credito-box">
+                        <input type="number" id="creditoTeam1" placeholder="Credito Team 1" style="color: var(--blu-scurissimo)">
+                        <select id="quandoCreditoTeam1">
+                            <option value="" disabled selected>Quando</option>
+                            <option value="10">Subito</option>
+                            <option value="8">A metà stagione</option>
+                            <option value="9">A fine stagione</option>
+                        </select>
+                    </div>
+
+                    <div class="credito-box">
+                        <input type="number" id="creditoTeam2" placeholder="Credito Team 2" style="color: var(--blu-scurissimo)">
+                        <select id="quandoCreditoTeam2">
+                            <option value="" disabled selected>Quando</option>
+                            <option value="1">Subito</option>
+                            <option value="2">A metà stagione</option>
+                            <option value="3">A fine stagione</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="finalizza-container">
+                    <button id="finalizzaTrattativa" class="finalizza-button">Finalizza Trattativa</button>
+                    <div id="risultatoTrattativa" class="risultato-trattativa"></div>
+                </div>
             </div>
         </div>
+            </div>
 
         <footer class="main-footer">
             <div class="swiper-container footer-swiper">
@@ -241,289 +388,442 @@
 </div>
 
 <script>
-    // Elementi DOM
-    const selectDivisione = document.getElementById('selectDivisione');
-    const selectCompetizione = document.getElementById('selectCompetizione');
-    const selectSquadra1 = document.getElementById('selectSquadra1');
-    const selectSquadra2 = document.getElementById('selectSquadra2');
-    const playerSelect1 = document.getElementById('playerSelect1');
-    const playerSelect2 = document.getElementById('playerSelect2');
-    const selectedPlayers1 = document.getElementById('selectedPlayers1');
-    const selectedPlayers2 = document.getElementById('selectedPlayers2');
-    const team1Name = document.getElementById('team1-name');
-    const team2Name = document.getElementById('team2-name');
-
-    // Oggetti per memorizzare i dati dei giocatori e quelli selezionati
-    let giocatoriSquadra1 = [];
-    let giocatoriSquadra2 = [];
-    const selectedPlayersData = {
-        squadra1: new Set(),
-        squadra2: new Set()
+    // DOM Elements
+    const selects = {
+        divisione: document.getElementById('selectDivisione'),
+        competizione: document.getElementById('selectCompetizione'),
+        squadra1: document.getElementById('selectSquadra1'),
+        squadra2: document.getElementById('selectSquadra2'),
+        player1: document.getElementById('playerSelect1'),
+        player2: document.getElementById('playerSelect2')
     };
 
-    // Carica divisioni all'avvio
-    fetch('endpoint/divisione/read.php')
-        .then(response => response.json())
+    const containers = {
+        selected1: document.getElementById('selectedPlayers1'),
+        selected2: document.getElementById('selectedPlayers2'),
+        team1: document.getElementById('team1-name'),
+        team2: document.getElementById('team2-name')
+    };
+
+    let giocatori = { squadra1: [], squadra2: [] };
+    let selectedPlayers = { squadra1: new Set(), squadra2: new Set() };
+    let selectedArrays = { squadra1: [], squadra2: [] };
+
+    // Utils
+    const fetchData = (url) => fetch(url).then(res => res.json());
+
+    const populateSelect = (select, items, valueKey, textKey) => {
+        select.innerHTML = `<option value="" disabled selected>Seleziona</option>`;
+        items.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item[valueKey];
+            opt.textContent = item[textKey];
+            select.appendChild(opt);
+        });
+    };
+
+    const resetPlayerSelections = (squadra = null) => {
+        if (!squadra || squadra === 'squadra1') {
+            selects.player1.innerHTML = '';
+            containers.selected1.innerHTML = '';
+            giocatori.squadra1 = [];
+            selectedPlayers.squadra1.clear();
+            selectedArrays.squadra1 = [];
+        }
+        if (!squadra || squadra === 'squadra2') {
+            selects.player2.innerHTML = '';
+            containers.selected2.innerHTML = '';
+            giocatori.squadra2 = [];
+            selectedPlayers.squadra2.clear();
+            selectedArrays.squadra2 = [];
+        }
+    };
+
+    // Load Divisioni on page load
+    fetchData('endpoint/divisione/read.php')
         .then(data => {
             const divisioni = Array.isArray(data) ? data : data.divisioni;
             if (Array.isArray(divisioni)) {
-                divisioni.forEach(divisione => {
-                    const option = document.createElement('option');
-                    option.value = divisione.id;
-                    option.textContent = divisione.nome_divisione;
-                    selectDivisione.appendChild(option);
-                });
+                populateSelect(selects.divisione, divisioni, 'id', 'nome_divisione');
             }
-        })
-        .catch(error => console.error('Errore nel caricamento delle divisioni:', error));
+        });
 
-    // Quando cambia la divisione, carica le competizioni
-    selectDivisione.addEventListener('change', () => {
-        // Pulisce selezioni successive
-        selectCompetizione.innerHTML = '<option value="" disabled selected>Seleziona una competizione</option>';
-        selectSquadra1.innerHTML = '<option value="" disabled selected>Seleziona squadra 1</option>';
-        selectSquadra2.innerHTML = '<option value="" disabled selected>Seleziona squadra 2</option>';
+    selects.divisione.addEventListener('change', () => {
         resetPlayerSelections();
+        populateSelect(selects.competizione, [], '', '');
+        populateSelect(selects.squadra1, [], '', '');
+        populateSelect(selects.squadra2, [], '', '');
 
-        if (!selectDivisione.value) return;
+        if (!selects.divisione.value) return;
 
-        fetch(`endpoint/competizione/read.php?id_divisione=${selectDivisione.value}`)
-            .then(response => response.json())
+        fetchData(`endpoint/competizione/read.php?id_divisione=${selects.divisione.value}`)
             .then(data => {
                 const competizioni = Array.isArray(data) ? data : data.competizione;
-                if (Array.isArray(competizioni)) {
-                    competizioni
-                        .sort((a, b) => a.nome_competizione.localeCompare(b.nome_competizione))
-                        .forEach(competizione => {
-                            const option = document.createElement('option');
-                            option.value = competizione.id;
-                            option.textContent = competizione.nome_competizione;
-                            selectCompetizione.appendChild(option);
-                        });
-                }
-            })
-            .catch(error => console.error('Errore nel caricamento delle competizioni:', error));
+                competizioni.sort((a, b) => a.nome_competizione.localeCompare(b.nome_competizione));
+                populateSelect(selects.competizione, competizioni, 'id', 'nome_competizione');
+            });
     });
 
-    // Quando cambia la competizione, carica le squadre
-    selectCompetizione.addEventListener('change', () => {
-        // Pulisce selezioni delle squadre
-        selectSquadra1.innerHTML = '<option value="" disabled selected>Seleziona squadra 1</option>';
-        selectSquadra2.innerHTML = '<option value="" disabled selected>Seleziona squadra 2</option>';
+    selects.competizione.addEventListener('change', () => {
         resetPlayerSelections();
+        populateSelect(selects.squadra1, [], '', '');
+        populateSelect(selects.squadra2, [], '', '');
 
-        if (!selectCompetizione.value) return;
+        if (!selects.competizione.value) return;
 
-        fetch(`endpoint/partecipazione/read.php?id_competizione=${selectCompetizione.value}`)
-            .then(response => response.json())
+        fetchData(`endpoint/partecipazione/read.php?id_competizione=${selects.competizione.value}`)
             .then(data => {
                 const squadre = data.squadre;
-                if (Array.isArray(squadre)) {
-                    squadre
-                        .sort((a, b) => a.nome_squadra.localeCompare(b.nome_squadra))
-                        .forEach(squadra => {
-                            const option1 = document.createElement('option');
-                            const option2 = document.createElement('option');
-                            option1.value = option2.value = squadra.id;
-                            option1.textContent = option2.textContent = squadra.nome_squadra;
-                            selectSquadra1.appendChild(option1);
-                            selectSquadra2.appendChild(option2);
-                        });
-                } else {
-                    console.error("Il campo 'squadre' non è un array:", squadre);
+                squadre.sort((a, b) => a.nome_squadra.localeCompare(b.nome_squadra));
+                populateSelect(selects.squadra1, squadre, 'id', 'nome_squadra');
+                populateSelect(selects.squadra2, squadre, 'id', 'nome_squadra');
+            });
+    });
+
+    const handleSquadraChange = (squadraSelezionata, squadraOpposta, teamLabel, playerSelectKey) => {
+        const id = selects[squadraSelezionata].value;
+        resetPlayerSelections(squadraSelezionata);
+
+        Array.from(selects[squadraOpposta].options).forEach(opt => opt.disabled = false);
+        if (id) {
+            const optToDisable = selects[squadraOpposta].querySelector(`option[value="${id}"]`);
+            if (optToDisable) optToDisable.disabled = true;
+            loadPlayers(id, squadraSelezionata, containers[teamLabel], selects[playerSelectKey]);
+        }
+    };
+
+    selects.squadra1.addEventListener('change', () => {
+        handleSquadraChange('squadra1', 'squadra2', 'team1', 'player1');
+    });
+
+    selects.squadra2.addEventListener('change', () => {
+        handleSquadraChange('squadra2', 'squadra1', 'team2', 'player2');
+    });
+
+    const loadPlayers = (id, squadraKey, teamNameContainer, playerSelect) => {
+        fetchData(`endpoint/associazioni/read.php?id_squadra=${id}`)
+            .then(data => {
+                const lista = data.associazioni || [];
+                giocatori[squadraKey] = lista;
+
+                if (lista.length > 0) {
+                    teamNameContainer.textContent = lista[0].nome_squadra || `Squadra ${squadraKey === 'squadra1' ? '1' : '2'}`;
                 }
-            })
-            .catch(error => console.error('Errore nel caricamento delle squadre:', error));
-    });
 
-    // Evita che venga selezionata la stessa squadra nei due menu
-    selectSquadra1.addEventListener('change', () => {
-        const selectedId = selectSquadra1.value;
+                playerSelect.innerHTML = '<option value="" disabled selected>Seleziona un calciatore</option>';
+                lista.sort((a, b) => {
+                    const ordine = { 'P': 1, 'D': 2, 'C': 3, 'A': 4 };
+                    return ordine[a.ruolo_calciatore] - ordine[b.ruolo_calciatore] || a.nome_calciatore.localeCompare(b.nome_calciatore);
+                }).forEach(giocatore => {
+                    const opt = document.createElement('option');
+                    opt.value = giocatore.id;
+                    opt.textContent = `${giocatore.nome_calciatore} (${giocatore.ruolo_calciatore}) - FVM: ${giocatore.fvm} - Costo: ${giocatore.costo_calciatore}`;
+                    opt.className = 'giocatore-item' + giocatore.ruolo_calciatore;
+                    opt.dataset.fvm = giocatore.fvm;
+                    playerSelect.appendChild(opt);
+                });
+            });
+    };
 
-        // Resetta le selezioni per la squadra 1
-        resetPlayerSelections('squadra1');
+    const createPlayerElement = (player, squadraKey, playerSelect, selectedContainer) => {
+        selectedPlayers[squadraKey].add(player.id);
+        selectedArrays[squadraKey].push({ ...player });
 
-        // Riattiva tutte le opzioni in selectSquadra2
-        Array.from(selectSquadra2.options).forEach(option => {
-            option.disabled = false;
+        // Crea elemento principale
+        const el = document.createElement('div');
+        el.className = `selected-player selected-player${player.ruolo_calciatore}`;
+        el.dataset.fvm = player.fvm;
+
+        // Informazioni del giocatore
+        const playerInfo = document.createElement('div');
+        playerInfo.className = 'selected-player-info';
+        playerInfo.innerHTML = `
+            ${player.nome_calciatore} (${player.ruolo_calciatore}) - FVM: ${player.fvm} - Costo: ${player.costo_calciatore}
+            <button type="button" data-id="${player.id}" class="remove-player">X</button>
+        `;
+
+        // Container per il select del tipo di trasferimento
+        const prestitoContainer = document.createElement('div');
+        prestitoContainer.className = 'prestito-select-container';
+
+        // Select per il tipo di trasferimento
+        const typeSelect = document.createElement('select');
+        typeSelect.className = 'player-select';
+        typeSelect.id = `type-select-${player.id}`;
+
+        // Opzioni per il tipo di trasferimento
+        const transferOptions = [
+            {value: '1', text: 'Vendita definitiva'},
+            {value: '2', text: 'Prestito'},
+            {value: '3', text: 'Prestito con diritto di riscatto'},
+            {value: '4', text: 'Prestito con obbligo di riscatto'}
+        ];
+
+        transferOptions.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.value;
+            option.textContent = opt.text;
+            typeSelect.appendChild(option);
         });
 
-        // Disattiva l'opzione selezionata in selectSquadra2
-        if (selectedId) {
-            const optionToDisable = selectSquadra2.querySelector(`option[value="${selectedId}"]`);
-            if (optionToDisable) {
-                optionToDisable.disabled = true;
-            }
+        typeSelect.addEventListener('change', () => toggleDataPrestito(typeSelect, player.id));
+        prestitoContainer.appendChild(typeSelect);
 
-            // Carica i giocatori della squadra 1
-            loadPlayers(selectedId, 'squadra1');
-        }
-    });
+        // Container per la data prestito
+        const dataPrestitoContainer = document.createElement('div');
+        dataPrestitoContainer.id = `data-prestito-${player.id}`;
+        dataPrestitoContainer.className = 'data-prestito-container';
+        dataPrestitoContainer.style.display = 'none';
 
-    selectSquadra2.addEventListener('change', () => {
-        const selectedId = selectSquadra2.value;
+        const dataPrestitoSelect = document.createElement('select');
+        dataPrestitoSelect.className = 'player-select';
+        dataPrestitoSelect.id = `data-fine-prestito-${player.id}`;
 
-        // Resetta le selezioni per la squadra 2
-        resetPlayerSelections('squadra2');
+        const prestitoOptions = [
+            {value: '', text: 'Seleziona data fine prestito', disabled: true, selected: true},
+            {value: '2', text: 'Mercato B'},
+            {value: '3', text: 'Mercato C'},
+            {value: '4', text: 'Mercato D'},
+            {value: '5', text: 'Mercato E'},
+            {value: '9', text: 'Fine stagione'}
+        ];
 
-        // Riattiva tutte le opzioni in selectSquadra1
-        Array.from(selectSquadra1.options).forEach(option => {
-            option.disabled = false;
+        prestitoOptions.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.value;
+            option.textContent = opt.text;
+            if (opt.disabled) option.disabled = true;
+            if (opt.selected) option.selected = true;
+            dataPrestitoSelect.appendChild(option);
         });
 
-        // Disattiva l'opzione selezionata in selectSquadra1
-        if (selectedId) {
-            const optionToDisable = selectSquadra1.querySelector(`option[value="${selectedId}"]`);
-            if (optionToDisable) {
-                optionToDisable.disabled = true;
+        dataPrestitoContainer.appendChild(dataPrestitoSelect);
+        prestitoContainer.appendChild(dataPrestitoContainer);
+
+        // Container per la data credito
+        const dataCreditoContainer = document.createElement('div');
+        dataCreditoContainer.id = `data-credito-${player.id}`;
+        dataCreditoContainer.className = 'data-credito-container';
+        dataCreditoContainer.style.display = 'none';
+
+        const dataCreditoSelect = document.createElement('select');
+        dataCreditoSelect.className = 'player-select';
+        dataCreditoSelect.id = `data-fine-credito-${player.id}`;
+
+        const creditoOptions = [
+            {value: '', text: 'Seleziona data di credito', disabled: true, selected: true},
+            {value: '8', text: 'Metà stagione'},
+            {value: '9', text: 'Fine stagione'}
+        ];
+
+        creditoOptions.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.value;
+            option.textContent = opt.text;
+            if (opt.disabled) option.disabled = true;
+            if (opt.selected) option.selected = true;
+            dataCreditoSelect.appendChild(option);
+        });
+
+        dataCreditoContainer.appendChild(dataCreditoSelect);
+        prestitoContainer.appendChild(dataCreditoContainer);
+
+        // Assembla tutto
+        el.appendChild(playerInfo);
+        el.appendChild(prestitoContainer);
+        selectedContainer.appendChild(el);
+
+        // Disabilita l'opzione selezionata
+        const opt = playerSelect.querySelector(`option[value="${player.id}"]`);
+        if (opt) opt.disabled = true;
+    };
+
+    const setupPlayerSelectHandler = (playerSelect, squadraKey, selectedContainer) => {
+        playerSelect.addEventListener('change', function () {
+            const selectedId = this.value;
+            const playerList = giocatori[squadraKey];
+            const player = playerList.find(g => g.id == selectedId);
+
+            if (player && !selectedPlayers[squadraKey].has(player.id)) {
+                createPlayerElement(player, squadraKey, playerSelect, selectedContainer);
             }
 
-            // Carica i giocatori della squadra 2
-            loadPlayers(selectedId, 'squadra2');
-        }
-    });
+            this.selectedIndex = 0;
+        });
 
-    // Funzione per caricare i giocatori di una squadra
-    function loadPlayers(squadraId, targetSquad) {
-        fetch(`endpoint/associazioni/read.php?id_squadra=${squadraId}`)
+        // Listener per la rimozione del giocatore
+        selectedContainer.addEventListener('click', function (e) {
+            if (e.target && e.target.classList.contains('remove-player')) {
+                const idToRemove = parseInt(e.target.dataset.id);
+                selectedPlayers[squadraKey].delete(idToRemove);
+                selectedArrays[squadraKey] = selectedArrays[squadraKey].filter(p => p.id !== idToRemove);
+
+                // Rimuove il div dal DOM
+                e.target.closest('.selected-player').remove();
+
+                // Riabilita l'opzione nel select
+                const opt = playerSelect.querySelector(`option[value="${idToRemove}"]`);
+                if (opt) opt.disabled = false;
+            }
+        });
+    };
+
+    // Funzione per mostrare/nascondere il campo data in base al tipo di trasferimento
+    window.toggleDataPrestito = function(selectElement, playerId) {
+        const dataPrestito = document.getElementById(`data-prestito-${playerId}`);
+        const dataCredito = document.getElementById(`data-credito-${playerId}`);
+        const selectedValue = selectElement.value;
+
+        // Nascondi entrambi i campi inizialmente
+        dataPrestito.style.display = 'none';
+        dataCredito.style.display = 'none';
+
+        // Mostra solo il campo appropriato
+        if (selectedValue === '2' || selectedValue === '3') {
+            dataPrestito.style.display = 'block';
+        } else if (selectedValue === '4') {
+            dataCredito.style.display = 'block';
+        }
+    };
+
+    // Inizializza gli handler per i select dei giocatori
+    setupPlayerSelectHandler(selects.player1, 'squadra1', containers.selected1);
+    setupPlayerSelectHandler(selects.player2, 'squadra2', containers.selected2);
+
+    // Gestione del pulsante "Finalizza Trattativa"
+    document.getElementById('finalizzaTrattativa').addEventListener('click', function() {
+        // Ottieni i dati di base
+        const idDivisione = selects.divisione.value;
+        const idCompetizione = selects.competizione.value;
+        const idSquadra1 = selects.squadra1.value;
+        const idSquadra2 = selects.squadra2.value;
+
+        // Ottieni i dati dei crediti
+        const creditoTeam1 = document.getElementById('creditoTeam1').value;
+        const quandoCreditoTeam1 = document.getElementById('quandoCreditoTeam1').value;
+        const creditoTeam2 = document.getElementById('creditoTeam2').value;
+        const quandoCreditoTeam2 = document.getElementById('quandoCreditoTeam2').value;
+
+        // Raccogli dettagli giocatori squadra 1
+        const giocatoriSquadra1 = Array.from(containers.selected1.querySelectorAll('.selected-player')).map(el => {
+            const playerId = el.querySelector('.remove-player').dataset.id;
+            const tipoTrasferimento = document.getElementById(`type-select-${playerId}`).value;
+            const dataPrestitoEl = document.getElementById(`data-fine-prestito-${playerId}`);
+            const dataPrestito = dataPrestitoEl && dataPrestitoEl.style.display !== 'none' ? dataPrestitoEl.value : null;
+            const dataCreditoEl = document.getElementById(`data-fine-credito-${playerId}`);
+            const dataCredito = dataCreditoEl && dataCreditoEl.style.display !== 'none' ? dataCreditoEl.value : null;
+
+            return {
+                id: playerId,
+                tipoTrasferimento: tipoTrasferimento,
+                dataPrestito: dataPrestito,
+                dataCredito: dataCredito
+            };
+        });
+
+        // Raccogli dettagli giocatori squadra 2
+        const giocatoriSquadra2 = Array.from(containers.selected2.querySelectorAll('.selected-player')).map(el => {
+            const playerId = el.querySelector('.remove-player').dataset.id;
+            const tipoTrasferimento = document.getElementById(`type-select-${playerId}`).value;
+            const dataPrestitoEl = document.getElementById(`data-fine-prestito-${playerId}`);
+            const dataPrestito = dataPrestitoEl && dataPrestitoEl.style.display !== 'none' ? dataPrestitoEl.value : null;
+            const dataCreditoEl = document.getElementById(`data-fine-credito-${playerId}`);
+            const dataCredito = dataCreditoEl && dataCreditoEl.style.display !== 'none' ? dataCreditoEl.value : null;
+
+            return {
+                id: playerId,
+                tipoTrasferimento: tipoTrasferimento,
+                dataPrestito: dataPrestito,
+                dataCredito: dataCredito
+            };
+        });
+
+        // Costruisci l'oggetto dati completo
+        const datiTrattativa = {
+            idDivisione: idDivisione,
+            idCompetizione: idCompetizione,
+            squadra1: {
+                id: idSquadra1,
+                giocatori: giocatoriSquadra1,
+                credito: creditoTeam1,
+                quandoCredito: quandoCreditoTeam1
+            },
+            squadra2: {
+                id: idSquadra2,
+                giocatori: giocatoriSquadra2,
+                credito: creditoTeam2,
+                quandoCredito: quandoCreditoTeam2
+            }
+        };
+
+        // Visualizza i dati raccolti per debug o conferma
+        const risultatoEl = document.getElementById('risultatoTrattativa');
+        risultatoEl.style.display = 'block';
+
+        // Verifica se ci sono dati sufficienti per procedere
+        if (!idSquadra1 || !idSquadra2) {
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.textContent = 'Seleziona entrambe le squadre per procedere.';
+            return;
+        }
+
+        if (giocatoriSquadra1.length === 0 && giocatoriSquadra2.length === 0 && !creditoTeam1 && !creditoTeam2) {
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.textContent = 'Seleziona almeno un giocatore o inserisci un credito per procedere.';
+            return;
+        }
+
+        // Verifica che le date siano state inserite dove necessario
+        const verificaDate = (giocatori) => {
+            return giocatori.every(g => {
+                if ((g.tipoTrasferimento === '2' || g.tipoTrasferimento === '3') && !g.dataPrestito) {
+                    return false;
+                }
+                if (g.tipoTrasferimento === '4' && !g.dataCredito) {
+                    return false;
+                }
+                return true;
+            });
+        };
+
+        if (!verificaDate(giocatoriSquadra1) || !verificaDate(giocatoriSquadra2)) {
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.textContent = 'Inserisci tutte le date richieste per i trasferimenti.';
+            return;
+        }
+
+        // Tutto ok, invia i dati al server
+        const formData = new FormData();
+        formData.append('dati', JSON.stringify(datiTrattativa));
+
+        fetch('endpoint/trattativa/create.php', {
+            method: 'POST',
+            body: formData
+        })
             .then(response => response.json())
             .then(data => {
-                const giocatori = data.associazioni;
+                if (data.success) {
+                    risultatoEl.className = 'risultato-trattativa success';
+                    risultatoEl.textContent = data.message || 'Trattativa finalizzata con successo!';
 
-                // Memorizza i giocatori in un array locale
-                if (targetSquad === 'squadra1') {
-                    giocatoriSquadra1 = giocatori || [];
+                    // Resetta il form dopo il successo
+                    resetPlayerSelections();
+                    document.getElementById('creditoTeam1').value = '';
+                    document.getElementById('quandoCreditoTeam1').value = '';
+                    document.getElementById('creditoTeam2').value = '';
+                    document.getElementById('quandoCreditoTeam2').value = '';
                 } else {
-                    giocatoriSquadra2 = giocatori || [];
-                }
-
-                // Aggiorna il nome della squadra
-                if (giocatori && giocatori.length > 0) {
-                    if (targetSquad === 'squadra1') {
-                        team1Name.textContent = giocatori[0].nome_squadra || 'Squadra 1';
-                    } else {
-                        team2Name.textContent = giocatori[0].nome_squadra || 'Squadra 2';
-                    }
-                }
-
-                // Ottieni il menu a tendina di destinazione
-                const selectPlayer = targetSquad === 'squadra1' ? playerSelect1 : playerSelect2;
-
-                // Pulisce il menu a tendina
-                selectPlayer.innerHTML = '<option value="" disabled selected>Seleziona un calciatore</option>';
-
-                if (Array.isArray(giocatori)) {
-                    // Ordina i giocatori per ruolo (P, D, C, A) e poi per cognome
-                    giocatori.sort((a, b) => {
-                        const ruoliOrdine = { 'P': 1, 'D': 2, 'C': 3, 'A': 4 };
-                        if (a.ruolo_calciatore !== b.ruolo_calciatore) {
-                            return ruoliOrdine[a.ruolo_calciatore] - ruoliOrdine[b.ruolo_calciatore];
-                        }
-                        return a.nome_calciatore.localeCompare(b.nome_calciatore);
-                    }).forEach(giocatore => {
-                        const option = document.createElement('option');
-                        option.value = giocatore.id;
-                        option.textContent = `${giocatore.nome_calciatore} (${giocatore.ruolo_calciatore})`;
-                        option.classList = 'giocatore-item'+giocatore.ruolo_calciatore;
-
-                        selectPlayer.appendChild(option);
-                    });
-                } else {
-                    console.error("Il campo 'associazioni' non è un array:", giocatori);
+                    risultatoEl.className = 'risultato-trattativa error';
+                    risultatoEl.textContent = data.message || 'Si è verificato un errore durante la finalizzazione della trattativa.';
                 }
             })
-            .catch(error => console.error(`Errore nel caricamento dei giocatori per ${targetSquad}:`, error));
-    }
-
-    // Event listener per la selezione dei giocatori
-    playerSelect1.addEventListener('change', function() {
-        if (this.value) {
-            const playerIndex = giocatoriSquadra1.findIndex(g => g.id == this.value);
-            if (playerIndex !== -1) {
-                const player = giocatoriSquadra1[playerIndex];
-                // Verifica se il giocatore è già stato selezionato
-                if (!selectedPlayersData.squadra1.has(player.id)) {
-                    addPlayerToSelected('squadra1', player);
-                }
-            }
-            // Resetta la selezione dopo l'aggiunta
-            this.selectedIndex = 0;
-        }
+            .catch(error => {
+                risultatoEl.className = 'risultato-trattativa error';
+                risultatoEl.textContent = 'Errore di connessione. Riprova più tardi.';
+                console.error('Errore:', error);
+            });
     });
-
-    playerSelect2.addEventListener('change', function() {
-        if (this.value) {
-            const playerIndex = giocatoriSquadra2.findIndex(g => g.id == this.value);
-            if (playerIndex !== -1) {
-                const player = giocatoriSquadra2[playerIndex];
-                // Verifica se il giocatore è già stato selezionato
-                if (!selectedPlayersData.squadra2.has(player.id)) {
-                    addPlayerToSelected('squadra2', player);
-                }
-            }
-            // Resetta la selezione dopo l'aggiunta
-            this.selectedIndex = 0;
-        }
-    });
-
-    // Funzione per aggiungere un giocatore all'elenco dei selezionati
-    function addPlayerToSelected(squadra, player) {
-        // Aggiungi l'ID del giocatore all'insieme dei selezionati
-        selectedPlayersData[squadra].add(player.id);
-
-        // Crea l'elemento del giocatore
-        const playerElement = document.createElement('div');
-        playerElement.className = `selected-player selected-player${player.ruolo_calciatore}`;
-        playerElement.dataset.playerId = player.id;
-
-        playerElement.innerHTML = `
-        <span>${player.nome_calciatore} (${player.ruolo_calciatore})</span>
-        <button class="remove-player" data-player-id="${player.id}" data-squad="${squadra}">×</button>
-    `;
-
-        // Aggiungi il gestore eventi per il pulsante di rimozione
-        playerElement.querySelector('.remove-player').addEventListener('click', function() {
-            const playerId = this.dataset.playerId;
-            const squad = this.dataset.squad;
-            removePlayerFromSelected(squad, playerId);
-        });
-
-        // Aggiungi l'elemento al container appropriato
-        const container = squadra === 'squadra1' ? selectedPlayers1 : selectedPlayers2;
-        container.appendChild(playerElement);
-    }
-
-    // Funzione per rimuovere un giocatore dall'elenco dei selezionati
-    function removePlayerFromSelected(squadra, playerId) {
-        // Rimuovi l'ID del giocatore dall'insieme dei selezionati
-        selectedPlayersData[squadra].delete(playerId);
-
-        // Rimuovi l'elemento dalla UI
-        const container = squadra === 'squadra1' ? selectedPlayers1 : selectedPlayers2;
-        const playerElement = container.querySelector(`[data-player-id="${playerId}"]`);
-        if (playerElement) {
-            playerElement.remove();
-        }
-    }
-
-    // Funzione per resettare le selezioni dei giocatori
-    function resetPlayerSelections(squadra = null) {
-        if (!squadra || squadra === 'squadra1') {
-            playerSelect1.innerHTML = '<option value="" disabled selected>Seleziona un calciatore</option>';
-            selectedPlayers1.innerHTML = '';
-            selectedPlayersData.squadra1.clear();
-            team1Name.textContent = 'Squadra 1';
-            giocatoriSquadra1 = [];
-        }
-
-        if (!squadra || squadra === 'squadra2') {
-            playerSelect2.innerHTML = '<option value="" disabled selected>Seleziona un calciatore</option>';
-            selectedPlayers2.innerHTML = '';
-            selectedPlayersData.squadra2.clear();
-            team2Name.textContent = 'Squadra 2';
-            giocatoriSquadra2 = [];
-        }
-    }
 </script>
+
 </body>
 </html>
