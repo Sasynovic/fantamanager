@@ -91,14 +91,6 @@
             border: 1px solid #ddd;
         }
 
-        .selected-players-container {
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            padding: 10px;
-            height: 100%;
-            overflow-y: auto;
-        }
-
         .selected-players-title {
             font-weight: bold;
             margin-bottom: 10px;
@@ -178,6 +170,14 @@
             margin: 20px 0;
             gap: 20px;
             flex-wrap: wrap;
+        }
+
+        .riscatto-box{
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            color: var(--blu-scurissimo);
         }
 
         .credito-box {
@@ -342,22 +342,22 @@
 
                 <div class="credito-container">
                     <div class="credito-box">
-                        <input type="number" id="creditoTeam1" placeholder="Credito Team 1" style="color: var(--blu-scurissimo)">
+                        <input min="0" type="number" id="creditoTeam1" placeholder="Credito Team 1" style="color: var(--blu-scurissimo)">
                         <select id="quandoCreditoTeam1">
                             <option value="" disabled selected>Quando</option>
                             <option value="10">Subito</option>
-                            <option value="8">A metà stagione</option>
-                            <option value="9">A fine stagione</option>
+                            <option value="8">Metà stagione</option>
+                            <option value="9">Fine stagione</option>
                         </select>
                     </div>
 
                     <div class="credito-box">
-                        <input type="number" id="creditoTeam2" placeholder="Credito Team 2" style="color: var(--blu-scurissimo)">
+                        <input  min="0" type="number" id="creditoTeam2" placeholder="Credito Team 2" style="color: var(--blu-scurissimo)">
                         <select id="quandoCreditoTeam2">
                             <option value="" disabled selected>Quando</option>
-                            <option value="1">Subito</option>
-                            <option value="2">A metà stagione</option>
-                            <option value="3">A fine stagione</option>
+                            <option value="10">Subito</option>
+                            <option value="8">Metà stagione</option>
+                            <option value="9">Fine stagione</option>
                         </select>
                     </div>
                 </div>
@@ -388,7 +388,7 @@
 </div>
 
 <script>
-    // DOM Elements
+    /// DOM Elements
     const selects = {
         divisione: document.getElementById('selectDivisione'),
         competizione: document.getElementById('selectCompetizione'),
@@ -408,6 +408,8 @@
     let giocatori = { squadra1: [], squadra2: [] };
     let selectedPlayers = { squadra1: new Set(), squadra2: new Set() };
     let selectedArrays = { squadra1: [], squadra2: [] };
+    let tipologieScambio = []; // Memorizza le tipologie di scambio
+    let finestreMercato = {}; // Memorizza le finestre di mercato per ogni tipologia
 
     // Utils
     const fetchData = (url) => fetch(url).then(res => res.json());
@@ -438,6 +440,38 @@
             selectedArrays.squadra2 = [];
         }
     };
+
+    // Carica le tipologie di scambio
+    fetchData('endpoint/tipologia_scambio/read.php')
+        .then(data => {
+            if (data && data.tipologia_scambio) {
+                tipologieScambio = data.tipologia_scambio;
+
+                // Organizza le finestre di mercato per tipo di prestito
+                tipologieScambio.forEach(tipo => {
+                    if (tipo.nome_metodo === "Prestito" && tipo.id_finestra_mercato) {
+                        // Se non esiste ancora un array per questa tipologia, crealo
+                        if (!finestreMercato["Prestito"]) {
+                            finestreMercato["Prestito"] = [];
+                        }
+                        // Aggiungi questa finestra mercato all'array della tipologia
+                        finestreMercato["Prestito"].push({
+                            id: tipo.id_finestra_mercato,
+                            nome: tipo.finestra_mercato.nome,
+                            data_inizio: tipo.finestra_mercato.data_inizio,
+                            data_fine: tipo.finestra_mercato.data_fine
+                        });
+                    }
+                    // Aggiungi altre tipologie se necessario
+                });
+
+                console.log("Tipologie di scambio caricate:", tipologieScambio);
+                console.log("Finestre di mercato organizzate:", finestreMercato);
+            }
+        })
+        .catch(error => {
+            console.error("Errore nel caricamento delle tipologie di scambio:", error);
+        });
 
     // Load Divisioni on page load
     fetchData('endpoint/divisione/read.php')
@@ -525,6 +559,71 @@
             });
     };
 
+    // Funzione per creare il select di tipo trasferimento usando i dati dall'API
+    const createTransferTypeSelect = (playerId) => {
+        const typeSelect = document.createElement('select');
+        typeSelect.className = 'player-select';
+        typeSelect.id = `type-select-${playerId}`;
+
+        // Prima opzione di default
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Seleziona tipo trasferimento';
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        typeSelect.appendChild(defaultOption);
+
+        // Ottieni metodi unici (nome_metodo) e i loro ID
+        const metodiUnici = [];
+        const metodoToId = {};
+
+        tipologieScambio.forEach(tipo => {
+            if (!metodiUnici.includes(tipo.nome_metodo)) {
+                metodiUnici.push(tipo.nome_metodo);
+                metodoToId[tipo.nome_metodo] = tipo.id_metodo;
+            }
+        });
+
+        // Per ogni metodo unico, crea un'opzione
+        metodiUnici.forEach(metodo => {
+            const option = document.createElement('option');
+            option.value = metodoToId[metodo];
+            option.textContent = metodo;
+            typeSelect.appendChild(option);
+        });
+
+        typeSelect.addEventListener('change', () => toggleDataPrestito(typeSelect, playerId));
+        return typeSelect;
+    };
+
+    // Funzione per creare il select della data prestito usando i dati dall'API
+    const createPrestitoDateSelect = (playerId) => {
+        const select = document.createElement('select');
+        select.className = 'player-select';
+        select.id = `data-fine-prestito-${playerId}`;
+
+        // Opzione di default
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Seleziona data fine prestito';
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        select.appendChild(defaultOption);
+
+        // Se abbiamo finestre di mercato per il prestito, aggiungiamole
+        if (finestreMercato["Prestito"] && finestreMercato["Prestito"].length > 0) {
+            finestreMercato["Prestito"].forEach(finestra => {
+                const option = document.createElement('option');
+                option.value = finestra.id;
+                option.textContent = finestra.nome;
+                select.appendChild(option);
+            });
+        }
+
+        return select;
+    };
+
+    // Modify the createPlayerElement function to append the inputRiscatto to the DOM
     const createPlayerElement = (player, squadraKey, playerSelect, selectedContainer) => {
         selectedPlayers[squadraKey].add(player.id);
         selectedArrays[squadraKey].push({ ...player });
@@ -538,35 +637,16 @@
         const playerInfo = document.createElement('div');
         playerInfo.className = 'selected-player-info';
         playerInfo.innerHTML = `
-            ${player.nome_calciatore} (${player.ruolo_calciatore}) - FVM: ${player.fvm} - Costo: ${player.costo_calciatore}
-            <button type="button" data-id="${player.id}" class="remove-player">X</button>
-        `;
+    ${player.nome_calciatore} (${player.ruolo_calciatore}) - FVM: ${player.fvm} - Costo: ${player.costo_calciatore}
+    <button type="button" data-id="${player.id}" class="remove-player">X</button>
+`;
 
         // Container per il select del tipo di trasferimento
         const prestitoContainer = document.createElement('div');
         prestitoContainer.className = 'prestito-select-container';
 
-        // Select per il tipo di trasferimento
-        const typeSelect = document.createElement('select');
-        typeSelect.className = 'player-select';
-        typeSelect.id = `type-select-${player.id}`;
-
-        // Opzioni per il tipo di trasferimento
-        const transferOptions = [
-            {value: '1', text: 'Vendita definitiva'},
-            {value: '2', text: 'Prestito'},
-            {value: '3', text: 'Prestito con diritto di riscatto'},
-            {value: '4', text: 'Prestito con obbligo di riscatto'}
-        ];
-
-        transferOptions.forEach(opt => {
-            const option = document.createElement('option');
-            option.value = opt.value;
-            option.textContent = opt.text;
-            typeSelect.appendChild(option);
-        });
-
-        typeSelect.addEventListener('change', () => toggleDataPrestito(typeSelect, player.id));
+        // Select per il tipo di trasferimento (usando i dati dall'API)
+        const typeSelect = createTransferTypeSelect(player.id);
         prestitoContainer.appendChild(typeSelect);
 
         // Container per la data prestito
@@ -575,28 +655,8 @@
         dataPrestitoContainer.className = 'data-prestito-container';
         dataPrestitoContainer.style.display = 'none';
 
-        const dataPrestitoSelect = document.createElement('select');
-        dataPrestitoSelect.className = 'player-select';
-        dataPrestitoSelect.id = `data-fine-prestito-${player.id}`;
-
-        const prestitoOptions = [
-            {value: '', text: 'Seleziona data fine prestito', disabled: true, selected: true},
-            {value: '2', text: 'Mercato B'},
-            {value: '3', text: 'Mercato C'},
-            {value: '4', text: 'Mercato D'},
-            {value: '5', text: 'Mercato E'},
-            {value: '9', text: 'Fine stagione'}
-        ];
-
-        prestitoOptions.forEach(opt => {
-            const option = document.createElement('option');
-            option.value = opt.value;
-            option.textContent = opt.text;
-            if (opt.disabled) option.disabled = true;
-            if (opt.selected) option.selected = true;
-            dataPrestitoSelect.appendChild(option);
-        });
-
+        // Select per la data di fine prestito (usando i dati dall'API)
+        const dataPrestitoSelect = createPrestitoDateSelect(player.id);
         dataPrestitoContainer.appendChild(dataPrestitoSelect);
         prestitoContainer.appendChild(dataPrestitoContainer);
 
@@ -609,6 +669,15 @@
         const dataCreditoSelect = document.createElement('select');
         dataCreditoSelect.className = 'player-select';
         dataCreditoSelect.id = `data-fine-credito-${player.id}`;
+
+        // Crea input per riscatto
+        const inputRiscatto = document.createElement('input');
+        inputRiscatto.type = 'number';
+        inputRiscatto.min = 0;
+        inputRiscatto.className = 'riscatto-box';
+        inputRiscatto.placeholder = 'Riscatto';
+        inputRiscatto.id = `riscatto-input-${player.id}`; // Make sure the ID format matches what you look for later
+        inputRiscatto.style.display = 'none';
 
         const creditoOptions = [
             {value: '', text: 'Seleziona data di credito', disabled: true, selected: true},
@@ -626,6 +695,7 @@
         });
 
         dataCreditoContainer.appendChild(dataCreditoSelect);
+        dataCreditoContainer.appendChild(inputRiscatto);
         prestitoContainer.appendChild(dataCreditoContainer);
 
         // Assembla tutto
@@ -668,21 +738,25 @@
         });
     };
 
-    // Funzione per mostrare/nascondere il campo data in base al tipo di trasferimento
+    // Make sure the toggleDataPrestito function handles null elements gracefully
     window.toggleDataPrestito = function(selectElement, playerId) {
         const dataPrestito = document.getElementById(`data-prestito-${playerId}`);
         const dataCredito = document.getElementById(`data-credito-${playerId}`);
+        const inputRiscatto = document.getElementById(`riscatto-input-${playerId}`);
         const selectedValue = selectElement.value;
+        const selectedText = selectElement.options[selectElement.selectedIndex].text;
 
         // Nascondi entrambi i campi inizialmente
-        dataPrestito.style.display = 'none';
-        dataCredito.style.display = 'none';
+        if (dataPrestito) dataPrestito.style.display = 'none';
+        if (dataCredito) dataCredito.style.display = 'none';
+        if (inputRiscatto) inputRiscatto.style.display = 'none';
 
         // Mostra solo il campo appropriato
-        if (selectedValue === '2' || selectedValue === '3') {
-            dataPrestito.style.display = 'block';
-        } else if (selectedValue === '4') {
-            dataCredito.style.display = 'block';
+        if (selectedText === 'Prestito' || selectedText === 'Prestito con diritto di riscatto') {
+            if (dataPrestito) dataPrestito.style.display = 'block';
+        } else if (selectedText === 'Prestito con obbligo di riscatto') {
+            if (dataCredito) dataCredito.style.display = 'block';
+            if (inputRiscatto) inputRiscatto.style.display = 'block';
         }
     };
 
@@ -693,29 +767,33 @@
     // Gestione del pulsante "Finalizza Trattativa"
     document.getElementById('finalizzaTrattativa').addEventListener('click', function() {
         // Ottieni i dati di base
-        const idDivisione = selects.divisione.value;
         const idCompetizione = selects.competizione.value;
         const idSquadra1 = selects.squadra1.value;
         const idSquadra2 = selects.squadra2.value;
 
         // Ottieni i dati dei crediti
-        const creditoTeam1 = document.getElementById('creditoTeam1').value;
-        const quandoCreditoTeam1 = document.getElementById('quandoCreditoTeam1').value;
-        const creditoTeam2 = document.getElementById('creditoTeam2').value;
-        const quandoCreditoTeam2 = document.getElementById('quandoCreditoTeam2').value;
+        const creditoTeam1 = document.getElementById('creditoTeam1').value|| 'null';
+        const quandoCreditoTeam1 = document.getElementById('quandoCreditoTeam1').value || 'null';
+        const creditoTeam2 = document.getElementById('creditoTeam2').value|| 'null';
+        const quandoCreditoTeam2 = document.getElementById('quandoCreditoTeam2').value|| 'null';
 
         // Raccogli dettagli giocatori squadra 1
         const giocatoriSquadra1 = Array.from(containers.selected1.querySelectorAll('.selected-player')).map(el => {
             const playerId = el.querySelector('.remove-player').dataset.id;
-            const tipoTrasferimento = document.getElementById(`type-select-${playerId}`).value;
+            const tipoSelect = document.getElementById(`type-select-${playerId}`);
+            const tipoTrasferimento = tipoSelect.value;
+            const tipoTrasferimentoText = tipoSelect.options[tipoSelect.selectedIndex].text;
+
             const dataPrestitoEl = document.getElementById(`data-fine-prestito-${playerId}`);
             const dataPrestito = dataPrestitoEl && dataPrestitoEl.style.display !== 'none' ? dataPrestitoEl.value : null;
+
             const dataCreditoEl = document.getElementById(`data-fine-credito-${playerId}`);
             const dataCredito = dataCreditoEl && dataCreditoEl.style.display !== 'none' ? dataCreditoEl.value : null;
 
             return {
                 id: playerId,
                 tipoTrasferimento: tipoTrasferimento,
+                tipoTrasferimentoText: tipoTrasferimentoText,
                 dataPrestito: dataPrestito,
                 dataCredito: dataCredito
             };
@@ -724,15 +802,20 @@
         // Raccogli dettagli giocatori squadra 2
         const giocatoriSquadra2 = Array.from(containers.selected2.querySelectorAll('.selected-player')).map(el => {
             const playerId = el.querySelector('.remove-player').dataset.id;
-            const tipoTrasferimento = document.getElementById(`type-select-${playerId}`).value;
+            const tipoSelect = document.getElementById(`type-select-${playerId}`);
+            const tipoTrasferimento = tipoSelect.value;
+            const tipoTrasferimentoText = tipoSelect.options[tipoSelect.selectedIndex].text;
+
             const dataPrestitoEl = document.getElementById(`data-fine-prestito-${playerId}`);
             const dataPrestito = dataPrestitoEl && dataPrestitoEl.style.display !== 'none' ? dataPrestitoEl.value : null;
+
             const dataCreditoEl = document.getElementById(`data-fine-credito-${playerId}`);
             const dataCredito = dataCreditoEl && dataCreditoEl.style.display !== 'none' ? dataCreditoEl.value : null;
 
             return {
                 id: playerId,
                 tipoTrasferimento: tipoTrasferimento,
+                tipoTrasferimentoText: tipoTrasferimentoText,
                 dataPrestito: dataPrestito,
                 dataCredito: dataCredito
             };
@@ -740,7 +823,6 @@
 
         // Costruisci l'oggetto dati completo
         const datiTrattativa = {
-            idDivisione: idDivisione,
             idCompetizione: idCompetizione,
             squadra1: {
                 id: idSquadra1,
@@ -755,6 +837,10 @@
                 quandoCredito: quandoCreditoTeam2
             }
         };
+
+
+
+
 
         // Visualizza i dati raccolti per debug o conferma
         const risultatoEl = document.getElementById('risultatoTrattativa');
@@ -776,10 +862,12 @@
         // Verifica che le date siano state inserite dove necessario
         const verificaDate = (giocatori) => {
             return giocatori.every(g => {
-                if ((g.tipoTrasferimento === '2' || g.tipoTrasferimento === '3') && !g.dataPrestito) {
+                const tipoText = g.tipoTrasferimentoText;
+
+                if ((tipoText === 'Prestito' || tipoText === 'Prestito con diritto di riscatto') && !g.dataPrestito) {
                     return false;
                 }
-                if (g.tipoTrasferimento === '4' && !g.dataCredito) {
+                if (tipoText === 'Prestito con obbligo di riscatto' && !g.dataCredito) {
                     return false;
                 }
                 return true;
@@ -792,36 +880,19 @@
             return;
         }
 
-        // Tutto ok, invia i dati al server
-        const formData = new FormData();
-        formData.append('dati', JSON.stringify(datiTrattativa));
+        /*
+         Per ogni calciatore della squadra 1 e 2, verifica se il tipo di trasferimento.
+             Se il trasferimento e' Vendita definitva somma Cartellino ed FVM del calciatore, il risultato e' il valore del singolo calciatore
+             Se il trasferimento e' Prestito o Prestito con diritto di riscatto l' FVM e' il valore del singolo calciatore
+             Se il trasferimento e' Prestito con obbligo di riscatto somma Cartellino, FVM del calciatore ed Valore Obbligo di riscatto, il risultato e' il valore del singolo calciatore
 
-        fetch('endpoint/trattativa/create.php', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    risultatoEl.className = 'risultato-trattativa success';
-                    risultatoEl.textContent = data.message || 'Trattativa finalizzata con successo!';
+             Per ogni squadra somma i valori dei singoli calciatori + il campo credito squadra
+             La squadra con il valore totale e' il target. Il target genera un range del 25%, negativo e positivo. Se il valore della squadra con valore totale e' minore e' compreso nel range la trattiva e' ok
+          */
+        function verificaTrattiva(datiTrattativa) {
 
-                    // Resetta il form dopo il successo
-                    resetPlayerSelections();
-                    document.getElementById('creditoTeam1').value = '';
-                    document.getElementById('quandoCreditoTeam1').value = '';
-                    document.getElementById('creditoTeam2').value = '';
-                    document.getElementById('quandoCreditoTeam2').value = '';
-                } else {
-                    risultatoEl.className = 'risultato-trattativa error';
-                    risultatoEl.textContent = data.message || 'Si è verificato un errore durante la finalizzazione della trattativa.';
-                }
-            })
-            .catch(error => {
-                risultatoEl.className = 'risultato-trattativa error';
-                risultatoEl.textContent = 'Errore di connessione. Riprova più tardi.';
-                console.error('Errore:', error);
-            });
+        }
+
     });
 </script>
 
