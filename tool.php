@@ -196,13 +196,13 @@
             font-size: 14px;
         }
 
-        .finalizza-container {
+        .calcola-container {
             margin-top: 30px;
             text-align: center;
             padding: 20px;
         }
 
-        .finalizza-button {
+        .calcola-button {
             background-color: #2e6be6;
             color: white;
             font-size: 16px;
@@ -214,7 +214,7 @@
             transition: background-color 0.3s;
         }
 
-        .finalizza-button:hover {
+        .calcola-button:hover {
             background-color: #1c4cad;
         }
 
@@ -342,7 +342,7 @@
 
                 <div class="credito-container">
                     <div class="credito-box">
-                        <input min="0" type="number" id="creditoTeam1" placeholder="Credito Team 1" style="color: var(--blu-scurissimo)">
+                        <input min="0"  max="200" type="number" id="creditoTeam1" placeholder="Credito Team 1" style="color: var(--blu-scurissimo)">
                         <select id="quandoCreditoTeam1">
                             <option value="" disabled selected>Quando</option>
                             <option value="10">Subito</option>
@@ -352,7 +352,7 @@
                     </div>
 
                     <div class="credito-box">
-                        <input  min="0" type="number" id="creditoTeam2" placeholder="Credito Team 2" style="color: var(--blu-scurissimo)">
+                        <input  min="0" max="200" type="number" id="creditoTeam2" placeholder="Credito Team 2" style="color: var(--blu-scurissimo)">
                         <select id="quandoCreditoTeam2">
                             <option value="" disabled selected>Quando</option>
                             <option value="10">Subito</option>
@@ -362,8 +362,8 @@
                     </div>
                 </div>
 
-                <div class="finalizza-container">
-                    <button id="finalizzaTrattativa" class="finalizza-button">Finalizza Trattativa</button>
+                <div class="calcola-container">
+                    <button id="calcolaTrattativa" class="calcola-button">Calcola Trattativa</button>
                     <div id="risultatoTrattativa" class="risultato-trattativa"></div>
                 </div>
             </div>
@@ -410,6 +410,33 @@
     let selectedArrays = { squadra1: [], squadra2: [] };
     let tipologieScambio = []; // Memorizza le tipologie di scambio
     let finestreMercato = {}; // Memorizza le finestre di mercato per ogni tipologia
+
+    // Aggiungi questo codice dopo la definizione degli elementi DOM
+    const creditoTeam1Input = document.getElementById('creditoTeam1');
+    const creditoTeam2Input = document.getElementById('creditoTeam2');
+
+    // Funzione per validare l'input del credito
+    function validateCreditoInput(inputElement) {
+        if (inputElement.value > 200) {
+            inputElement.value = 200;
+            alert('Il valore massimo consentito per il credito è 200');
+        }
+    }
+
+    // Aggiungi gli event listener
+    creditoTeam1Input.addEventListener('change', () => validateCreditoInput(creditoTeam1Input));
+    creditoTeam1Input.addEventListener('input', () => {
+        if (creditoTeam1Input.value > 200) {
+            creditoTeam1Input.value = 200;
+        }
+    });
+
+    creditoTeam2Input.addEventListener('change', () => validateCreditoInput(creditoTeam2Input));
+    creditoTeam2Input.addEventListener('input', () => {
+        if (creditoTeam2Input.value > 200) {
+            creditoTeam2Input.value = 200;
+        }
+    });
 
     // Utils
     const fetchData = (url) => fetch(url).then(res => res.json());
@@ -765,7 +792,9 @@
     setupPlayerSelectHandler(selects.player2, 'squadra2', containers.selected2);
 
     // Gestione del pulsante "Finalizza Trattativa"
-    document.getElementById('finalizzaTrattativa').addEventListener('click', function() {
+    document.getElementById('calcolaTrattativa').addEventListener('click', function() {
+
+
         // Ottieni i dati di base
         const idCompetizione = selects.competizione.value;
         const idSquadra1 = selects.squadra1.value;
@@ -777,12 +806,20 @@
         const creditoTeam2 = document.getElementById('creditoTeam2').value || '0';
         const quandoCreditoTeam2 = document.getElementById('quandoCreditoTeam2').value || 'null';
 
+        if (creditoTeam1 > 200 || creditoTeam2 > 200) {
+            const risultatoEl = document.getElementById('risultatoTrattativa');
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.textContent = 'Il credito non può superare 200';
+            risultatoEl.style.display = 'block';
+            return;
+        }
+
         // Raccogli dettagli giocatori squadra 1
         const giocatoriSquadra1 = Array.from(containers.selected1.querySelectorAll('.selected-player')).map(el => {
             const playerId = el.querySelector('.remove-player').dataset.id;
             const tipoSelect = document.getElementById(`type-select-${playerId}`);
-            const tipoTrasferimento = tipoSelect.value;
-            const tipoTrasferimentoText = tipoSelect.options[tipoSelect.selectedIndex].text;
+            const tipoTrasferimento = tipoSelect ? tipoSelect.value : '';
+            const tipoTrasferimentoText = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex].text : '';
 
             const dataPrestitoEl = document.getElementById(`data-fine-prestito-${playerId}`);
             const dataPrestito = dataPrestitoEl && dataPrestitoEl.style.display !== 'none' ? dataPrestitoEl.value : null;
@@ -803,8 +840,8 @@
         const giocatoriSquadra2 = Array.from(containers.selected2.querySelectorAll('.selected-player')).map(el => {
             const playerId = el.querySelector('.remove-player').dataset.id;
             const tipoSelect = document.getElementById(`type-select-${playerId}`);
-            const tipoTrasferimento = tipoSelect.value;
-            const tipoTrasferimentoText = tipoSelect.options[tipoSelect.selectedIndex].text;
+            const tipoTrasferimento = tipoSelect ? tipoSelect.value : '';
+            const tipoTrasferimentoText = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex].text : '';
 
             const dataPrestitoEl = document.getElementById(`data-fine-prestito-${playerId}`);
             const dataPrestito = dataPrestitoEl && dataPrestitoEl.style.display !== 'none' ? dataPrestitoEl.value : null;
@@ -856,6 +893,35 @@
             return;
         }
 
+        // Verifica che i tipi di trasferimento siano stati selezionati per tutti i giocatori
+        const verificaTipiTrasferimento = (giocatori) => {
+            return giocatori.every(g => g.tipoTrasferimento && g.tipoTrasferimento !== '');
+        };
+
+        if (!verificaTipiTrasferimento(giocatoriSquadra1) || !verificaTipiTrasferimento(giocatoriSquadra2)) {
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.textContent = 'Seleziona il tipo di trasferimento per tutti i giocatori.';
+            return;
+        }
+
+        // Verifica che i riscatti siano stati inseriti dove richiesto
+        const verificaRiscatti = (giocatori) => {
+            return giocatori.every(g => {
+                if (g.tipoTrasferimentoText === 'Prestito con obbligo di riscatto') {
+                    const riscattoInput = document.getElementById(`riscatto-input-${g.id}`);
+                    const riscatto = riscattoInput ? parseFloat(riscattoInput.value) : null;
+                    return riscatto !== null && riscatto > 0;
+                }
+                return true;
+            });
+        };
+
+        if (!verificaRiscatti(giocatoriSquadra1) || !verificaRiscatti(giocatoriSquadra2)) {
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.textContent = 'Inserisci un valore di riscatto valido per i prestiti con obbligo di riscatto.';
+            return;
+        }
+
         // Verifica che le date siano state inserite dove necessario
         const verificaDate = (giocatori) => {
             return giocatori.every(g => {
@@ -882,6 +948,46 @@
     });
 
     function verificaTrattativa(datiTrattativa) {
+        // Prima verifica: controlla che tutti i giocatori abbiano un tipo di trasferimento selezionato
+        const verificaTipiTrasferimento = (giocatori) => {
+            return giocatori.every(g => {
+                if (!g.tipoTrasferimento || g.tipoTrasferimento === '') {
+                    return false;
+                }
+                return true;
+            });
+        };
+
+        if (!verificaTipiTrasferimento(datiTrattativa.squadra1.giocatori) ||
+            !verificaTipiTrasferimento(datiTrattativa.squadra2.giocatori)) {
+            const risultatoEl = document.getElementById('risultatoTrattativa');
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.innerHTML = 'Seleziona il tipo di trasferimento per tutti i giocatori';
+            return false;
+        }
+
+        // Seconda verifica: controlla che i prestiti con obbligo di riscatto abbiano un valore di riscatto valido
+        const verificaRiscatti = (giocatori) => {
+            return giocatori.every(g => {
+                if (g.tipoTrasferimentoText === 'Prestito con obbligo di riscatto') {
+                    const riscattoInput = document.getElementById(`riscatto-input-${g.id}`);
+                    const riscatto = riscattoInput ? parseFloat(riscattoInput.value) : null;
+                    if (riscatto === null || riscatto <= 0) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        };
+
+        if (!verificaRiscatti(datiTrattativa.squadra1.giocatori) ||
+            !verificaRiscatti(datiTrattativa.squadra2.giocatori)) {
+            const risultatoEl = document.getElementById('risultatoTrattativa');
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.innerHTML = 'Inserisci un valore di riscatto valido per tutti i prestiti con obbligo di riscatto';
+            return false;
+        }
+
         // Calcola il valore totale per ogni squadra
         const calcolaValoreSquadra = (squadra) => {
             let valoreTotale = parseFloat(squadra.credito) || 0;
@@ -903,7 +1009,7 @@
                         break;
                     case 'Prestito con obbligo di riscatto':
                         const riscattoInput = document.getElementById(`riscatto-input-${giocatore.id}`);
-                        const riscatto = riscattoInput ? parseFloat(riscattoInput.value) || 0 : 0;
+                        const riscatto = riscattoInput ? parseFloat(riscattoInput.value) : 0;
                         valoreTotale += costo + fvm + riscatto;
                         break;
                     default:
@@ -914,6 +1020,7 @@
             return valoreTotale;
         };
 
+        // Resto della funzione rimane invariato...
         const valoreSquadra1 = calcolaValoreSquadra(datiTrattativa.squadra1);
         const valoreSquadra2 = calcolaValoreSquadra(datiTrattativa.squadra2);
 
@@ -960,6 +1067,8 @@
 
         return isValido;
     }
+
+
 </script>
 
 </body>
