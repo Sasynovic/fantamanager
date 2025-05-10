@@ -228,13 +228,13 @@
         }
 
         .success {
-            background-color: #dff0d8;
+            background-color: #3c763d;
             border-color: #d6e9c6;
             color: #3c763d;
         }
 
         .error {
-            background-color: #f2dede;
+            background-color: #a94442;
             border-color: #ebccd1;
             color: #a94442;
         }
@@ -772,10 +772,10 @@
         const idSquadra2 = selects.squadra2.value;
 
         // Ottieni i dati dei crediti
-        const creditoTeam1 = document.getElementById('creditoTeam1').value|| 'null';
+        const creditoTeam1 = document.getElementById('creditoTeam1').value || '0';
         const quandoCreditoTeam1 = document.getElementById('quandoCreditoTeam1').value || 'null';
-        const creditoTeam2 = document.getElementById('creditoTeam2').value|| 'null';
-        const quandoCreditoTeam2 = document.getElementById('quandoCreditoTeam2').value|| 'null';
+        const creditoTeam2 = document.getElementById('creditoTeam2').value || '0';
+        const quandoCreditoTeam2 = document.getElementById('quandoCreditoTeam2').value || 'null';
 
         // Raccogli dettagli giocatori squadra 1
         const giocatoriSquadra1 = Array.from(containers.selected1.querySelectorAll('.selected-player')).map(el => {
@@ -838,10 +838,6 @@
             }
         };
 
-
-
-
-
         // Visualizza i dati raccolti per debug o conferma
         const risultatoEl = document.getElementById('risultatoTrattativa');
         risultatoEl.style.display = 'block';
@@ -853,7 +849,8 @@
             return;
         }
 
-        if (giocatoriSquadra1.length === 0 && giocatoriSquadra2.length === 0 && !creditoTeam1 && !creditoTeam2) {
+        if (giocatoriSquadra1.length === 0 && giocatoriSquadra2.length === 0 &&
+            (creditoTeam1 === '0' || !creditoTeam1) && (creditoTeam2 === '0' || !creditoTeam2)) {
             risultatoEl.className = 'risultato-trattativa error';
             risultatoEl.textContent = 'Seleziona almeno un giocatore o inserisci un credito per procedere.';
             return;
@@ -880,20 +877,89 @@
             return;
         }
 
-        /*
-         Per ogni calciatore della squadra 1 e 2, verifica se il tipo di trasferimento.
-             Se il trasferimento e' Vendita definitva somma Cartellino ed FVM del calciatore, il risultato e' il valore del singolo calciatore
-             Se il trasferimento e' Prestito o Prestito con diritto di riscatto l' FVM e' il valore del singolo calciatore
-             Se il trasferimento e' Prestito con obbligo di riscatto somma Cartellino, FVM del calciatore ed Valore Obbligo di riscatto, il risultato e' il valore del singolo calciatore
+        // Esegui la verifica della trattativa
+        verificaTrattativa(datiTrattativa);
+    });
 
-             Per ogni squadra somma i valori dei singoli calciatori + il campo credito squadra
-             La squadra con il valore totale e' il target. Il target genera un range del 25%, negativo e positivo. Se il valore della squadra con valore totale e' minore e' compreso nel range la trattiva e' ok
-          */
-        function verificaTrattiva(datiTrattativa) {
+    function verificaTrattativa(datiTrattativa) {
+        // Calcola il valore totale per ogni squadra
+        const calcolaValoreSquadra = (squadra) => {
+            let valoreTotale = parseFloat(squadra.credito) || 0;
 
+            squadra.giocatori.forEach(giocatore => {
+                const playerData = [...giocatori.squadra1, ...giocatori.squadra2].find(p => p.id == giocatore.id);
+                if (!playerData) return;
+
+                const fvm = parseFloat(playerData.fvm) || 0;
+                const costo = parseFloat(playerData.costo_calciatore) || 0;
+
+                switch(giocatore.tipoTrasferimentoText) {
+                    case 'Vendita definitiva':
+                        valoreTotale += costo + fvm;
+                        break;
+                    case 'Prestito':
+                    case 'Prestito con diritto di riscatto':
+                        valoreTotale += fvm;
+                        break;
+                    case 'Prestito con obbligo di riscatto':
+                        const riscattoInput = document.getElementById(`riscatto-input-${giocatore.id}`);
+                        const riscatto = riscattoInput ? parseFloat(riscattoInput.value) || 0 : 0;
+                        valoreTotale += costo + fvm + riscatto;
+                        break;
+                    default:
+                        valoreTotale += fvm;
+                }
+            });
+
+            return valoreTotale;
+        };
+
+        const valoreSquadra1 = calcolaValoreSquadra(datiTrattativa.squadra1);
+        const valoreSquadra2 = calcolaValoreSquadra(datiTrattativa.squadra2);
+
+        // Determina quale squadra ha il valore più alto (target)
+        const target = valoreSquadra1 > valoreSquadra2 ?
+            { squadra: 'squadra1', valore: valoreSquadra1 } :
+            { squadra: 'squadra2', valore: valoreSquadra2 };
+
+        const other = target.squadra === 'squadra1' ?
+            { squadra: 'squadra2', valore: valoreSquadra2 } :
+            { squadra: 'squadra1', valore: valoreSquadra1 };
+
+        // Calcola il range accettabile (25% del valore target)
+        const range = target.valore * 0.25;
+        const minimoAccettabile = target.valore - range;
+        const massimoAccettabile = target.valore + range;
+
+        // Verifica se il valore dell'altra squadra è nel range
+        const isValido = other.valore >= minimoAccettabile && other.valore <= massimoAccettabile;
+
+        // Prepara il risultato per l'output
+        const risultatoEl = document.getElementById('risultatoTrattativa');
+        risultatoEl.style.display = 'block';
+
+        if (isValido) {
+            risultatoEl.className = 'risultato-trattativa success';
+            risultatoEl.innerHTML = `
+            <p>Trattativa VALIDA!</p>
+            <p><strong>Squadra 1:</strong> Valore totale: ${valoreSquadra1.toFixed(2)}</p>
+            <p><strong>Squadra 2:</strong> Valore totale: ${valoreSquadra2.toFixed(2)}</p>
+            <p>Range accettabile: da ${minimoAccettabile.toFixed(2)} a ${massimoAccettabile.toFixed(2)}</p>
+            <p>La differenza è nel range del 25%</p>
+        `;
+        } else {
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.innerHTML = `
+            <p>Trattativa NON VALIDA!</p>
+            <p><strong>Squadra 1:</strong> Valore totale: ${valoreSquadra1.toFixed(2)}</p>
+            <p><strong>Squadra 2:</strong> Valore totale: ${valoreSquadra2.toFixed(2)}</p>
+            <p>Range accettabile: da ${minimoAccettabile.toFixed(2)} a ${massimoAccettabile.toFixed(2)}</p>
+            <p>La differenza è FUORI dal range del 25%</p>
+        `;
         }
 
-    });
+        return isValido;
+    }
 </script>
 
 </body>
