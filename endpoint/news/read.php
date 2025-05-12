@@ -31,7 +31,7 @@ $num = $stmt->rowCount();
 
 if ($num > 0) {
     $response = [
-        'presidenti' => [],
+        'news' => [],
         'pagination' => [
             'total_items' => (int)$total_records,
             'current_page' => (int)$page,
