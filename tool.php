@@ -20,6 +20,7 @@
             padding: 10px;
         }
 
+
         .giocatore-itemP,.giocatore-itemD, .giocatore-itemC, .giocatore-itemA {
             display: flex;
             align-items: center;
@@ -51,6 +52,11 @@
             border: 1px solid #ccc;
         }
 
+        input:out-of-range {
+            border-color: #f21a3c;
+            background-color: #fde8eb;
+        }
+
         .data-input {
             width: 100%;
             padding: 6px;
@@ -73,6 +79,7 @@
             border-radius: 8px;
             padding: 10px;
             height: 100%;
+            background: linear-gradient(135deg, var(--accento), var(--blu-scurissimo));
         }
 
         .team-header {
@@ -344,8 +351,7 @@
                     <div class="credito-box">
                         <input min="0"  max="200" type="number" id="creditoTeam1" placeholder="Credito Team 1" style="color: var(--blu-scurissimo)">
                         <select id="quandoCreditoTeam1">
-                            <option value="" disabled selected>Quando</option>
-                            <option value="10">Subito</option>
+                            <option value="10" selected >Subito</option>
                             <option value="8">Metà stagione</option>
                             <option value="9">Fine stagione</option>
                         </select>
@@ -354,8 +360,7 @@
                     <div class="credito-box">
                         <input  min="0" max="200" type="number" id="creditoTeam2" placeholder="Credito Team 2" style="color: var(--blu-scurissimo)">
                         <select id="quandoCreditoTeam2">
-                            <option value="" disabled selected>Quando</option>
-                            <option value="10">Subito</option>
+                            <option value="10" selected>Subito</option>
                             <option value="8">Metà stagione</option>
                             <option value="9">Fine stagione</option>
                         </select>
@@ -802,9 +807,9 @@
 
         // Ottieni i dati dei crediti
         const creditoTeam1 = document.getElementById('creditoTeam1').value || '0';
-        const quandoCreditoTeam1 = document.getElementById('quandoCreditoTeam1').value || 'null';
+        const quandoCreditoTeam1 = document.getElementById('quandoCreditoTeam1').value;
         const creditoTeam2 = document.getElementById('creditoTeam2').value || '0';
-        const quandoCreditoTeam2 = document.getElementById('quandoCreditoTeam2').value || 'null';
+        const quandoCreditoTeam2 = document.getElementById('quandoCreditoTeam2').value;
 
         if (creditoTeam1 > 200 || creditoTeam2 > 200) {
             const risultatoEl = document.getElementById('risultatoTrattativa');
@@ -951,10 +956,7 @@
         // Prima verifica: controlla che tutti i giocatori abbiano un tipo di trasferimento selezionato
         const verificaTipiTrasferimento = (giocatori) => {
             return giocatori.every(g => {
-                if (!g.tipoTrasferimento || g.tipoTrasferimento === '') {
-                    return false;
-                }
-                return true;
+                return !(!g.tipoTrasferimento || g.tipoTrasferimento === '');
             });
         };
 
@@ -1047,6 +1049,7 @@
 
         if (isValido) {
             risultatoEl.className = 'risultato-trattativa success';
+            console.log(datiTrattativa);
             risultatoEl.innerHTML = `
             <p>Trattativa VALIDA!</p>
             <p><strong>Squadra 1:</strong> Valore totale: ${valoreSquadra1.toFixed(2)}</p>
@@ -1054,6 +1057,8 @@
             <p>Range accettabile: da ${minimoAccettabile.toFixed(2)} a ${massimoAccettabile.toFixed(2)}</p>
             <p>La differenza è nel range del 25%</p>
         `;
+
+
         } else {
             risultatoEl.className = 'risultato-trattativa error';
             risultatoEl.innerHTML = `
