@@ -19,11 +19,12 @@ $offset = ($page - 1) * $limit;
 // Parametro di ricerca
 $id_divisione = isset($_GET['id_divisione']) ? $_GET['id_divisione'] : null;
 $search = isset($_GET['search']) ? $_GET['search'] : null;
+$id_competizione = isset($_GET['id_competizione']) ? $_GET['id_competizione'] : null;
 
 // Conta il totale dei record
-$total_records = $competizione->count($search, $id_divisione);
+$total_records = $competizione->count($search, $id_divisione,$id_competizione);
 // Recupera i record paginati
-$stmt = $competizione->read($id_divisione, $search, $limit, $offset);
+$stmt = $competizione->read($id_competizione, $id_divisione, $search, $limit, $offset);
 $num = $stmt->rowCount();
 
 if ($num > 0) {
