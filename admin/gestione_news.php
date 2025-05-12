@@ -41,7 +41,7 @@ $nomeSezione = "news";
                 let formFilterCompetizione = document.getElementById('filter-competizione');
                 let addCompetizioneToForm = document.getElementById('id-competizione');
                     function loadCompetizioni(select){
-                    let urlDiv = `${window.location.protocol}//${window.location.host}/endpoint/competizione/read.php`;
+                    let urlDiv = `${window.location.protocol}//${window.location.host}/endpoint/competizione/read.php?limit=100`;
 
                     fetch(urlDiv)
                         .then(response => response.json())
