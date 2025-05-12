@@ -78,46 +78,7 @@
             max-width: 95%;
         }
 
-        #alboTable {
-            margin: 20px auto;
-            width: 90%;
-            border-collapse: collapse;
-            background-color: var(--blu-scuro, #1a2c56);
-            border-radius: 15px;
-            overflow: hidden;
-        }
 
-        #alboTable thead {
-            background: linear-gradient(135deg, var(--accento, #3c74f5), var(--blu, #294582));
-        }
-
-        #alboTable th {
-            padding: 15px;
-            text-align: left;
-            font-weight: bold;
-            font-size: 1.1rem;
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        #alboTable td {
-            padding: 12px 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            color: #eee;
-        }
-
-        #alboTable tr:nth-child(even) {
-            background-color: rgba(41, 69, 130, 0.2);
-        }
-
-        #alboTable tr:hover {
-            background-color: rgba(60, 116, 245, 0.15);
-        }
-
-        #alboTable tr:last-child td {
-            border-bottom: none;
-        }
 
         /* Stile paginazione */
         .pagination {
@@ -164,7 +125,7 @@
                 width: 100%;
             }
 
-            #alboTable th, #alboTable td {
+            th, td {
                 padding: 10px;
                 font-size: 0.9rem;
             }
