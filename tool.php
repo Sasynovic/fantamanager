@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
-    <script src="renderFooter.js" defer></script>
+
     <style>
         .select-container{
             display: flex;
@@ -18,6 +18,37 @@
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 10px;
             padding: 10px;
+        }
+
+        .inviaTrattativa {
+            background-color: var(--blu-scuro);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .inviaTrattativa:hover {
+            background-color: var(--blu-scurissimo);
+        }
+
+        .inviaTrattativa:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
         }
 
 
@@ -81,6 +112,16 @@
             height: 100%;
             background: linear-gradient(135deg, var(--accento), var(--blu-scurissimo));
         }
+
+        .credito-container{
+            background: linear-gradient(135deg, var(--accento), var(--blu-scurissimo));
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+
+        }
+
+
 
         .team-header {
             font-size: 18px;
@@ -201,6 +242,7 @@
             border-radius: 5px;
             border: 1px solid #ddd;
             font-size: 14px;
+            color: var(--blu-scurissimo);
         }
 
         .calcola-container {
@@ -246,6 +288,15 @@
             color: #a94442;
         }
 
+        .finestra-credito{
+            display: flex        ;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .main-body{
+            height: 100%;
+            overflow-y: scroll;
+        }
     </style>
 </head>
 
@@ -347,25 +398,53 @@
                     </div>
                 </div>
 
-                <div class="credito-container">
-                    <div class="credito-box">
-                        <input min="0"  max="200" type="number" id="creditoTeam1" placeholder="Credito Team 1" style="color: var(--blu-scurissimo)">
-                        <select id="quandoCreditoTeam1">
-                            <option value="10" selected >Subito</option>
-                            <option value="8">Metà stagione</option>
-                            <option value="9">Fine stagione</option>
-                        </select>
-                    </div>
+                    <div class="credito-container">
+                        <div class="credito-box">
+                            <h4>(Max: <span id="maxCreditoTeam1">0</span>)</h4>
+                            <div class="finestra-credito">
+                                <label>Subito :</label>
+                                <input type="hidden" id="subitoTeam1" value="10">
+                                <input type="number" id="creditoTeam1_1" min="0" placeholder="Credito Finestra 1">
+                            </div>
+                            <div class="finestra-credito">
+                                <label>Metà stagione :</label>
+                                <input type="hidden" id="metaTeam1" value="8">
+                                <input type="number" id="creditoTeam1_2" min="0" placeholder="Credito Finestra 2">
+                            </div>
+                            <div class="finestra-credito">
+                                <label>Fine stagione :</label>
+                                <input type="hidden" id="fineTeam1" value="9">
+                                <input type="number" id="creditoTeam1_3" min="0" placeholder="Credito Finestra 3">
+                            </div>
+                            <div class="credito-totale">
+                                <label>Totale:</label>
+                                <span id="totaleCreditoTeam1">0</span>
+                            </div>
+                        </div>
 
-                    <div class="credito-box">
-                        <input  min="0" max="200" type="number" id="creditoTeam2" placeholder="Credito Team 2" style="color: var(--blu-scurissimo)">
-                        <select id="quandoCreditoTeam2">
-                            <option value="10" selected>Subito</option>
-                            <option value="8">Metà stagione</option>
-                            <option value="9">Fine stagione</option>
-                        </select>
+                        <div class="credito-box">
+                            <h4>(Max: <span id="maxCreditoTeam2">0</span>)</h4>
+                            <div class="finestra-credito">
+                                <label>Subito :</label>
+                                <input type="hidden" id="subitoTeam2" value="10">
+                                <input type="number" id="creditoTeam2_1" min="0" placeholder="Credito Finestra 1">
+                            </div>
+                            <div class="finestra-credito">
+                                <label>Metà stagione :</label>
+                                <input type="hidden" id="metaTeam2" value="8">
+                                <input type="number" id="creditoTeam2_2" min="0" placeholder="Credito Finestra 2">
+                            </div>
+                            <div class="finestra-credito">
+                                <label>Fine stagione :</label>
+                                <input type="hidden" id="fineTeam2" value="9">
+                                <input type="number" id="creditoTeam2_3" min="0" placeholder="Credito Finestra 3">
+                            </div>
+                            <div class="credito-totale">
+                                <label>Totale:</label>
+                                <span id="totaleCreditoTeam2">0</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
                 <div class="calcola-container">
                     <button id="calcolaTrattativa" class="calcola-button">Calcola Trattativa</button>
@@ -375,20 +454,6 @@
         </div>
             </div>
 
-        <footer class="main-footer">
-            <div class="swiper-container footer-swiper">
-                <div class="swiper-wrapper" id="footerList">
-                    <!-- Gli elementi division-ball verranno inseriti qui tramite JavaScript -->
-                </div>
-                <!-- Aggiunti i pulsanti di navigazione -->
-                <div class="swiper-button-prev footer-nav-prev">
-                    <img src="chevronL.svg" alt="Indietro">
-                </div>
-                <div class="swiper-button-next footer-nav-next">
-                    <img src="chevronR.svg" alt="Avanti">
-                </div>
-            </div>
-        </footer>
     </div>
 </div>
 
@@ -415,33 +480,9 @@
     let selectedArrays = { squadra1: [], squadra2: [] };
     let tipologieScambio = []; // Memorizza le tipologie di scambio
     let finestreMercato = {}; // Memorizza le finestre di mercato per ogni tipologia
-
-    // Aggiungi questo codice dopo la definizione degli elementi DOM
-    const creditoTeam1Input = document.getElementById('creditoTeam1');
-    const creditoTeam2Input = document.getElementById('creditoTeam2');
-
-    // Funzione per validare l'input del credito
-    function validateCreditoInput(inputElement) {
-        if (inputElement.value > 200) {
-            inputElement.value = 200;
-            alert('Il valore massimo consentito per il credito è 200');
-        }
-    }
-
-    // Aggiungi gli event listener
-    creditoTeam1Input.addEventListener('change', () => validateCreditoInput(creditoTeam1Input));
-    creditoTeam1Input.addEventListener('input', () => {
-        if (creditoTeam1Input.value > 200) {
-            creditoTeam1Input.value = 200;
-        }
-    });
-
-    creditoTeam2Input.addEventListener('change', () => validateCreditoInput(creditoTeam2Input));
-    creditoTeam2Input.addEventListener('input', () => {
-        if (creditoTeam2Input.value > 200) {
-            creditoTeam2Input.value = 200;
-        }
-    });
+    // Aggiungi queste variabili globali
+    let maxCreditoTeam1 = 0;
+    let maxCreditoTeam2 = 0;
 
     // Utils
     const fetchData = (url) => fetch(url).then(res => res.json());
@@ -555,8 +596,56 @@
             const optToDisable = selects[squadraOpposta].querySelector(`option[value="${id}"]`);
             if (optToDisable) optToDisable.disabled = true;
             loadPlayers(id, squadraSelezionata, containers[teamLabel], selects[playerSelectKey]);
+
+            // Carica il credito massimo della squadra
+            fetchData(`endpoint/squadra/read.php?id=${id}`)
+                .then(data => {
+                    const creditoMassimo = data.squadra[0]?.credito || 0;
+                    if (squadraSelezionata === 'squadra1') {
+                        maxCreditoTeam1 = creditoMassimo;
+                        document.getElementById('maxCreditoTeam1').textContent = creditoMassimo;
+                    } else {
+                        maxCreditoTeam2 = creditoMassimo;
+                        document.getElementById('maxCreditoTeam2').textContent = creditoMassimo;
+                    }
+                });
         }
     };
+    function setupCreditoListeners(teamPrefix) {
+        const inputs = [
+            document.getElementById(`${teamPrefix}_1`),
+            document.getElementById(`${teamPrefix}_2`),
+            document.getElementById(`${teamPrefix}_3`)
+        ];
+
+        const maxCredito = teamPrefix === 'creditoTeam1' ? maxCreditoTeam1 : maxCreditoTeam2;
+        const totaleElement = document.getElementById(`totale${teamPrefix.charAt(0).toUpperCase() + teamPrefix.slice(1)}`);
+
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                let totale = 0;
+                inputs.forEach(i => {
+                    const value = parseFloat(i.value) || 0;
+                    totale += value;
+                });
+
+                totaleElement.textContent = totale;
+
+                // Validazione
+                if (totale > maxCredito) {
+                    totaleElement.style.fontWeight = 'bold';
+                } else {
+                    totaleElement.style.color = 'inherit';
+                }
+            });
+        });
+    }
+
+    // Chiama la funzione di setup all'avvio
+    document.addEventListener('DOMContentLoaded', () => {
+        setupCreditoListeners('creditoTeam1');
+        setupCreditoListeners('creditoTeam2');
+    });
 
     selects.squadra1.addEventListener('change', () => {
         handleSquadraChange('squadra1', 'squadra2', 'team1', 'player1');
@@ -705,7 +794,7 @@
         // Crea input per riscatto
         const inputRiscatto = document.createElement('input');
         inputRiscatto.type = 'number';
-        inputRiscatto.min = 0;
+        inputRiscatto.min = 1;
         inputRiscatto.className = 'riscatto-box';
         inputRiscatto.placeholder = 'Riscatto';
         inputRiscatto.id = `riscatto-input-${player.id}`; // Make sure the ID format matches what you look for later
@@ -806,18 +895,14 @@
         const idSquadra2 = selects.squadra2.value;
 
         // Ottieni i dati dei crediti
-        const creditoTeam1 = document.getElementById('creditoTeam1').value || '0';
-        const quandoCreditoTeam1 = document.getElementById('quandoCreditoTeam1').value;
-        const creditoTeam2 = document.getElementById('creditoTeam2').value || '0';
-        const quandoCreditoTeam2 = document.getElementById('quandoCreditoTeam2').value;
-
-        if (creditoTeam1 > 200 || creditoTeam2 > 200) {
-            const risultatoEl = document.getElementById('risultatoTrattativa');
-            risultatoEl.className = 'risultato-trattativa error';
-            risultatoEl.textContent = 'Il credito non può superare 200';
-            risultatoEl.style.display = 'block';
-            return;
-        }
+        const creditoTeam1Subito = document.getElementById('creditoTeam1_1').value || '0';
+        const creditoTeam2Subito = document.getElementById('creditoTeam2_1').value || '0';
+        const creditoTeam1Meta = document.getElementById('creditoTeam1_2').value || '0';
+        const creditoTeam2Meta = document.getElementById('creditoTeam2_2').value || '0';
+        const creditoTeam1Fine = document.getElementById('creditoTeam1_3').value || '0';
+        const creditoTeam2Fine = document.getElementById('creditoTeam2_3').value || '0';
+        const creditoTeam1 = [creditoTeam1Subito, creditoTeam1Meta, creditoTeam1Fine];
+        const creditoTeam2 = [creditoTeam2Subito, creditoTeam2Meta, creditoTeam2Fine];
 
         // Raccogli dettagli giocatori squadra 1
         const giocatoriSquadra1 = Array.from(containers.selected1.querySelectorAll('.selected-player')).map(el => {
@@ -832,10 +917,14 @@
             const dataCreditoEl = document.getElementById(`data-fine-credito-${playerId}`);
             const dataCredito = dataCreditoEl && dataCreditoEl.style.display !== 'none' ? dataCreditoEl.value : null;
 
+            const valoreRiscattoEl = (document.getElementById(`riscatto-input-${playerId}`));
+            const valoreRiscatto = valoreRiscattoEl ? parseFloat(valoreRiscattoEl.value) : null;
+
             return {
                 id: playerId,
                 tipoTrasferimento: tipoTrasferimento,
                 tipoTrasferimentoText: tipoTrasferimentoText,
+                valoreRiscatto: valoreRiscatto,
                 dataPrestito: dataPrestito,
                 dataCredito: dataCredito
             };
@@ -854,10 +943,15 @@
             const dataCreditoEl = document.getElementById(`data-fine-credito-${playerId}`);
             const dataCredito = dataCreditoEl && dataCreditoEl.style.display !== 'none' ? dataCreditoEl.value : null;
 
+            const valoreRiscattoEl = (document.getElementById(`riscatto-input-${playerId}`));
+            const valoreRiscatto = valoreRiscattoEl ? parseFloat(valoreRiscattoEl.value) : null;
+
+
             return {
                 id: playerId,
                 tipoTrasferimento: tipoTrasferimento,
                 tipoTrasferimentoText: tipoTrasferimentoText,
+                valoreRiscatto: valoreRiscatto,
                 dataPrestito: dataPrestito,
                 dataCredito: dataCredito
             };
@@ -869,14 +963,21 @@
             squadra1: {
                 id: idSquadra1,
                 giocatori: giocatoriSquadra1,
-                credito: creditoTeam1,
-                quandoCredito: quandoCreditoTeam1
+                credito: {
+                    10: creditoTeam1Subito,
+                    8: creditoTeam1Meta,
+                    9: creditoTeam1Fine
+                }
+
             },
             squadra2: {
                 id: idSquadra2,
                 giocatori: giocatoriSquadra2,
-                credito: creditoTeam2,
-                quandoCredito: quandoCreditoTeam2
+                credito: {
+                    10: creditoTeam2Subito,
+                    8: creditoTeam2Meta,
+                    9: creditoTeam2Fine
+                }
             }
         };
 
@@ -915,7 +1016,20 @@
                 if (g.tipoTrasferimentoText === 'Prestito con obbligo di riscatto') {
                     const riscattoInput = document.getElementById(`riscatto-input-${g.id}`);
                     const riscatto = riscattoInput ? parseFloat(riscattoInput.value) : null;
-                    return riscatto !== null && riscatto > 0;
+
+                    // Verifica che il riscatto sia valido
+                    if (riscatto === null || riscatto <= 0) {
+                        return false;
+                    }
+
+                    // Se è un credito a fine stagione (value="9"), verifica che non superi 200
+                    const dataCreditoSelect = document.getElementById(`data-fine-credito-${g.id}`);
+                    if (dataCreditoSelect && dataCreditoSelect.value === '9' && riscatto > 200) {
+                        alert(`Il valore del riscatto non può superare 200 per la finestra "Fine stagione"`);
+                        return false;
+                    }
+
+                    return true;
                 }
                 return true;
             });
@@ -949,11 +1063,218 @@
         }
 
         // Esegui la verifica della trattativa
-        verificaTrattativa(datiTrattativa);
+        const isValid = verificaTrattativa(datiTrattativa);
+
+        if (isValid) {
+            // Rimuovi eventuali bottoni precedenti
+            console.log("Dati trattativa validi:", datiTrattativa);
+            const existingButton = document.querySelector('.inviaTrattativa');
+            if (existingButton) {
+                existingButton.remove();
+            }
+
+            // Crea il nuovo bottone
+            const inviaTrattativa = document.createElement('button');
+            inviaTrattativa.className = 'inviaTrattativa';
+            inviaTrattativa.textContent = 'Invia Trattativa';
+
+            // Aggiungi l'event listener
+            inviaTrattativa.addEventListener('click', async () => {
+                inviaTrattativa.disabled = true;
+                inviaTrattativa.textContent = 'Invio in corso...';
+
+                try {
+                    // 1. Crea la trattativa principale
+                    const trattativaData = {
+                        id_competizione: idCompetizione,
+                        id_squadra1: idSquadra1,
+                        id_squadra2: idSquadra2
+                    };
+
+                    console.log("Invio dati trattativa principale:", trattativaData);
+
+                    // Invio alla trattativa principale
+                    const responseTrattativa = await fetch('endpoint/trattative/create.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(trattativaData)
+                    });
+
+                    // Verifica lo stato della risposta HTTP
+                    if (!responseTrattativa.ok) {
+                        throw new Error(`Errore HTTP: ${responseTrattativa.status}`);
+                    }
+
+                    // Converti la risposta in JSON
+                    const resultTrattativa = await responseTrattativa.json();
+
+                    // Log completo della risposta per debug
+                    console.log("Risposta completa del server:", resultTrattativa);
+                    console.log("Tipo di risposta:", typeof resultTrattativa);
+
+                    // Mostra un alert con la risposta per ispezione
+                    alert("Risposta del server: " + JSON.stringify(resultTrattativa));
+
+                    // Verifica la presenza del campo success
+                    if (resultTrattativa && !resultTrattativa.success) {
+                        throw new Error(resultTrattativa.message || 'Errore nella creazione della trattativa');
+                    }
+
+                    // Ispezione approfondita della risposta per trovare l'ID trattativa
+                    let idTrattativa;
+
+                    // Debug dei campi disponibili nella risposta
+                    if (resultTrattativa) {
+                        console.log("Campi disponibili nella risposta:", Object.keys(resultTrattativa));
+
+                        if (typeof resultTrattativa === 'object') {
+                            // Cerca in tutti i campi di primo livello un possibile ID
+                            for (const key in resultTrattativa) {
+                                console.log(`Campo ${key}:`, resultTrattativa[key]);
+                                // Se troviamo un campo che contiene "id" o "ID" nel nome
+                                if (key.toLowerCase().includes('id')) {
+                                    console.log(`Possibile ID trovato in campo ${key}:`, resultTrattativa[key]);
+                                }
+                            }
+                        }
+                    }
+
+                    // Prova tutte le possibili posizioni dell'ID
+                    if (resultTrattativa.id_trattativa) {
+                        idTrattativa = resultTrattativa.id_trattativa;
+                        console.log("ID trovato in id_trattativa:", idTrattativa);
+                    } else if (resultTrattativa.data && resultTrattativa.data.id_trattativa) {
+                        // Caso alternativo: il campo è dentro un oggetto "data"
+                        idTrattativa = resultTrattativa.data.id_trattativa;
+                        console.log("ID trovato in data.id_trattativa:", idTrattativa);
+                    } else if (resultTrattativa.id) {
+                        // Altro caso possibile: il campo si chiama semplicemente "id"
+                        idTrattativa = resultTrattativa.id;
+                        console.log("ID trovato in id:", idTrattativa);
+                    } else if (resultTrattativa.trattativa_id) {
+                        // Altro possibile nome di campo
+                        idTrattativa = resultTrattativa.trattativa_id;
+                        console.log("ID trovato in trattativa_id:", idTrattativa);
+                    } else if (resultTrattativa.insertId || resultTrattativa.insert_id) {
+                        // Possibile formato per MySQL/MariaDB
+                        idTrattativa = resultTrattativa.insertId || resultTrattativa.insert_id;
+                        console.log("ID trovato in insertId/insert_id:", idTrattativa);
+                    } else if (resultTrattativa.data && resultTrattativa.data.id) {
+                        // Altro caso: id dentro data
+                        idTrattativa = resultTrattativa.data.id;
+                        console.log("ID trovato in data.id:", idTrattativa);
+                    } else {
+                        // Invece di lanciare un errore, usiamo un ID temporaneo e mostriamo l'avviso
+                        console.error('ID trattativa non trovato nella risposta del server:', resultTrattativa);
+                        alert("ATTENZIONE: ID trattativa non trovato automaticamente nella risposta del server.\nInserisci manualmente l'ID dalla risposta mostrata.");
+
+                        // Chiediamo all'utente di inserire l'ID manualmente basandosi sulla risposta del server
+                        const manualId = prompt("Inserisci manualmente l'ID trattativa dalla risposta del server mostrata");
+                        if (manualId && !isNaN(parseInt(manualId))) {
+                            idTrattativa = parseInt(manualId);
+                            console.log("ID inserito manualmente:", idTrattativa);
+                        } else {
+                            throw new Error('ID trattativa non valido o non inserito');
+                        }
+                    }
+
+                    console.log("Trattativa creata con ID:", idTrattativa);
+
+                    // 2. Invio associazioni giocatori
+                    const associazioniPromises = [];
+
+                    // Processa giocatori squadra 1
+                    giocatoriSquadra1.forEach(g => {
+                        const associazioneData = {
+                            id_trattativa: idTrattativa,
+                            id_associazione: g.id,
+                            id_tipologia_scambio: g.tipoTrasferimento === 'prestito' ? 2 : 1, // 1 per acquisto, 2 per prestito
+                            valore_riscatto: g.valoreRiscatto || null
+                        };
+
+                        console.log("Invio associazione giocatore squadra 1:", associazioneData);
+
+                        associazioniPromises.push(
+                            fetch('endpoint/operazioni/create.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(associazioneData)
+                            }).then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`Errore HTTP associazione: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                        );
+                    });
+
+                    // Processa giocatori squadra 2
+                    giocatoriSquadra2.forEach(g => {
+                        const associazioneData = {
+                            id_trattativa: idTrattativa,
+                            id_associazione: g.id,
+                            id_tipologia_scambio: g.tipoTrasferimento === 'prestito' ? 2 : 1, // 1 per acquisto, 2 per prestito
+                            valore_riscatto: g.valoreRiscatto || null
+                        };
+
+                        console.log("Invio associazione giocatore squadra 2:", associazioneData);
+
+                        associazioniPromises.push(
+                            fetch('endpoint/operazioni/create.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(associazioneData)
+                            }).then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`Errore HTTP associazione: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                        );
+                    });
+
+                    try {
+                        // Attendi tutte le risposte delle associazioni
+                        const associazioniJson = await Promise.all(associazioniPromises);
+
+                        // Verifica se tutte le associazioni sono andate a buon fine
+                        const failedAssociations = associazioniJson.filter(r => !r.success);
+
+                        if (failedAssociations.length > 0) {
+                            console.error("Associazioni fallite:", failedAssociations);
+                            throw new Error(`${failedAssociations.length} associazioni non sono state registrate correttamente`);
+                        } else {
+                            alert('Trattativa e associazioni registrate con successo!');
+                            console.log("Trattativa completata con successo, ID:", idTrattativa);
+                        }
+                    } catch (associationError) {
+                        console.error('Errore nelle associazioni:', associationError);
+                        alert('Errore durante il salvataggio delle associazioni: ' + associationError.message);
+                    }
+
+                } catch (err) {
+                    console.error('Errore generale:', err);
+                    alert('Errore durante il salvataggio: ' + err.message);
+                } finally {
+                    inviaTrattativa.disabled = false;
+                    inviaTrattativa.textContent = 'Invia Trattativa';
+                }
+            });
+
+            // Aggiungi il bottone al DOM (sotto il risultato della trattativa)
+            const risultatoEl = document.getElementById('risultatoTrattativa');
+            risultatoEl.appendChild(inviaTrattativa);
+        }
     });
 
     function verificaTrattativa(datiTrattativa) {
-        // Prima verifica: controlla che tutti i giocatori abbiano un tipo di trasferimento selezionato
+        // 1. Verifica che tutti i giocatori abbiano un tipo di trasferimento selezionato
         const verificaTipiTrasferimento = (giocatori) => {
             return giocatori.every(g => {
                 return !(!g.tipoTrasferimento || g.tipoTrasferimento === '');
@@ -968,7 +1289,7 @@
             return false;
         }
 
-        // Seconda verifica: controlla che i prestiti con obbligo di riscatto abbiano un valore di riscatto valido
+        // 2. Verifica che i prestiti con obbligo di riscatto abbiano un valore di riscatto valido
         const verificaRiscatti = (giocatori) => {
             return giocatori.every(g => {
                 if (g.tipoTrasferimentoText === 'Prestito con obbligo di riscatto') {
@@ -990,10 +1311,40 @@
             return false;
         }
 
-        // Calcola il valore totale per ogni squadra
-        const calcolaValoreSquadra = (squadra) => {
-            let valoreTotale = parseFloat(squadra.credito) || 0;
+        // 3. Calcola i crediti totali per ogni squadra e verifica che non superino il massimo
+        const calcolaCreditiTotali = (teamPrefix) => {
+            const credito1 = parseFloat(document.getElementById(`${teamPrefix}_1`).value) || 0;
+            const credito2 = parseFloat(document.getElementById(`${teamPrefix}_2`).value) || 0;
+            const credito3 = parseFloat(document.getElementById(`${teamPrefix}_3`).value) || 0;
+            return credito1 + credito2 + credito3;
+        };
 
+        const creditoTotaleTeam1 = calcolaCreditiTotali('creditoTeam1');
+        const creditoTotaleTeam2 = calcolaCreditiTotali('creditoTeam2');
+
+        // Verifica limiti di credito
+        if (creditoTotaleTeam1 > maxCreditoTeam1) {
+            const risultatoEl = document.getElementById('risultatoTrattativa');
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.innerHTML = `Il credito totale della Squadra 1 (${creditoTotaleTeam1}) supera il massimo consentito (${maxCreditoTeam1})`;
+            return false;
+        }
+
+        if (creditoTotaleTeam2 > maxCreditoTeam2) {
+            const risultatoEl = document.getElementById('risultatoTrattativa');
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.innerHTML = `Il credito totale della Squadra 2 (${creditoTotaleTeam2}) supera il massimo consentito (${maxCreditoTeam2})`;
+            return false;
+        }
+
+        // 4. Calcola il valore totale per ogni squadra (inclusi crediti)
+        const calcolaValoreSquadra = (squadra, isTeam1) => {
+            let valoreTotale = 0;
+
+            // Aggiungi il valore dei crediti
+            valoreTotale = calcolaCreditiTotali(isTeam1 ? 'creditoTeam1' : 'creditoTeam2');
+
+            // Aggiungi il valore dei giocatori
             squadra.giocatori.forEach(giocatore => {
                 const playerData = [...giocatori.squadra1, ...giocatori.squadra2].find(p => p.id == giocatore.id);
                 if (!playerData) return;
@@ -1022,11 +1373,10 @@
             return valoreTotale;
         };
 
-        // Resto della funzione rimane invariato...
-        const valoreSquadra1 = calcolaValoreSquadra(datiTrattativa.squadra1);
-        const valoreSquadra2 = calcolaValoreSquadra(datiTrattativa.squadra2);
+        const valoreSquadra1 = calcolaValoreSquadra(datiTrattativa.squadra1, true);
+        const valoreSquadra2 = calcolaValoreSquadra(datiTrattativa.squadra2, false);
 
-        // Determina quale squadra ha il valore più alto (target)
+        // 5. Determina quale squadra ha il valore più alto (target)
         const target = valoreSquadra1 > valoreSquadra2 ?
             { squadra: 'squadra1', valore: valoreSquadra1 } :
             { squadra: 'squadra2', valore: valoreSquadra2 };
@@ -1035,36 +1385,45 @@
             { squadra: 'squadra2', valore: valoreSquadra2 } :
             { squadra: 'squadra1', valore: valoreSquadra1 };
 
-        // Calcola il range accettabile (25% del valore target)
+        // 6. Calcola il range accettabile (25% del valore target)
         const range = target.valore * 0.25;
         const minimoAccettabile = target.valore - range;
         const massimoAccettabile = target.valore + range;
 
-        // Verifica se il valore dell'altra squadra è nel range
+        // 7. Verifica se il valore dell'altra squadra è nel range
         const isValido = other.valore >= minimoAccettabile && other.valore <= massimoAccettabile;
 
-        // Prepara il risultato per l'output
+        // 8. Prepara il risultato per l'output
         const risultatoEl = document.getElementById('risultatoTrattativa');
         risultatoEl.style.display = 'block';
 
         if (isValido) {
             risultatoEl.className = 'risultato-trattativa success';
-            console.log(datiTrattativa);
             risultatoEl.innerHTML = `
             <p>Trattativa VALIDA!</p>
-            <p><strong>Squadra 1:</strong> Valore totale: ${valoreSquadra1.toFixed(2)}</p>
-            <p><strong>Squadra 2:</strong> Valore totale: ${valoreSquadra2.toFixed(2)}</p>
+            <p><strong>Squadra 1:</strong>
+                Valore totale: ${valoreSquadra1.toFixed(2)}
+                (Crediti: ${creditoTotaleTeam1.toFixed(2)}/${maxCreditoTeam1.toFixed(2)})
+            </p>
+            <p><strong>Squadra 2:</strong>
+                Valore totale: ${valoreSquadra2.toFixed(2)}
+                (Crediti: ${creditoTotaleTeam2.toFixed(2)}/${maxCreditoTeam2.toFixed(2)})
+            </p>
             <p>Range accettabile: da ${minimoAccettabile.toFixed(2)} a ${massimoAccettabile.toFixed(2)}</p>
             <p>La differenza è nel range del 25%</p>
         `;
-
-
         } else {
             risultatoEl.className = 'risultato-trattativa error';
             risultatoEl.innerHTML = `
             <p>Trattativa NON VALIDA!</p>
-            <p><strong>Squadra 1:</strong> Valore totale: ${valoreSquadra1.toFixed(2)}</p>
-            <p><strong>Squadra 2:</strong> Valore totale: ${valoreSquadra2.toFixed(2)}</p>
+            <p><strong>Squadra 1:</strong>
+                Valore totale: ${valoreSquadra1.toFixed(2)}
+                (Crediti: ${creditoTotaleTeam1.toFixed(2)}/${maxCreditoTeam1.toFixed(2)})
+            </p>
+            <p><strong>Squadra 2:</strong>
+                Valore totale: ${valoreSquadra2.toFixed(2)}
+                (Crediti: ${creditoTotaleTeam2.toFixed(2)}/${maxCreditoTeam2.toFixed(2)})
+            </p>
             <p>Range accettabile: da ${minimoAccettabile.toFixed(2)} a ${massimoAccettabile.toFixed(2)}</p>
             <p>La differenza è FUORI dal range del 25%</p>
         `;
@@ -1072,8 +1431,6 @@
 
         return isValido;
     }
-
-
 </script>
 
 </body>
