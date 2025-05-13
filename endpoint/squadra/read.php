@@ -50,6 +50,7 @@ if ($num > 0) {
             "presidente" => $row['nome_pres'] . ' ' . $row['cognome_pres'],
             "vicepresidente" => $row['nome_vice'] . ' ' . $row['cognome_vice'],
             "valore_fvm" => $row['valore_fvm'],
+            "credito" => $row['credito'],
             "stadio" => $row['nome_stadio'],
             "livello_stadio" => $row['livello_stadio'],
             "costo_manutenzione" => $row['costo_manutenzione'],
