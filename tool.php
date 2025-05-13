@@ -9,9 +9,30 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
 
     <style>
+        .main-body-content{
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+
+        }
+        .tool-container{
+            width: 90%;
+            margin-top: 25px;
+        }
+
         .select-container{
             display: flex;
             justify-content: space-evenly;
+            background: linear-gradient(135deg, var(--accento), var(--blu-scurissimo));
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .select-container > select {
+            width: auto ;
+            margin: 0;
         }
         .giocatori-list {
             display: grid;
@@ -210,6 +231,15 @@
             .team-container {
                 width: 100%;
             }
+            .select-container{
+                display: flex;
+                flex-direction: column;
+            }
+
+            .select-container > select {
+                width: auto ;
+            }
+
         }
 
         .credito-container {
@@ -349,7 +379,7 @@
 
 
         <div class="main-body">
-            <div class="main-body-content" id="main-body-content" style="position: relative;">
+            <div class="main-body-content" id="main-body-content">
 
                 <div class="tool-container">
 
@@ -1101,86 +1131,10 @@
                         },
                         body: JSON.stringify(trattativaData)
                     });
-
-                    // Verifica lo stato della risposta HTTP
-                    if (!responseTrattativa.ok) {
-                        throw new Error(`Errore HTTP: ${responseTrattativa.status}`);
-                    }
-
                     // Converti la risposta in JSON
                     const resultTrattativa = await responseTrattativa.json();
-
-                    // Log completo della risposta per debug
-                    console.log("Risposta completa del server:", resultTrattativa);
-                    console.log("Tipo di risposta:", typeof resultTrattativa);
-
-                    // Mostra un alert con la risposta per ispezione
-                    alert("Risposta del server: " + JSON.stringify(resultTrattativa));
-
-                    // Verifica la presenza del campo success
-                    if (resultTrattativa && !resultTrattativa.success) {
-                        throw new Error(resultTrattativa.message || 'Errore nella creazione della trattativa');
-                    }
-
-                    // Ispezione approfondita della risposta per trovare l'ID trattativa
                     let idTrattativa;
-
-                    // Debug dei campi disponibili nella risposta
-                    if (resultTrattativa) {
-                        console.log("Campi disponibili nella risposta:", Object.keys(resultTrattativa));
-
-                        if (typeof resultTrattativa === 'object') {
-                            // Cerca in tutti i campi di primo livello un possibile ID
-                            for (const key in resultTrattativa) {
-                                console.log(`Campo ${key}:`, resultTrattativa[key]);
-                                // Se troviamo un campo che contiene "id" o "ID" nel nome
-                                if (key.toLowerCase().includes('id')) {
-                                    console.log(`Possibile ID trovato in campo ${key}:`, resultTrattativa[key]);
-                                }
-                            }
-                        }
-                    }
-
-                    // Prova tutte le possibili posizioni dell'ID
-                    if (resultTrattativa.id_trattativa) {
-                        idTrattativa = resultTrattativa.id_trattativa;
-                        console.log("ID trovato in id_trattativa:", idTrattativa);
-                    } else if (resultTrattativa.data && resultTrattativa.data.id_trattativa) {
-                        // Caso alternativo: il campo è dentro un oggetto "data"
-                        idTrattativa = resultTrattativa.data.id_trattativa;
-                        console.log("ID trovato in data.id_trattativa:", idTrattativa);
-                    } else if (resultTrattativa.id) {
-                        // Altro caso possibile: il campo si chiama semplicemente "id"
-                        idTrattativa = resultTrattativa.id;
-                        console.log("ID trovato in id:", idTrattativa);
-                    } else if (resultTrattativa.trattativa_id) {
-                        // Altro possibile nome di campo
-                        idTrattativa = resultTrattativa.trattativa_id;
-                        console.log("ID trovato in trattativa_id:", idTrattativa);
-                    } else if (resultTrattativa.insertId || resultTrattativa.insert_id) {
-                        // Possibile formato per MySQL/MariaDB
-                        idTrattativa = resultTrattativa.insertId || resultTrattativa.insert_id;
-                        console.log("ID trovato in insertId/insert_id:", idTrattativa);
-                    } else if (resultTrattativa.data && resultTrattativa.data.id) {
-                        // Altro caso: id dentro data
-                        idTrattativa = resultTrattativa.data.id;
-                        console.log("ID trovato in data.id:", idTrattativa);
-                    } else {
-                        // Invece di lanciare un errore, usiamo un ID temporaneo e mostriamo l'avviso
-                        console.error('ID trattativa non trovato nella risposta del server:', resultTrattativa);
-                        alert("ATTENZIONE: ID trattativa non trovato automaticamente nella risposta del server.\nInserisci manualmente l'ID dalla risposta mostrata.");
-
-                        // Chiediamo all'utente di inserire l'ID manualmente basandosi sulla risposta del server
-                        const manualId = prompt("Inserisci manualmente l'ID trattativa dalla risposta del server mostrata");
-                        if (manualId && !isNaN(parseInt(manualId))) {
-                            idTrattativa = parseInt(manualId);
-                            console.log("ID inserito manualmente:", idTrattativa);
-                        } else {
-                            throw new Error('ID trattativa non valido o non inserito');
-                        }
-                    }
-
-                    console.log("Trattativa creata con ID:", idTrattativa);
+                    idTrattativa = resultTrattativa.id_trattativa;
 
                     // 2. Invio associazioni giocatori
                     const associazioniPromises = [];
@@ -1250,8 +1204,8 @@
                             console.error("Associazioni fallite:", failedAssociations);
                             throw new Error(`${failedAssociations.length} associazioni non sono state registrate correttamente`);
                         } else {
-                            alert('Trattativa e associazioni registrate con successo!');
-                            console.log("Trattativa completata con successo, ID:", idTrattativa);
+                            alert('Trattativa e associazioni registrate con successo! Il tuo id trattativa e' + idTrattativa);
+                            window.location.reload();
                         }
                     } catch (associationError) {
                         console.error('Errore nelle associazioni:', associationError);
