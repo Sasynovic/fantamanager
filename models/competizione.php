@@ -14,7 +14,7 @@ class competizione
         $this->conn = $db;
     }
 
-    public function count($search = null, $id_divisione = null)
+    public function count($search = null, $id_divisione = null, $id_competizione = null)
     {
         $query = "SELECT COUNT(*) as total 
                         FROM " . $this->table_name . "  c
@@ -29,6 +29,9 @@ class competizione
         if ($search !== null) {
             $query .= " AND c.nome_competizione LIKE :search";
         }
+        if ($id_competizione !== null) {
+            $query .= " AND c.id = :id_competizione";
+        }
 
         $stmt = $this->conn->prepare($query);
 
@@ -38,6 +41,9 @@ class competizione
         if ($search) {
             $search = "%$search%";
             $stmt->bindParam(':search', $search, PDO::PARAM_STR);
+        }
+        if ($id_competizione !== null) {
+            $stmt->bindParam(':id_competizione', $id_competizione, PDO::PARAM_INT);
         }
 
         $stmt->execute();
@@ -77,7 +83,7 @@ class competizione
         }
     }
 
-    public function read($id_divisione = null, $search = null, $limit = 10, $offset = 0)
+    public function read($id_competizione = null,$id_divisione = null, $search = null, $limit = 10, $offset = 0)
     {
         $query =  "
                         SELECT  
@@ -100,6 +106,9 @@ class competizione
         if ($search) {
             $query .= " AND c.nome_competizione LIKE :search";
         }
+        if ($id_competizione) {
+            $query .= " AND c.id = :id_competizione";
+        }
         $query .= " ORDER BY c.id DESC";
         $query .= " LIMIT :limit OFFSET :offset";
 
@@ -111,6 +120,9 @@ class competizione
         if ($search) {
             $search = "%$search%";
             $stmt->bindParam(':search', $search, PDO::PARAM_STR);
+        }
+        if ($id_competizione !== null) {
+            $stmt->bindParam(':id_competizione', $id_competizione, PDO::PARAM_INT);
         }
 
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
