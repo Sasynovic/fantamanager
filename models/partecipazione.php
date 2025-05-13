@@ -42,6 +42,7 @@ class partecipazione
                             s.id_pres AS id_pres,
                             s.id_vice AS id_vice,
                             s.rate AS rate,
+                            s.credito AS credito,
                             
                             pres.nome AS nome_pres,
                             pres.cognome AS cognome_pres,

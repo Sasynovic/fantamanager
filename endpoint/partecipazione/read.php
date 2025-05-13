@@ -32,6 +32,7 @@ if ($num > 0) {
     $partecipazioni_arr["squadre"][] = array(
         "id" => $id,
         "nome_squadra" => $nome_squadra,
+        "credito" => $credito,
         "presidente" => $nome_pres . ' ' . $cognome_pres,
         "vicepresidente" => $nome_vice . ' ' . $cognome_vice,
         "posizione" => $Pos ?? 0,
