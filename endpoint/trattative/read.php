@@ -16,11 +16,15 @@ $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $limit = isset($_GET['limit']) ? max(1, intval($_GET['limit'])) : 10;
 $offset = ($page - 1) * $limit;
 
+//Parametri di ricerca
+$ufficializzata = isset($_GET['ufficializzata']) ? $_GET['ufficializzata'] : null;
+$id_trattativa = isset($_GET['id_trattativa']) ? $_GET['id_trattativa'] : null;
+
 // Conta il totale dei record
-$total_records = $trattative->count();
+$total_records = $trattative->count($ufficializzata);
 
 // Recupera i record paginati
-$stmt = $trattative->read($limit, $offset);
+$stmt = $trattative->read($id_trattativa,$ufficializzata,$limit, $offset);
 $num = $stmt->rowCount();
 
 if ($num > 0) {
@@ -53,7 +57,7 @@ if ($num > 0) {
 } else {
     http_response_code(404);
     echo json_encode([
-        'message' => 'Nessun presidente trovato.',
+        'message' => 'Nessuna trattativa trovato.',
         'pagination' => [
             'total_items' => 0,
             'current_page' => (int)$page,
