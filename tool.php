@@ -1146,7 +1146,9 @@
                             id_trattativa: idTrattativa,
                             id_associazione: g.id,
                             id_tipologia_scambio: g.tipoTrasferimento === 'prestito' ? 2 : 1, // 1 per acquisto, 2 per prestito
-                            valore_riscatto: g.valoreRiscatto || null
+                            valore_riscatto: g.valoreRiscatto || null,
+                            id_squadra_c: idSquadra1,
+                            id_squadra_r: idSquadra2
                         };
 
                         console.log("Invio associazione giocatore squadra 1:", associazioneData);
@@ -1173,7 +1175,9 @@
                             id_trattativa: idTrattativa,
                             id_associazione: g.id,
                             id_tipologia_scambio: g.tipoTrasferimento === 'prestito' ? 2 : 1, // 1 per acquisto, 2 per prestito
-                            valore_riscatto: g.valoreRiscatto || null
+                            valore_riscatto: g.valoreRiscatto || null,
+                            id_squadra_c: idSquadra2,
+                            id_squadra_r: idSquadra1
                         };
 
                         console.log("Invio associazione giocatore squadra 2:", associazioneData);
