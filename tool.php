@@ -435,17 +435,17 @@
                             <h4>Credito massimo disponibile: <span id="maxCreditoTeam1">0</span></h4>
                             <div class="finestra-credito">
                                 <label>Subito :</label>
-                                <input type="hidden" id="subitoTeam1" value="10">
+                                <input type="hidden" id="subitoTeam1" value="8">
                                 <input type="number" id="creditoTeam1_1" min="0" placeholder="Subito">
                             </div>
                             <div class="finestra-credito">
                                 <label>Gennaio :</label>
-                                <input type="hidden" id="metaTeam1" value="8">
+                                <input type="hidden" id="metaTeam1" value="9">
                                 <input type="number" id="creditoTeam1_2" min="0" placeholder="Gennaio">
                             </div>
                             <div class="finestra-credito">
                                 <label>Giugno :</label>
-                                <input type="hidden" id="fineTeam1" value="9">
+                                <input type="hidden" id="fineTeam1" value="10">
                                 <input type="number" id="creditoTeam1_3" min="0" max="200" placeholder="Giugno">
                             </div>
                             <div class="credito-totale">
@@ -458,17 +458,17 @@
                             <h4>Credito massimo disponibile: <span id="maxCreditoTeam2">0</span></h4>
                             <div class="finestra-credito">
                                 <label>Subito :</label>
-                                <input type="hidden" id="subitoTeam2" value="10">
+                                <input type="hidden" id="subitoTeam2" value="8">
                                 <input type="number" id="creditoTeam2_1" min="0" placeholder="Subito">
                             </div>
                             <div class="finestra-credito">
                                 <label>Gennaio :</label>
-                                <input type="hidden" id="metaTeam2" value="8">
+                                <input type="hidden" id="metaTeam2" value="9">
                                 <input type="number" id="creditoTeam2_2" min="0" placeholder="Gennaio">
                             </div>
                             <div class="finestra-credito">
                                 <label>Giugno :</label>
-                                <input type="hidden" id="fineTeam2" value="9">
+                                <input type="hidden" id="fineTeam2" value="10">
                                 <input type="number" id="creditoTeam2_3" min="0"  max="200" placeholder="Giugno">
                             </div>
                             <div class="credito-totale">
@@ -834,8 +834,8 @@
 
         const creditoOptions = [
             {value: '', text: 'Seleziona data di credito', disabled: true, selected: true},
-            {value: '8', text: 'Gennaio'},
-            {value: '9', text: 'Giugno'}
+            {value: '9', text: 'Gennaio'},
+            {value: '10', text: 'Giugno'}
         ];
 
         creditoOptions.forEach(opt => {
@@ -896,7 +896,7 @@
         const dataPrestito = document.getElementById(`data-prestito-${playerId}`);
         const dataCredito = document.getElementById(`data-credito-${playerId}`);
         const inputRiscatto = document.getElementById(`riscatto-input-${playerId}`);
-        const selectedValue = selectElement.value;
+
         const selectedText = selectElement.options[selectElement.selectedIndex].text;
 
         // Nascondi entrambi i campi inizialmente
@@ -939,8 +939,10 @@
         // Raccogli dettagli giocatori squadra 1
         const giocatoriSquadra1 = Array.from(containers.selected1.querySelectorAll('.selected-player')).map(el => {
             const playerId = el.querySelector('.remove-player').dataset.id;
+
             const tipoSelect = document.getElementById(`type-select-${playerId}`);
-            const tipoTrasferimento = tipoSelect ? tipoSelect.value : '';
+            let tipoTrasferimento = tipoSelect ? tipoSelect.value : '';
+
             const tipoTrasferimentoText = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex].text : '';
 
             const dataPrestitoEl = document.getElementById(`data-fine-prestito-${playerId}`);
@@ -949,12 +951,30 @@
             const dataCreditoEl = document.getElementById(`data-fine-credito-${playerId}`);
             const dataCredito = dataCreditoEl && dataCreditoEl.style.display !== 'none' ? dataCreditoEl.value : null;
 
+            let valore = 1;
+
+            tipologieScambio.forEach(tipo => {
+                // Controlla prima se il tipo di trasferimento corrisponde
+                if (tipo.id_metodo === tipoTrasferimento) {
+                    // Se abbiamo un credito, usa quella data per trovare la finestra
+                    if (dataCredito !== null && tipo.id_finestra_mercato && tipo.id_finestra_mercato.toString() === dataCredito) {
+                        valore = tipo.id_tipologia;
+                    }
+                    // Altrimenti, se abbiamo un prestito, usa quella data
+                    else if (dataPrestito !== null && tipo.id_finestra_mercato && tipo.id_finestra_mercato.toString() === dataPrestito) {
+                        valore = tipo.id_tipologia;
+                    }
+                }
+            });
+
+            console.log("Tipo trasferimento:", valore);
+
             const valoreRiscattoEl = (document.getElementById(`riscatto-input-${playerId}`));
             const valoreRiscatto = valoreRiscattoEl ? parseFloat(valoreRiscattoEl.value) : null;
 
             return {
                 id: playerId,
-                tipoTrasferimento: tipoTrasferimento,
+                tipoTrasferimento: valore,
                 tipoTrasferimentoText: tipoTrasferimentoText,
                 valoreRiscatto: valoreRiscatto,
                 dataPrestito: dataPrestito,
@@ -965,8 +985,10 @@
         // Raccogli dettagli giocatori squadra 2
         const giocatoriSquadra2 = Array.from(containers.selected2.querySelectorAll('.selected-player')).map(el => {
             const playerId = el.querySelector('.remove-player').dataset.id;
+
             const tipoSelect = document.getElementById(`type-select-${playerId}`);
-            const tipoTrasferimento = tipoSelect ? tipoSelect.value : '';
+            let tipoTrasferimento = tipoSelect ? tipoSelect.value : '';
+
             const tipoTrasferimentoText = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex].text : '';
 
             const dataPrestitoEl = document.getElementById(`data-fine-prestito-${playerId}`);
@@ -978,10 +1000,26 @@
             const valoreRiscattoEl = (document.getElementById(`riscatto-input-${playerId}`));
             const valoreRiscatto = valoreRiscattoEl ? parseFloat(valoreRiscattoEl.value) : null;
 
+            let valore = 1;
+
+            tipologieScambio.forEach(tipo => {
+                // Controlla prima se il tipo di trasferimento corrisponde
+                if (tipo.id_metodo === tipoTrasferimento) {
+                    // Se abbiamo un credito, usa quella data per trovare la finestra
+                    if (dataCredito !== null && tipo.id_finestra_mercato && tipo.id_finestra_mercato.toString() === dataCredito) {
+                        valore = tipo.id_tipologia;
+                    }
+                    // Altrimenti, se abbiamo un prestito, usa quella data
+                    else if (dataPrestito !== null && tipo.id_finestra_mercato && tipo.id_finestra_mercato.toString() === dataPrestito) {
+                        valore = tipo.id_tipologia;
+                    }
+                }
+            });
+
 
             return {
                 id: playerId,
-                tipoTrasferimento: tipoTrasferimento,
+                tipoTrasferimento: valore,
                 tipoTrasferimentoText: tipoTrasferimentoText,
                 valoreRiscatto: valoreRiscatto,
                 dataPrestito: dataPrestito,
@@ -1145,7 +1183,7 @@
                         const associazioneData = {
                             id_trattativa: idTrattativa,
                             id_associazione: g.id,
-                            id_tipologia_scambio: g.tipoTrasferimento === 'prestito' ? 2 : 1, // 1 per acquisto, 2 per prestito
+                            id_tipologia_scambio: g.tipoTrasferimento,
                             valore_riscatto: g.valoreRiscatto || null,
                             id_squadra_c: idSquadra1,
                             id_squadra_r: idSquadra2
@@ -1174,7 +1212,7 @@
                         const associazioneData = {
                             id_trattativa: idTrattativa,
                             id_associazione: g.id,
-                            id_tipologia_scambio: g.tipoTrasferimento === 'prestito' ? 2 : 1, // 1 per acquisto, 2 per prestito
+                            id_tipologia_scambio: g.tipoTrasferimento,
                             valore_riscatto: g.valoreRiscatto || null,
                             id_squadra_c: idSquadra2,
                             id_squadra_r: idSquadra1
