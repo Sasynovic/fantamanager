@@ -88,6 +88,8 @@ class operazioni
                 t.ufficializzata AS ufficializzata,
                 t.data_creazione,
                 
+                o.id_squadra_c AS id_squadra_c,
+                o.id_squadra_r AS id_squadra_r,
                 s1.nome_squadra AS nome_squadra1,
                 s2.nome_squadra AS nome_squadra2,
                 

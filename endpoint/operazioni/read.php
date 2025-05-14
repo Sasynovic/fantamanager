@@ -53,6 +53,8 @@ if ($num > 0) {
                 "id" => (int)$row['id_trattativa'],
                 "descrizione" => $row['descrizione_trattativa'],
                 "id_competizione" => (int)$row['id_competizione'],
+                "id_squadra_c" => (int)$row['id_squadra_c'],
+                "id_squadra_r" => (int)$row['id_squadra_r'],
                 "nome_squadra_1" => $row['nome_squadra1'],
                 "nome_squadra_2" => $row['nome_squadra2'],
                 "data_creazione" => $row['data_creazione'],
