@@ -707,6 +707,14 @@
                     opt.textContent = `${giocatore.nome_calciatore} (${giocatore.ruolo_calciatore}) - FVM: ${giocatore.fvm} - Costo: ${giocatore.costo_calciatore}`;
                     opt.className = 'giocatore-item' + giocatore.ruolo_calciatore;
                     opt.dataset.fvm = giocatore.fvm;
+                    opt.dataset.n_movimenti = giocatore.n_movimenti;
+                    opt.dataset.scambiato = giocatore.scambiato;
+                    if(giocatore.scambiato) {
+                        opt.disabled = true;
+                    }
+                    if(giocatore.n_movimenti > 2) {
+                        opt.disabled = true;
+                    }
                     playerSelect.appendChild(opt);
                 });
             });
