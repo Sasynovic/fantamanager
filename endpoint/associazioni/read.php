@@ -35,6 +35,8 @@ if ($num > 0) {
             "costo_calciatore" => $costo_calciatore,
             "eta" => $eta,
             "fvm" => $fvm,
+            "n_movimenti" => $n_movimenti,
+            "scambiato" => $scambiato
         );
 
         $associazioni_arr["associazioni"][] = $associazioni_item;
