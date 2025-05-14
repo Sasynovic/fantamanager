@@ -32,7 +32,7 @@ class operazioni
         return $row['total'];
     }
 
-    public function create(int  $id_trattativa,int  $id_associazione, int  $id_tipologia_scambio, int $valore_riscatto=null){
+    public function create(int  $id_trattativa,int  $id_associazione, int  $id_tipologia_scambio,int $id_squadra_c, int $id_squadra_r, int $valore_riscatto=null){
         if (empty($id_trattativa)) {
             throw new InvalidArgumentException("Il id_trattativa non può essere vuoto");
         }
@@ -42,12 +42,18 @@ class operazioni
         if (empty($id_tipologia_scambio)) {
             throw new InvalidArgumentException("Il id_tipologia_scambio non può essere vuoto");
         }
+        if (empty($id_squadra_c)) {
+            throw new InvalidArgumentException("Il id_squadra_c non può essere vuoto");
+        }
+        if (empty($id_squadra_r)) {
+            throw new InvalidArgumentException("Il id_squadra_r non può essere vuoto");
+        }
 
 
         $query = "INSERT INTO " . $this->table_name . " 
-        (id_trattativa,id_associazione,id_tipologia_scambio,valore_riscatto)
+        (id_trattativa,id_associazione,id_tipologia_scambio,valore_riscatto,id_squadra_c,id_squadra_r)
         VALUES 
-        (:id_trattativa,:id_associazione,:id_tipologia_scambio,:valore_riscatto)";
+        (:id_trattativa,:id_associazione,:id_tipologia_scambio,:valore_riscatto,:id_squadra_c,:id_squadra_r)";
 
         $stmt = $this->conn->prepare($query);
 
@@ -55,6 +61,8 @@ class operazioni
         $stmt -> bindParam(':id_associazione', $id_associazione, PDO::PARAM_INT);
         $stmt -> bindParam(':id_tipologia_scambio', $id_tipologia_scambio, PDO::PARAM_INT);
         $stmt -> bindParam(':valore_riscatto', $valore_riscatto, PDO::PARAM_INT);
+        $stmt -> bindParam(':id_squadra_c', $id_squadra_c, PDO::PARAM_INT);
+        $stmt -> bindParam(':id_squadra_r', $id_squadra_r, PDO::PARAM_INT);
 
         try {
             return $stmt->execute();
@@ -65,7 +73,7 @@ class operazioni
 
     }
 
-    public function read($id_trattativa = null,$limit = 10, $offset = 0)
+    public function read($id_trattativa = null,$limit = null, $offset = null)
     {
         $query = "SELECT
                 o.id,
@@ -77,10 +85,11 @@ class operazioni
                 
                 t.descrizione AS descrizione_trattativa,
                 t.id_competizione AS id_competizione,
-                t.id_squadra1 AS id_squadra_1,
-                t.id_squadra2 AS id_squadra_2,
                 t.ufficializzata AS ufficializzata,
                 t.data_creazione,
+                
+                s1.nome_squadra AS nome_squadra1,
+                s2.nome_squadra AS nome_squadra2,
                 
                 a.id_calciatore,
                 a.n_movimenti,
@@ -96,7 +105,11 @@ class operazioni
                 
                 
               FROM " . $this->table_name . " o
+              
               LEFT JOIN trattative t ON o.id_trattativa = t.id
+              
+              LEFT JOIN squadre s1 ON  o.id_squadra_c = s1.id
+              LEFT JOIN squadre s2 ON o.id_squadra_r = s2.id
               
               LEFT JOIN associazioni a ON o.id_associazione = a.id
               
@@ -115,12 +128,21 @@ class operazioni
         }
 
         $query .= " ORDER BY o.id ASC";
-        $query .= " LIMIT :limit OFFSET :offset";
+        // Aggiungi la limitazione e l'offset solo se sono stati forniti
+        if ($limit !== null && $offset !== null) {
+            $limit = (int)$limit;
+            $offset = (int)$offset;
+            $query .= " LIMIT :limit OFFSET :offset";
+        }
 
         $stmt = $this->conn->prepare($query);
 
-        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        // Se sono stati forniti limit e offset, bindali come parametri
+        if ($limit !== null && $offset !== null) {
+            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        }
+
         if ($id_trattativa) {
             $stmt->bindParam(':id_trattativa', $id_trattativa, PDO::PARAM_INT);
         }

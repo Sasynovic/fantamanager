@@ -13,8 +13,13 @@ $operazioni = new operazioni($db);
 
 // Parametri di paginazione
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
-$limit = isset($_GET['limit']) ? max(1, intval($_GET['limit'])) : 10;
-$offset = ($page - 1) * $limit;
+$limit = isset($_GET['limit']) ? max(1, intval($_GET['limit'])) : null;
+if($limit != null) {
+    $offset = ($page - 1) * $limit;
+}else{
+    $offset = null;
+}
+
 
 $idTrattativa = isset($_GET['id_trattativa']) ? intval($_GET['id_trattativa']) : null;
 
@@ -26,17 +31,20 @@ $stmt = $operazioni->read($idTrattativa,$limit, $offset);
 $num = $stmt->rowCount();
 
 if ($num > 0) {
-    $response = [
-        'operazioni' => [],
-        'pagination' => [
-            'total_items' => (int)$total_records,
-            'current_page' => (int)$page,
-            'items_per_page' => (int)$limit,
-            'total_pages' => ceil($total_records / $limit),
-            'has_next_page' => ($page * $limit) < $total_records,
-            'has_previous_page' => $page > 1
-        ]
-    ];
+    if($limit != null) {
+        $response = [
+            'operazioni' => [],
+            'pagination' => [
+                'total_items' => (int)$total_records,
+                'current_page' => (int)$page,
+                'items_per_page' => (int)$limit,
+                'total_pages' => ceil($total_records / $limit),
+                'has_next_page' => ($page * $limit) < $total_records,
+                'has_previous_page' => $page > 1
+            ]
+        ];
+    }
+
 
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $response['operazioni'][] = [
@@ -45,15 +53,15 @@ if ($num > 0) {
                 "id" => (int)$row['id_trattativa'],
                 "descrizione" => $row['descrizione_trattativa'],
                 "id_competizione" => (int)$row['id_competizione'],
-                "id_squadra_1" => (int)$row['id_squadra_1'],
-                "id_squadra_2" => (int)$row['id_squadra_2'],
-                "ufficializzata" => (bool)$row['ufficializzata'],
-                "n_movimenti" => (int)$row['n_movimenti'],
+                "nome_squadra_1" => $row['nome_squadra1'],
+                "nome_squadra_2" => $row['nome_squadra2'],
                 "data_creazione" => $row['data_creazione'],
+                "ufficializzata" => (bool)$row['ufficializzata'],
             ],
             "calciatore" => [
                 "id" => (int)$row['id_calciatore'],
                 "nome" => $row['nome_calciatore'],
+                "n_movimenti" => (int)$row['n_movimenti'],
                 "scambiato" => (bool)$row['scambiato'],
             ],
             "scambio" => [
@@ -63,7 +71,7 @@ if ($num > 0) {
                 "valore_riscatto" => $row['valore_riscatto'],
             ],
             "finestra_mercato" => [
-                "nome" => $row['nome_finestra_mercato'],
+                "nome" => $row['nome_finestra_mercato'] ?? '',
                 "data_inizio" => $row['data_inizio_finestra'],
                 "data_fine" => $row['data_fine_finestra']
             ]

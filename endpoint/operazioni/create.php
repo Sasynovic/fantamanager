@@ -35,7 +35,7 @@ if (empty($data)) {
 
 try {
     // Verifica campi obbligatori
-    $requiredFields = ['id_trattativa', 'id_associazione', 'id_tipologia_scambio'];
+    $requiredFields = ['id_trattativa', 'id_associazione', 'id_tipologia_scambio', 'id_squadra_c', 'id_squadra_r'];
     foreach ($requiredFields as $field) {
         if (!isset($data->$field) || empty($data->$field)) {
             http_response_code(400);
@@ -49,6 +49,8 @@ try {
     $id_associazione = (int) $data->id_associazione;
     $id_tipologia_scambio = (int) $data->id_tipologia_scambio;
     $valore_riscatto = isset($data->valore_riscatto) ? (int) $data->valore_riscatto : null;
+    $id_squadra_c = (int) $data->id_squadra_c;
+    $id_squadra_r = (int) $data->id_squadra_r;
 
     // Connessione al database
     $database = new Database();
@@ -58,7 +60,7 @@ try {
     $operazioni = new operazioni($db);
 
     // Chiamata al metodo create
-    $result = $operazioni->create($id_trattativa, $id_associazione, $id_tipologia_scambio, $valore_riscatto);
+    $result = $operazioni->create($id_trattativa, $id_associazione, $id_tipologia_scambio, $id_squadra_c, $id_squadra_r, $valore_riscatto);
 
     if ($result) {
         http_response_code(201);
