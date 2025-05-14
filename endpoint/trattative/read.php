@@ -17,8 +17,8 @@ $limit = isset($_GET['limit']) ? max(1, intval($_GET['limit'])) : 10;
 $offset = ($page - 1) * $limit;
 
 //Parametri di ricerca
-$ufficializzata = isset($_GET['ufficializzata']) ? $_GET['ufficializzata'] : null;
-$id_trattativa = isset($_GET['id_trattativa']) ? $_GET['id_trattativa'] : null;
+$ufficializzata = isset($_GET['ufficializzata']) ? $_GET['ufficializzata'] : false;
+$id_trattativa = isset($_GET['id']) ? $_GET['id'] : null;
 
 // Conta il totale dei record
 $total_records = $trattative->count($ufficializzata);
