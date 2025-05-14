@@ -32,7 +32,7 @@
                 <a href="tool.php">Tool scambi</a>
             </li>
             <li class="menu-item">
-                <a href="index.php">Regolamento</a>
+                <a href="regolamento.php">Regolamento</a>
             </li>
             <li class="menu-item">
                 <a href="index.php">Ricerca</a>
