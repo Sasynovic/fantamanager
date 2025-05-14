@@ -308,7 +308,7 @@ $nomeSezione = "news";
     });
 
     function editItem(id) {
-        const urlSingleNews = `${window.location.protocol}//${window.location.host}/endpoint/news/read.php?id=${id}`;
+        const urlSingleNews = `${window.location.protocol}//${window.location.host}/endpoint/<?php echo $nomeSezione ?>/read.php?id=${id}`;
         fetch(urlSingleNews)
             .then(response => response.json())
             .then(data => {
@@ -365,7 +365,7 @@ $nomeSezione = "news";
 
         console.log(data);
 
-        fetch(`../endpoint/news/update.php?id=${id}`, {
+        fetch(`../endpoint/<?php echo $nomeSezione ?>/update.php?id=${id}`, {
                 method: 'PUT', // o 'POST' se necessario
             headers: {
                 'Content-Type': 'application/json'
@@ -390,7 +390,6 @@ $nomeSezione = "news";
 
             });
     }
-
 
     function formatDate(dateStr) {
         const date = new Date(dateStr);
