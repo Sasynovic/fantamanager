@@ -12,7 +12,7 @@ class news
         $this->conn = $db;
     }
 
-    public function count($id_competizione = null, $search = null)
+    public function count($id=null,$id_competizione = null, $search = null)
     {
         $query = "SELECT COUNT(*) as total 
                         FROM " . $this->table_name . " n
@@ -26,9 +26,15 @@ class news
         if ($search !== null) {
             $query .= " AND (n.titolo LIKE :search OR n.contenuto LIKE :search)";
         }
+        if ($id !== null) {
+            $query .= " AND n.id = :id";
+        }
 
         $stmt = $this->conn->prepare($query);
 
+        if ($id !== null) {
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        }
         if ($search) {
             $search_term = "%$search%";
             $stmt->bindParam(':search', $search_term, PDO::PARAM_STR);
@@ -36,6 +42,7 @@ class news
         if ($id_competizione !== null) {
             $stmt->bindParam(':id_competizione', $id_competizione, PDO::PARAM_INT);
         }
+
 
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -84,7 +91,7 @@ class news
         }
     }
 
-    public function read($id_competizione = null, $search = null, $limit = null, $offset = 0) {
+    public function read($id=null,$id_competizione = null, $search = null, $limit = null, $offset = 0) {
         $query = "
                         SELECT  
                             n.id,
@@ -103,6 +110,10 @@ class news
                         WHERE 1=1
                     ";
 
+        if ($id !== null) {
+            $query .= " AND n.id = :id";
+        }
+
         if ($id_competizione !== null) {
             $query .= " AND n.id_competizione = :id_competizione";
         }
@@ -115,6 +126,9 @@ class news
 
         $stmt = $this->conn->prepare($query);
 
+        if ($id !== null) {
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        }
         if ($id_competizione !== null) {
             $stmt->bindParam(':id_competizione', $id_competizione, PDO::PARAM_INT);
         }
@@ -131,6 +145,64 @@ class news
         }
 
         return null;
+    }
+
+    public function update($id, $data): bool
+    {
+        // Validazione dell'ID
+        if (!is_numeric($id) || $id <= 0) {
+            throw new InvalidArgumentException("L'ID della trattativa non è valido");
+        }
+
+        // Verifica che $data sia un array
+        if (!is_array($data)) {
+            throw new InvalidArgumentException("I dati per l'aggiornamento devono essere un array");
+        }
+
+        // Costruzione della query dinamica
+        $fields = [];
+        $params = [':id' => $id];
+
+        // Lista dei campi aggiornabili
+        $allowedFields = [
+            'titolo' => PDO::PARAM_STR,
+            'contenuto' => PDO::PARAM_STR,
+            'autore' => PDO::PARAM_STR,
+            'data_pubblicazione' => PDO::PARAM_INT,
+            'id_competizione' => PDO::PARAM_INT,
+            'visibile' => PDO::PARAM_BOOL
+        ];
+
+        foreach ($allowedFields as $field => $type) {
+            if (isset($data[$field])) {
+                $fields[] = "$field = :$field";
+                $params[":$field"] = $data[$field];
+            }
+        }
+
+        if (empty($fields)) {
+            return false;
+        }
+
+        $query = "UPDATE " . $this->table_name . " 
+              SET " . implode(', ', $fields) . " 
+              WHERE id = :id";
+
+        $stmt = $this->conn->prepare($query);
+
+        // Bind dei parametri
+        foreach ($params as $key => $value) {
+            $type = $allowedFields[str_replace(':', '', $key)] ?? PDO::PARAM_STR;
+            $stmt->bindValue($key, $value, $type);
+        }
+
+        try {
+            $stmt->execute();
+            return ($stmt->rowCount() > 0);
+        } catch (PDOException $e) {
+            error_log("Errore durante l'aggiornamento della trattativa: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function delete($id) {
@@ -152,7 +224,5 @@ class news
             return false;
         }
     }
-
-
 
 }

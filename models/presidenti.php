@@ -60,7 +60,7 @@ class presidenti
 
     }
 
-    public function read($limit = 10, $offset = 0, $search = null)
+    public function read($limit = null, $offset = null, $search = null)
     {
         $query = "SELECT
                 p.id,
@@ -74,17 +74,25 @@ class presidenti
         }
 
         $query .= " ORDER BY p.id ASC";
-        $query .= " LIMIT :limit OFFSET :offset";
+        // Aggiungi la limitazione e l'offset solo se sono stati forniti
+        if ($limit !== null && $offset !== null) {
+            $limit = (int)$limit;
+            $offset = (int)$offset;
+            $query .= " LIMIT :limit OFFSET :offset";
+        }
 
         $stmt = $this->conn->prepare($query);
+
+        // Se sono stati forniti limit e offset, bindali come parametri
+        if ($limit !== null && $offset !== null) {
+            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        }
 
         if ($search) {
             $search_term = "%$search%";
             $stmt->bindParam(':search', $search_term, PDO::PARAM_STR);
         }
-
-        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
 
         $stmt->execute();
 
