@@ -19,14 +19,16 @@ $limit = isset($_GET['limit']) ? max(1, intval($_GET['limit'])) : 10;
 $offset = ($page - 1) * $limit;
 
 // Parametro di ricerca
+$id = $_GET['id'] ?? null;
 $id_competizione_filter = isset($_GET['id_competizione']) ? intval($_GET['id_competizione']) : null;
 $search = isset($_GET['search']) ? $_GET['search'] : null;
 
+
 // Conta il totale dei record
-$total_records = $news->count($id_competizione_filter,$search);
+$total_records = $news->count($id,$id_competizione_filter,$search);
 
 // Recupera i record paginati
-$stmt = $news->read($id_competizione_filter, $search, $limit, $offset);
+$stmt = $news->read($id,$id_competizione_filter, $search, $limit, $offset);
 $num = $stmt->rowCount();
 
 if ($num > 0) {

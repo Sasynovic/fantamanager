@@ -29,10 +29,10 @@ $nomeSezione = "news";
         </button>
     </div>
 
-    <div class="card-all">
+    <div class="card-all" id="card-all">
         <div class="filter-section">
             <div class="form-group">
-                <label for="filter-competizione">Competizione</label>
+                <label for="filter-competizione" >Competizione</label>
                 <select id="filter-competizione" name="id_competizione" class="form-control">
                     <option value="">Tutte</option>
                 </select>
@@ -131,6 +131,59 @@ $nomeSezione = "news";
             <button id="cancel-form" class="btn btn-outline">Annulla</button>
         </div>
     </div>
+
+    <div class="card hidden" id="edit-form">
+        <div class="card-header">
+            <h2 class="card-title">Modifica <?php echo $nomeSezione?></h2>
+        </div>
+
+        <div class="form-group">
+            <label for="id-edit"></label>
+            <input type="hidden" id="id-edit" name="id_edit" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="titolo-edit">Titolo</label>
+            <input type="text" id="titolo-edit" name="titolo_edit" placeholder="Inserisci il titolo della <?php echo $nomeSezione?>">
+        </div>
+
+        <div class="form-group">
+            <label for="autore-edit">Autore</label>
+            <input type="text" id="autore-edit" name="autore_edit" placeholder="Nome dell'autore">
+        </div>
+
+        <div class="checkbox-label">
+            <span>Visibile</span>
+            <label class="toggle-switch">
+                <input type="checkbox" name="visibile_edit" id="visibile-edit" checked>
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label for="id-competizione-edit">Competizione</label>
+            <select id="id-competizione-edit" name="id_competizione_edit" class="form-control">
+                <option value="" disabled selected>Seleziona una competizione</option>
+                <script>
+                    let formCompetizioneEdit = document.getElementById('id-competizione-edit');
+                    loadCompetizioni(formCompetizioneEdit);
+                </script>
+
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="editor-container-edit">Contenuto</label>
+            <div id="editor-container-edit"></div>
+            <input type="hidden" id="contenuto-edit" name="contenuto_edit">
+        </div>
+
+        <div class="btn-group">
+            <button id="submit-edit" class="btn btn-primary" onclick="updateNews()">📰Modifica</button>
+            <button id="cancel-edit-form" class="btn btn-outline" onclick="closeFormModifica()">Annulla</button>
+        </div>
+    </div>
+
     <div id="pagination" class="pagination"></div>
 </div>
 
@@ -153,6 +206,23 @@ $nomeSezione = "news";
             ]
         },
         placeholder: 'Scrivi il contenuto della notizia qui...'
+    });
+
+    const quillEdit = new Quill('#editor-container-edit', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, false] }],
+                ['bold', 'italic', 'underline'],
+                ['link'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                ['clean'],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'align': [] }],
+                ['blockquote', 'code-block']
+            ]
+        },
+        placeholder: 'Modifica il contenuto della notizia qui...'
     });
 
     /**
@@ -191,7 +261,7 @@ $nomeSezione = "news";
 
                 </div>
                 <div class="card-actions">
-                    <button class="btn btn-warning edit-btn" onclick="crudManager.editItem(${item.id})">
+                    <button class="btn btn-warning edit-btn" onclick="editItem(${item.id})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 6px;">
                             <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
                         </svg>
@@ -237,10 +307,90 @@ $nomeSezione = "news";
         crudManager.loadData();
     });
 
-    // Funzione globale per editare un elemento (necessaria per i pulsanti di modifica)
     function editItem(id) {
-        crudManager.editItem(id);
+        const urlSingleNews = `${window.location.protocol}//${window.location.host}/endpoint/news/read.php?id=${id}`;
+        fetch(urlSingleNews)
+            .then(response => response.json())
+            .then(data => {
+                // Modifica qui: prendi il primo elemento dell'array news
+                const news = data.news[0]; // Aggiungi [0] per accedere al primo elemento dell'array
+                if (news) {
+                    apriFormModifica(news);
+                    console.log('Dati della notizia:', news);
+                } else {
+                    console.error('Elemento non trovato');
+                }
+            })
+            .catch(error => console.error('Errore nel caricamento dell\'elemento:', error));
     }
+
+    function apriFormModifica(dati) {
+        // Popola i campi
+        document.getElementById('id-edit').value = dati.id || '';
+        document.getElementById('titolo-edit').value = dati.titolo || '';
+        document.getElementById('autore-edit').value = dati.autore || '';
+        document.getElementById('visibile-edit').checked = dati.visibile === "1" || dati.visibile === 1 || dati.visibile === true;
+        document.getElementById('id-competizione-edit').value = dati.id_competizione || '';
+
+        // Popola Quill
+        quillEdit.setContents(quillEdit.clipboard.convert(dati.contenuto || ''));
+
+        // // Mostra il form di modifica
+        document.getElementById('card-all').classList.add('hidden');
+        document.getElementById('pagination').classList.add('hidden');
+        document.getElementById('edit-form').classList.remove('hidden');
+    }
+
+    function closeFormModifica() {
+        document.getElementById('card-all').classList.remove('hidden');
+        document.getElementById('pagination').classList.remove('hidden');
+        document.getElementById('edit-form').classList.add('hidden');
+    }
+
+    function updateNews() {
+        const id = document.getElementById('id-edit').value;
+        const titolo = document.getElementById('titolo-edit').value;
+        const autore = document.getElementById('autore-edit').value;
+        const visibile = document.getElementById('visibile-edit').checked ? 1 : 0;
+        const id_competizione = document.getElementById('id-competizione-edit').value;
+        const contenuto = quillEdit.root.innerHTML;
+
+        const data = {
+            titolo: titolo,
+            contenuto: contenuto,
+            autore: autore,
+            id_competizione: id_competizione,
+            visibile: visibile
+        };
+
+        console.log(data);
+
+        fetch(`../endpoint/news/update.php?id=${id}`, {
+                method: 'PUT', // o 'POST' se necessario
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Successo:', data);
+                window.location.reload(); // Ricarica la pagina per mostrare le modifiche
+                // Aggiorna la lista delle news o fai un redirect se necessario
+            })
+            .catch(error => {
+                console.error('Errore:',  (error.message || error));
+                alert('Si è verificato un errore durante l\'aggiornamento: ' + (error.message || error));
+
+            });
+    }
+
 
     function formatDate(dateStr) {
         const date = new Date(dateStr);
