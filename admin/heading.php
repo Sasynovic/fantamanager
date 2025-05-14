@@ -99,6 +99,8 @@
         </div>
 
         <a href="gestione_competizioni.php">Gestione Competizioni</a>
+
+        <a href="approva_trattativa.php">Approva Trattativa</a>
         <a href="logout.php">Logout</a>
     </div>
 </div>
