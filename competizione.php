@@ -10,6 +10,9 @@
     <script src="renderFooter.js" defer></script>
 </head>
 <style>
+
+
+
     .news-container {
         max-width: 1000px;
         margin: 0 auto;
@@ -72,7 +75,7 @@
     .page-button {
         padding: 8px 12px;
         border: 1px solid #ddd;
-        background: white;
+        background: var(--accento);
         cursor: pointer;
         border-radius: 3px;
     }
@@ -146,7 +149,10 @@
     <div class="main-content">
         <header class="main-header">
             <div class="main-text-header">
-                <h1>
+                <button class="back-button" onclick="window.history.back();">
+                    <img src="chevronL.svg" alt="Indietro" height="40px" width="40px">
+                </button>
+                    <h1>
                     <?php
                     // Recupera l'ID competizione dall'URL
                     $urlParams = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
@@ -163,7 +169,7 @@
                     ]));
 
                     if ($data) {
-                    $json = json_decode($data);}
+                        $json = json_decode($data);}
                     if (isset($json->competizione[0]->nome_competizione)) {
                         echo htmlspecialchars($json->competizione[0]->nome_competizione);
                     } else {
@@ -173,112 +179,109 @@
                 </h1>
                 <a href="admin/login.php">Admin</a>
             </div>
-            <div class="header-content">
-                <p>Dettagli competizione</p>
-            </div>
         </header>
 
         <div class="main-body">
             <div class="main-body-content" id="main-body-content" style="position: relative;">
                 <div class="container">
 
-                        <div class="tab">
-                            <button class="tablinks" onclick="openTab(event, 'classifica')" id="defaultOpen">Classifica</button>
-                            <button class="tablinks" onclick="openTab(event, 'news')">News</button>
-                        </div>
+                    <div class="tab">
+                        <button class="tablinks" onclick="openTab(event, 'classifica')" id="defaultOpen">Classifica</button>
+                        <button class="tablinks" onclick="openTab(event, 'news')">News</button>
+                    </div>
 
-                        <div id="classifica" name="tabcontent" >
-                            <script>
-                                fetch('/endpoint/partecipazione/read.php?id_competizione=' + <?php echo $id_competizione; ?>)
-                                    .then(response => {
-                                        if (!response.ok) {
-                                            throw new Error('Errore nella risposta del server');
+                    <div id="classifica" name="tabcontent" >
+                        <script>
+                            fetch('/endpoint/partecipazione/read.php?id_competizione=' + <?php echo $id_competizione; ?>)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Errore nella risposta del server');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    console.log('Dati ricevuti:', data); // Debug
+
+                                    // Verifica che data.squadre esista e sia un array
+                                    if (!data.squadre || !Array.isArray(data.squadre)) {
+                                        console.error('Dati non validi:', data);
+                                        throw new Error('Formato dati non valido');
+                                    }
+
+                                    // Ordina le squadre per posizione in classifica
+                                    const squadreOrdinate = [...data.squadre].sort((a, b) => {
+                                        // Prima per punti totali (decrescente)
+                                        if (b.punti !== a.punti) {
+                                            return b.punti - a.punti;
                                         }
-                                        return response.json();
-                                    })
-                                    .then(data => {
-                                        console.log('Dati ricevuti:', data); // Debug
-
-                                        // Verifica che data.squadre esista e sia un array
-                                        if (!data.squadre || !Array.isArray(data.squadre)) {
-                                            console.error('Dati non validi:', data);
-                                            throw new Error('Formato dati non valido');
+                                        if (b.punti_totali !== a.punti_totali) {
+                                            return b.punti_totali - a.punti_totali;
                                         }
 
-                                        // Ordina le squadre per posizione in classifica
-                                        const squadreOrdinate = [...data.squadre].sort((a, b) => {
-                                            // Prima per punti totali (decrescente)
-                                            if (b.punti !== a.punti) {
-                                                return b.punti - a.punti;
-                                            }
-                                            if (b.punti_totali !== a.punti_totali) {
-                                                return b.punti_totali - a.punti_totali;
-                                            }
+                                        // Poi per differenza reti (decrescente)
+                                        if (b.differenza_reti !== a.differenza_reti) {
+                                            return b.differenza_reti - a.differenza_reti;
+                                        }
 
-                                            // Poi per differenza reti (decrescente)
-                                            if (b.differenza_reti !== a.differenza_reti) {
-                                                return b.differenza_reti - a.differenza_reti;
-                                            }
+                                        // Infine per gol fatti (decrescente)
+                                        return b.gol_fatti - a.gol_fatti;
+                                    });
 
-                                            // Infine per gol fatti (decrescente)
-                                            return b.gol_fatti - a.gol_fatti;
-                                        });
+                                    // Genera la tabella HTML
+                                    const classificaContainer = document.getElementById('classifica');
+                                    let classificaHTML = `
+                                            <table class="classifica-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Pos</th>
+                                                        <th>Squadra</th>
+                                                        <th>Pn</th>
+                                                        <th>G</th>
+                                                        <th>V</th>
+                                                        <th>N</th>
+                                                        <th>P</th>
+                                                        <th>Gf</th>
+                                                        <th>Gs</th>
 
-                                        // Genera la tabella HTML
-                                        const classificaContainer = document.getElementById('classifica');
-                                        let classificaHTML = `
-                <table class="classifica-table">
-                    <thead>
-                        <tr>
-                            <th>Pos</th>
-                            <th>Squadra</th>
-                            <th>Pn</th>
-                            <th>G</th>
-                            <th>V</th>
-                            <th>N</th>
-                            <th>P</th>
-                            <th>Gf</th>
-                            <th>Gs</th>
+                                                        <th>Pt</th>
+                                                        <th>Pt tot</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>`;
 
-                            <th>Pt</th>
-                            <th>Pt tot</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
+                                    squadreOrdinate.forEach((squadra, index) => {
+                                        classificaHTML += `
+                                                <tr>
+                                                    <td>${index + 1}</td>
+                                                    <td>${squadra.nome_squadra || 'N/D'}</td>
+                                                    <td>${squadra.penalizzazione || 0}</td>
+                                                    <td>${squadra.giocate || 0}</td>
+                                                    <td>${squadra.vittorie || 0}</td>
+                                                    <td>${squadra.pareggi || 0}</td>
+                                                    <td>${squadra.sconfitte || 0}</td>
+                                                    <td>${squadra.gol_fatti || 0}</td>
+                                                    <td>${squadra.gol_subiti || 0}</td>
 
-                                        squadreOrdinate.forEach((squadra, index) => {
-                                            classificaHTML += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${squadra.nome_squadra || 'N/D'}</td>
-                        <td>${squadra.penalizzazione || 0}</td>
-                        <td>${squadra.giocate || 0}</td>
-                        <td>${squadra.vittorie || 0}</td>
-                        <td>${squadra.pareggi || 0}</td>
-                        <td>${squadra.sconfitte || 0}</td>
-                        <td>${squadra.gol_fatti || 0}</td>
-                        <td>${squadra.gol_subiti || 0}</td>
+                                                    <td>${squadra.punti || 0}</td>
+                                                    <td>${squadra.punti_totali || 0}</td>
+                                                </tr>`;
+                                    });
 
-                        <td>${squadra.punti || 0}</td>
-                        <td>${squadra.punti_totali || 0}</td>
-                    </tr>`;
-                                        });
-
-                                        classificaHTML += `</tbody></table>`;
-                                        classificaContainer.innerHTML = classificaHTML;
-                                    })
-                                    .catch(error => {
-                                        console.error('Errore:', error);
-                                        document.getElementById('classifica').innerHTML = `
+                                    classificaHTML += `</tbody></table>`;
+                                    classificaContainer.innerHTML = classificaHTML;
+                                })
+                                .catch(error => {
+                                    console.error('Errore:', error);
+                                    document.getElementById('classifica').innerHTML = `
                 <div class="error-message">
                     Errore nel caricamento della classifica: ${error.message}
                 </div>`;
-                                    });
-                            </script>
-                        </div>
+                                });
+                        </script>
+                    </div>
 
-                        <div id="news" name="tabcontent" class="news-container">
-                            <div class="news-content" id="news-content">
+                    <div id="news" name="tabcontent" class="news-container">
+                        <div class="news-content" id="news-content">
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
                                     // Elementi DOM
@@ -302,7 +305,8 @@
                                             this.classList.add('active');
 
                                             // Carica news per il tab selezionato
-                                            currentTab = this.dataset.tab;
+                                            // Verifica se il pulsante ha un attributo data-tab
+                                            currentTab = this.dataset.tab || 'all';
                                             currentPage = 1; // Resetta alla prima pagina quando cambi tab
                                             loadNews(currentTab, currentPage);
                                         });
@@ -310,13 +314,11 @@
 
                                     // Funzione per caricare le news
                                     function loadNews(tab, page) {
-                                        let url = '/endpoint/news/read.php?id_competizione?=' + <?php echo $id_competizione?> '&page=' + page + '&limit=' + itemsPerPage;
+                                        // Usa direttamente l'ID competizione dall'URL
+                                        let url = '/endpoint/news/read.php?id_competizione=' + <?php echo $id_competizione; ?> + '&page=' + page + '&limit=' + itemsPerPage;
 
-                                        // Aggiungi filtro competizione se non è "all"
-                                        if (tab !== 'all') {
-                                            const competitionId = tab.split('-')[1];
-                                            url += '&id_competizione=' + competitionId;
-                                        }
+                                        // Rimuoviamo questa parte che causa l'errore
+                                        // Non sovrascriviamo l'ID competizione che è già nell'URL
 
                                         fetch(url)
                                             .then(response => response.json())
@@ -427,15 +429,15 @@
                                         return new Date(dateString).toLocaleDateString('it-IT', options);
                                     }
                                 });
-                        </script>
-                            </div>
-                            <div class="news-pagination" id="news-pagination">
-                                <!-- La paginazione verrà generata dinamicamente -->
-                            </div>
-
+                            </script>
+                        </div>
+                        <div class="news-pagination" id="news-pagination">
+                            <!-- La paginazione verrà generata dinamicamente -->
                         </div>
 
                     </div>
+
+                </div>
 
 
             </div>

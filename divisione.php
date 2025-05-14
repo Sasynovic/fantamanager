@@ -49,6 +49,9 @@
     <div class="main-content">
         <header class="main-header">
             <div class="main-text-header">
+                <button class="back-button" onclick="window.history.back();">
+                    <img src="chevronL.svg" alt="Indietro" height="40px" width="40px">
+                </button>
                 <h1>
                     <?php
                     // Recupera l'ID divisione dall'URL
@@ -75,9 +78,6 @@
                     ?>
                 </h1>
                 <a href="admin/login.php">Admin</a>
-            </div>
-            <div class="header-content">
-                <p>Dettagli divisione</p>
             </div>
         </header>
 
