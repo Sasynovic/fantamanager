@@ -68,7 +68,7 @@
         }
 
         .error {
-            color: red;
+            color: white;
             font-weight: bold;
         }
 
@@ -238,6 +238,7 @@
 
             .select-container > select {
                 width: auto ;
+                margin-bottom: 15px;
             }
 
         }
@@ -273,6 +274,7 @@
             border: 1px solid #ddd;
             font-size: 14px;
             color: var(--blu-scurissimo);
+            width: 40%;
         }
 
         .calcola-container {
@@ -315,7 +317,7 @@
         .error {
             background-color: #a94442;
             border-color: #ebccd1;
-            color: #a94442;
+            color: white;
         }
 
         .finestra-credito{
@@ -369,11 +371,11 @@
     <div class="main-content">
         <header class="main-header">
             <div class="main-text-header">
+                <button class="back-button" onclick="window.history.back();">
+                    <img src="chevronL.svg" alt="Indietro" height="40px" width="40px">
+                </button>
                 <h1>Tool Scambi</h1>
                 <a href="admin/login.php">Admin</a>
-            </div>
-            <div class="header-content">
-                <p>Verifica la fattibilita' dello scambio</p>
             </div>
         </header>
 
@@ -430,21 +432,21 @@
 
                     <div class="credito-container">
                         <div class="credito-box">
-                            <h4>(Max: <span id="maxCreditoTeam1">0</span>)</h4>
+                            <h4>Credito massimo disponibile: <span id="maxCreditoTeam1">0</span></h4>
                             <div class="finestra-credito">
                                 <label>Subito :</label>
                                 <input type="hidden" id="subitoTeam1" value="10">
-                                <input type="number" id="creditoTeam1_1" min="0" placeholder="Credito Finestra 1">
+                                <input type="number" id="creditoTeam1_1" min="0" placeholder="Subito">
                             </div>
                             <div class="finestra-credito">
-                                <label>Metà stagione :</label>
+                                <label>Gennaio :</label>
                                 <input type="hidden" id="metaTeam1" value="8">
-                                <input type="number" id="creditoTeam1_2" min="0" placeholder="Credito Finestra 2">
+                                <input type="number" id="creditoTeam1_2" min="0" placeholder="Gennaio">
                             </div>
                             <div class="finestra-credito">
-                                <label>Fine stagione :</label>
+                                <label>Giugno :</label>
                                 <input type="hidden" id="fineTeam1" value="9">
-                                <input type="number" id="creditoTeam1_3" min="0" placeholder="Credito Finestra 3">
+                                <input type="number" id="creditoTeam1_3" min="0" max="200" placeholder="Giugno">
                             </div>
                             <div class="credito-totale">
                                 <label>Totale:</label>
@@ -453,21 +455,21 @@
                         </div>
 
                         <div class="credito-box">
-                            <h4>(Max: <span id="maxCreditoTeam2">0</span>)</h4>
+                            <h4>Credito massimo disponibile: <span id="maxCreditoTeam2">0</span></h4>
                             <div class="finestra-credito">
                                 <label>Subito :</label>
                                 <input type="hidden" id="subitoTeam2" value="10">
-                                <input type="number" id="creditoTeam2_1" min="0" placeholder="Credito Finestra 1">
+                                <input type="number" id="creditoTeam2_1" min="0" placeholder="Subito">
                             </div>
                             <div class="finestra-credito">
-                                <label>Metà stagione :</label>
+                                <label>Gennaio :</label>
                                 <input type="hidden" id="metaTeam2" value="8">
-                                <input type="number" id="creditoTeam2_2" min="0" placeholder="Credito Finestra 2">
+                                <input type="number" id="creditoTeam2_2" min="0" placeholder="Gennaio">
                             </div>
                             <div class="finestra-credito">
-                                <label>Fine stagione :</label>
+                                <label>Giugno :</label>
                                 <input type="hidden" id="fineTeam2" value="9">
-                                <input type="number" id="creditoTeam2_3" min="0" placeholder="Credito Finestra 3">
+                                <input type="number" id="creditoTeam2_3" min="0"  max="200" placeholder="Giugno">
                             </div>
                             <div class="credito-totale">
                                 <label>Totale:</label>
@@ -832,8 +834,8 @@
 
         const creditoOptions = [
             {value: '', text: 'Seleziona data di credito', disabled: true, selected: true},
-            {value: '8', text: 'Metà stagione'},
-            {value: '9', text: 'Fine stagione'}
+            {value: '8', text: 'Gennaio'},
+            {value: '9', text: 'Giugno'}
         ];
 
         creditoOptions.forEach(opt => {
@@ -1041,7 +1043,7 @@
         }
 
         // Verifica che i riscatti siano stati inseriti dove richiesto
-        const verificaRiscatti = (giocatori) => {
+        const verificaRiscatti = (giocatori, maxCrediti) => {
             return giocatori.every(g => {
                 if (g.tipoTrasferimentoText === 'Prestito con obbligo di riscatto') {
                     const riscattoInput = document.getElementById(`riscatto-input-${g.id}`);
@@ -1052,22 +1054,21 @@
                         return false;
                     }
 
-                    // Se è un credito a fine stagione (value="9"), verifica che non superi 200
+                    // Controllo per la finestra "Giugno" (value = '9')
                     const dataCreditoSelect = document.getElementById(`data-fine-credito-${g.id}`);
-                    if (dataCreditoSelect && dataCreditoSelect.value === '9' && riscatto > 200) {
-                        alert(`Il valore del riscatto non può superare 200 per la finestra "Fine stagione"`);
+                    if (dataCreditoSelect && dataCreditoSelect.value === '9' && riscatto > maxCrediti) {
                         return false;
                     }
-
                     return true;
                 }
                 return true;
             });
         };
 
-        if (!verificaRiscatti(giocatoriSquadra1) || !verificaRiscatti(giocatoriSquadra2)) {
+
+        if (!verificaRiscatti(giocatoriSquadra1, maxCreditoTeam1) || !verificaRiscatti(giocatoriSquadra2, maxCreditoTeam1)) {
             risultatoEl.className = 'risultato-trattativa error';
-            risultatoEl.textContent = 'Inserisci un valore di riscatto valido per i prestiti con obbligo di riscatto.';
+            risultatoEl.textContent = 'Inserisci un valore che sia compreso tra 1 ed il massimo credito disponibile per gli obblighi di riscatto di Giugno.';
             return;
         }
 
@@ -1193,6 +1194,55 @@
                         );
                     });
 
+                    // Processa i crediti
+                    const creditiPromises = [];
+                    const creditiTeam1 = creditoTeam1.map((credito, index) => ({
+                        id_squadra: idSquadra1,
+                        id_trattativa: idTrattativa,
+                        id_fm: index + 8, // 8 per gennaio, 9 per giugno
+                        credito: credito
+                    }));
+                    const creditiTeam2 = creditoTeam2.map((credito, index) => ({
+                        id_squadra: idSquadra2,
+                        id_trattativa: idTrattativa,
+                        id_fm: index + 8, // 8 per gennaio, 9 per giugno
+                        credito: credito
+                    }));
+
+                    creditiTeam1.forEach(credito => {
+                        creditiPromises.push(
+                            fetch('endpoint/credito/create.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(credito)
+                            }).then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`Errore HTTP credito: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                        );
+                    });
+
+                    creditiTeam2.forEach(credito => {
+                        creditiPromises.push(
+                            fetch('endpoint/credito/create.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(credito)
+                            }).then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`Errore HTTP credito: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                        );
+                    });
+
                     try {
                         // Attendi tutte le risposte delle associazioni
                         const associazioniJson = await Promise.all(associazioniPromises);
@@ -1204,7 +1254,7 @@
                             console.error("Associazioni fallite:", failedAssociations);
                             throw new Error(`${failedAssociations.length} associazioni non sono state registrate correttamente`);
                         } else {
-                            alert('Trattativa e associazioni registrate con successo! Il tuo id trattativa e' + idTrattativa);
+                            alert('Trattativa e associazioni registrate con successo! Il tuo id trattativa è ' + idTrattativa);
                             window.location.reload();
                         }
                     } catch (associationError) {
@@ -1235,9 +1285,11 @@
             });
         };
 
+        const risultatoEl = document.getElementById('risultatoTrattativa');
+        risultatoEl.style.display = 'block';
+
         if (!verificaTipiTrasferimento(datiTrattativa.squadra1.giocatori) ||
             !verificaTipiTrasferimento(datiTrattativa.squadra2.giocatori)) {
-            const risultatoEl = document.getElementById('risultatoTrattativa');
             risultatoEl.className = 'risultato-trattativa error';
             risultatoEl.innerHTML = 'Seleziona il tipo di trasferimento per tutti i giocatori';
             return false;
@@ -1249,7 +1301,8 @@
                 if (g.tipoTrasferimentoText === 'Prestito con obbligo di riscatto') {
                     const riscattoInput = document.getElementById(`riscatto-input-${g.id}`);
                     const riscatto = riscattoInput ? parseFloat(riscattoInput.value) : null;
-                    if (riscatto === null || riscatto <= 0) {
+
+                    if (riscatto === null || isNaN(riscatto) || riscatto <= 0) {
                         return false;
                     }
                 }
@@ -1259,44 +1312,103 @@
 
         if (!verificaRiscatti(datiTrattativa.squadra1.giocatori) ||
             !verificaRiscatti(datiTrattativa.squadra2.giocatori)) {
-            const risultatoEl = document.getElementById('risultatoTrattativa');
             risultatoEl.className = 'risultato-trattativa error';
             risultatoEl.innerHTML = 'Inserisci un valore di riscatto valido per tutti i prestiti con obbligo di riscatto';
             return false;
         }
 
-        // 3. Calcola i crediti totali per ogni squadra e verifica che non superino il massimo
-        const calcolaCreditiTotali = (teamPrefix) => {
+        // 3. Calcola i riscatti che ogni squadra riceverà
+        const calcolaRiscattiRicevuti = (isTeam1) => {
+            let riscatti = 0;
+            const squadraOpposta = isTeam1 ? datiTrattativa.squadra2 : datiTrattativa.squadra1;
+
+            squadraOpposta.giocatori.forEach(giocatore => {
+                if (giocatore.tipoTrasferimentoText === 'Prestito con obbligo di riscatto') {
+                    const riscattoInput = document.getElementById(`riscatto-input-${giocatore.id}`);
+                    const riscatto = riscattoInput ? parseFloat(riscattoInput.value) : 0;
+                    if (!isNaN(riscatto) && riscatto > 0) {
+                        riscatti += riscatto;
+                        console.log(`[RISCATTI RICEVUTI] +${riscatto} da giocatore ${giocatore.id} (${isTeam1 ? 'per Team1' : 'per Team2'})`);
+                    }
+                }
+            });
+
+            console.log(`[RISCATTI RICEVUTI] Totale riscatti ricevuti ${isTeam1 ? 'per Team1' : 'per Team2'}: ${riscatti}`);
+
+            return riscatti;
+        };
+
+        // Calcola i riscatti per ogni squadra
+        const riscattiTeam1 = calcolaRiscattiRicevuti(true);
+        const riscattiTeam2 = calcolaRiscattiRicevuti(false);
+
+        // 3.1 Calcola i crediti totali per ogni squadra includendo i riscatti nel credito3
+        const calcolaCreditiTotali = (teamPrefix, riscatti) => {
             const credito1 = parseFloat(document.getElementById(`${teamPrefix}_1`).value) || 0;
             const credito2 = parseFloat(document.getElementById(`${teamPrefix}_2`).value) || 0;
             const credito3 = parseFloat(document.getElementById(`${teamPrefix}_3`).value) || 0;
-            return credito1 + credito2 + credito3;
+
+            // Non aggiungiamo qui i riscatti al credito3, li manterremo separati per la verifica specifica
+            return {
+                credito1: credito1,
+                credito2: credito2,
+                credito3: credito3,
+                riscatti: riscatti,
+                totale: credito1 + credito2 + credito3 + riscatti
+            };
         };
 
-        const creditoTotaleTeam1 = calcolaCreditiTotali('creditoTeam1');
-        const creditoTotaleTeam2 = calcolaCreditiTotali('creditoTeam2');
+        // Calcola i crediti totali mantenendo i riscatti separati
+        const creditiTeam1 = calcolaCreditiTotali('creditoTeam1', riscattiTeam1);
+        const creditiTeam2 = calcolaCreditiTotali('creditoTeam2', riscattiTeam2);
 
-        // Verifica limiti di credito
-        if (creditoTotaleTeam1 > maxCreditoTeam1) {
-            const risultatoEl = document.getElementById('risultatoTrattativa');
-            risultatoEl.className = 'risultato-trattativa error';
-            risultatoEl.innerHTML = `Il credito totale della Squadra 1 (${creditoTotaleTeam1}) supera il massimo consentito (${maxCreditoTeam1})`;
+        // 4. Verifica specifica per il credito di giugno (finestra 3) + riscatti di giugno
+        const verificaCreditoGiugnoConRiscatti = (teamName, creditiTeam, isTeam1) => {
+            let errore = false;
+            const squadraOpposta = isTeam1 ? datiTrattativa.squadra2 : datiTrattativa.squadra1;
+            const squadraOppostaMaxCredito = isTeam1 ? maxCreditoTeam2 : maxCreditoTeam1;
+
+            // Calcoliamo i riscatti di giugno separatamente
+            let riscattiGiugno = 0;
+
+            squadraOpposta.giocatori.forEach(g => {
+                if (g.tipoTrasferimentoText === 'Prestito con obbligo di riscatto') {
+                    const riscattoInput = document.getElementById(`riscatto-input-${g.id}`);
+                    const riscatto = riscattoInput ? parseFloat(riscattoInput.value) : 0;
+
+                    const riscattoSelect = document.getElementById(`data-fine-credito-${g.id}`);
+                    const riscattoPeriodo = riscattoSelect ? riscattoSelect.value : null;
+
+                    // Somma solo i riscatti di giugno (value = "9")
+                    if (riscattoPeriodo === "9" && riscatto > 0) {
+                        riscattiGiugno += riscatto;
+                    }
+                }
+            });
+
+            // Ora verifichiamo se la somma del credito di giugno e i riscatti di giugno supera il massimo
+            const somma = creditiTeam.credito3 + riscattiGiugno;
+
+            if (somma > squadraOppostaMaxCredito) {
+                errore = true;
+                risultatoEl.className = 'risultato-trattativa error';
+                risultatoEl.innerHTML = `La somma tra credito di Giugno e i riscatti ricevuti di Giugno per la ${teamName} supera ${squadraOppostaMaxCredito} (totale: ${somma.toFixed(2)}). Trattativa non valida.`;
+            }
+
+            return !errore;
+        };
+
+        // Verifica i crediti di giugno
+        if (
+            !verificaCreditoGiugnoConRiscatti('Squadra 1', creditiTeam1, true) ||
+            !verificaCreditoGiugnoConRiscatti('Squadra 2', creditiTeam2, false)
+        ) {
             return false;
         }
 
-        if (creditoTotaleTeam2 > maxCreditoTeam2) {
-            const risultatoEl = document.getElementById('risultatoTrattativa');
-            risultatoEl.className = 'risultato-trattativa error';
-            risultatoEl.innerHTML = `Il credito totale della Squadra 2 (${creditoTotaleTeam2}) supera il massimo consentito (${maxCreditoTeam2})`;
-            return false;
-        }
-
-        // 4. Calcola il valore totale per ogni squadra (inclusi crediti)
+        // 5. Calcola il valore totale per ogni squadra (esclusi i riscatti che sono già nei crediti)
         const calcolaValoreSquadra = (squadra, isTeam1) => {
             let valoreTotale = 0;
-
-            // Aggiungi il valore dei crediti
-            valoreTotale = calcolaCreditiTotali(isTeam1 ? 'creditoTeam1' : 'creditoTeam2');
 
             // Aggiungi il valore dei giocatori
             squadra.giocatori.forEach(giocatore => {
@@ -1315,9 +1427,8 @@
                         valoreTotale += fvm;
                         break;
                     case 'Prestito con obbligo di riscatto':
-                        const riscattoInput = document.getElementById(`riscatto-input-${giocatore.id}`);
-                        const riscatto = riscattoInput ? parseFloat(riscattoInput.value) : 0;
-                        valoreTotale += costo + fvm + riscatto;
+                        // Il riscatto è già stato aggiunto ai crediti della squadra opposta
+                        valoreTotale += costo + fvm;
                         break;
                     default:
                         valoreTotale += fvm;
@@ -1327,10 +1438,15 @@
             return valoreTotale;
         };
 
-        const valoreSquadra1 = calcolaValoreSquadra(datiTrattativa.squadra1, true);
-        const valoreSquadra2 = calcolaValoreSquadra(datiTrattativa.squadra2, false);
+        // Calcola i valori base delle squadre (senza crediti)
+        const valoreBaseSquadra1 = calcolaValoreSquadra(datiTrattativa.squadra1, true);
+        const valoreBaseSquadra2 = calcolaValoreSquadra(datiTrattativa.squadra2, false);
 
-        // 5. Determina quale squadra ha il valore più alto (target)
+        // Il valore totale include: valore base + crediti (che già contengono i riscatti)
+        const valoreSquadra1 = valoreBaseSquadra1 + creditiTeam1.totale;
+        const valoreSquadra2 = valoreBaseSquadra2 + creditiTeam2.totale;
+
+        // 6. Determina quale squadra ha il valore più alto (target)
         const target = valoreSquadra1 > valoreSquadra2 ?
             { squadra: 'squadra1', valore: valoreSquadra1 } :
             { squadra: 'squadra2', valore: valoreSquadra2 };
@@ -1339,29 +1455,28 @@
             { squadra: 'squadra2', valore: valoreSquadra2 } :
             { squadra: 'squadra1', valore: valoreSquadra1 };
 
-        // 6. Calcola il range accettabile (25% del valore target)
+        // 7. Calcola il range accettabile (25% del valore target)
         const range = target.valore * 0.25;
         const minimoAccettabile = target.valore - range;
         const massimoAccettabile = target.valore + range;
 
-        // 7. Verifica se il valore dell'altra squadra è nel range
+        // 8. Verifica se il valore dell'altra squadra è nel range
         const isValido = other.valore >= minimoAccettabile && other.valore <= massimoAccettabile;
 
-        // 8. Prepara il risultato per l'output
-        const risultatoEl = document.getElementById('risultatoTrattativa');
-        risultatoEl.style.display = 'block';
-
+        // 9. Prepara il risultato per l'output
         if (isValido) {
             risultatoEl.className = 'risultato-trattativa success';
             risultatoEl.innerHTML = `
             <p>Trattativa VALIDA!</p>
             <p><strong>Squadra 1:</strong>
                 Valore totale: ${valoreSquadra1.toFixed(2)}
-                (Crediti: ${creditoTotaleTeam1.toFixed(2)}/${maxCreditoTeam1.toFixed(2)})
+                (Crediti: ${(creditiTeam1.credito1 + creditiTeam1.credito2 + creditiTeam1.credito3).toFixed(2)},
+                 Riscatti: ${creditiTeam1.riscatti.toFixed(2)})
             </p>
             <p><strong>Squadra 2:</strong>
                 Valore totale: ${valoreSquadra2.toFixed(2)}
-                (Crediti: ${creditoTotaleTeam2.toFixed(2)}/${maxCreditoTeam2.toFixed(2)})
+                (Crediti: ${(creditiTeam2.credito1 + creditiTeam2.credito2 + creditiTeam2.credito3).toFixed(2)},
+                 Riscatti: ${creditiTeam2.riscatti.toFixed(2)})
             </p>
             <p>Range accettabile: da ${minimoAccettabile.toFixed(2)} a ${massimoAccettabile.toFixed(2)}</p>
             <p>La differenza è nel range del 25%</p>
@@ -1372,11 +1487,13 @@
             <p>Trattativa NON VALIDA!</p>
             <p><strong>Squadra 1:</strong>
                 Valore totale: ${valoreSquadra1.toFixed(2)}
-                (Crediti: ${creditoTotaleTeam1.toFixed(2)}/${maxCreditoTeam1.toFixed(2)})
+                (Crediti: ${(creditiTeam1.credito1 + creditiTeam1.credito2 + creditiTeam1.credito3).toFixed(2)},
+                 Riscatti: ${creditiTeam1.riscatti.toFixed(2)})
             </p>
             <p><strong>Squadra 2:</strong>
                 Valore totale: ${valoreSquadra2.toFixed(2)}
-                (Crediti: ${creditoTotaleTeam2.toFixed(2)}/${maxCreditoTeam2.toFixed(2)})
+                (Crediti: ${(creditiTeam2.credito1 + creditiTeam2.credito2 + creditiTeam2.credito3).toFixed(2)},
+                 Riscatti: ${creditiTeam2.riscatti.toFixed(2)})
             </p>
             <p>Range accettabile: da ${minimoAccettabile.toFixed(2)} a ${massimoAccettabile.toFixed(2)}</p>
             <p>La differenza è FUORI dal range del 25%</p>
