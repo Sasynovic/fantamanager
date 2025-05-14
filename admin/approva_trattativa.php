@@ -8,12 +8,97 @@ require_once 'heading.php';
 $nomeSezione = "trattative"
 ?>
 
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione <?php echo $nomeSezione?></title>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        .collapsible {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border-left: 3px solid #007bff;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            color: #333;
+            transition: all 0.3s ease-in-out;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #edit-form {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        #edit-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        #edit-form .btn-group {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .collapsible.visible {
+            display: flex;
+        }
+
+        .btn-toggle {
+            background-color: #e9ecef;
+            color: #333;
+            border: 1px solid #ccc;
+            margin: 6px 0;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-toggle:hover {
+            background-color: #dee2e6;
+        }
+        .operazione{
+            display: flex
+        ;
+            flex-direction: column;
+            border-radius: 10px;
+            box-shadow: 2px 1px 3px  2px var(--secondary);
+            padding: 10px;
+        }
+
+        /* Stile per l'editor Quill */
+        #editor-container {
+            height: 200px;
+            margin-bottom: 15px;
+        }
+        .ql-editor {
+            min-height: 150px;
+        }
+    </style>
+</head>
+<body>
 <div class="app-container">
     <div class="header">
         <h1>Gestione <?php echo $nomeSezione?></h1>
+        <button id="toggle-add-form" class="btn btn-primary" style="display: none">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 8px;">
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+            </svg>
+            Nuova <?php echo $nomeSezione?>
+        </button>
     </div>
 
-    <div class="card-all">
+    <div class="card-all" id="card-all">
         <div class="filter-section">
             <div class="form-group">
                 <label for="filter-card"><?php echo $nomeSezione?> da mostrare</label>
@@ -39,51 +124,56 @@ $nomeSezione = "trattative"
 
     <div class="card hidden" id="add-form">
         <div class="card-header">
-            <h2 class="card-title">Aggiungi <?php echo $nomeSezione?></h2>
+            <h2 class="card-title">Modifica <?php echo $nomeSezione?></h2>
         </div>
 
         <div class="form-group">
-            <label for="nome_squadra">Nome squadra</label>
-            <input type="text" name="nome_squadra" placeholder="Inserisci nome squadra">
-        </div>
-
-        <div class="form-group">
-            <label for="id_pres">Selezione presidente</label>
-            <select id="id_pres" name="id_pres" class="form-control">
-                <option value="" disabled selected>Seleziona un presidente</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="id_vice">Selezione presidente</label>
-            <select id="id_vice" name="id_vice" class="form-control">
-                <option value="NULL" selected>Nessun vice</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="id_stadio">Selezione uno stadio</label>
-            <select id="id_stadio" name="id_stadio" class="form-control">
-                <option value="" selected disabled>Seleziona uno stadio</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="valore_fvm">Valore fvm</label>
-            <input type="text" name="valore_fvm" placeholder="Valore fvm squadra">
+            <label for="editor-container">Descrizione</label>
+            <div id="editor-container"></div>
+            <input type="hidden" id="descrizione" name="descrizione">
         </div>
 
         <div class="checkbox-label">
-            <span>In vendita</span>
+            <span>Stato</span>
             <label class="toggle-switch">
-                <input type="checkbox" name="vendita" id="vendita">
+                <input type="checkbox" name="ufficializzata" id="ufficializzata-edit" checked>
                 <span class="toggle-slider"></span>
             </label>
         </div>
 
         <div class="btn-group">
-            <button id="submit" class="btn btn-primary">Inserisci <?php echo $nomeSezione?></button>
+            <button id="submit" class="btn btn-primary">📰Pubblica</button>
             <button id="cancel-form" class="btn btn-outline">Annulla</button>
+        </div>
+    </div>
+
+    <div class="card hidden" id="edit-form">
+        <div class="card-header">
+            <h2 class="card-title">Modifica <?php echo $nomeSezione?></h2>
+        </div>
+
+        <div class="form-group">
+            <label for="id-edit"></label>
+            <input type="hidden" id="id-edit" name="id_edit" readonly>
+        </div>
+
+        <div class="checkbox-label">
+            <span>Ufficializza</span>
+            <label class="toggle-switch">
+                <input type="checkbox" name="ufficializzata" id="ufficializzata" checked>
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label for="editor-container">Descrizione</label>
+            <div id="editor-container"></div>
+            <input type="hidden" id="contenuto-edit" name="contenuto_edit">
+        </div>
+
+        <div class="btn-group">
+            <button id="submit-edit" class="btn btn-primary" onclick="updateNews()">📰Modifica</button>
+            <button id="cancel-edit-form" class="btn btn-outline" onclick="closeFormModifica()">Annulla</button>
         </div>
     </div>
 
@@ -91,13 +181,32 @@ $nomeSezione = "trattative"
 
 </div>
 
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 <script src="CRUDManager.js" defer></script>
 
 <script>
-    let crudManager;
+    const quill = new Quill('#editor-container', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, false] }],
+                ['bold', 'italic', 'underline'],
+                ['link'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                ['clean'],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'align': [] }],
+                ['blockquote', 'code-block']
+            ]
+        },
+        placeholder: 'Scrivi la descrizione della trattativa qui...'
+    });
 
+    let ArrayAssociazioni = [];
+
+    let crudManager;
     document.addEventListener('DOMContentLoaded', function() {
-        // Inizializza il gestore CRUD per i "presidenti"
+        // Inizializza il gestore CRUD per i "trattative"
         crudManager = new CRUDManager('<?php echo $nomeSezione?>', 'https://barrettasalvatore.it', {
             // Override degli elementi DOM, personalizzando i nomi degli elementi
             cardList: document.getElementById('card-list'),
@@ -106,6 +215,8 @@ $nomeSezione = "trattative"
             searchButton: document.getElementById('search-button'),
             toggleAddForm: document.getElementById('toggle-add-form'),
             addForm: document.getElementById('add-form'),
+            toggleEditForm: document.getElementById('toggle-edit-form'),
+            editForm: document.getElementById('edit-form'),
             cancelForm: document.getElementById('cancel-form'),
             submitForm: document.getElementById('submit'),
             pagination: document.getElementById('pagination'),
@@ -115,73 +226,64 @@ $nomeSezione = "trattative"
             renderItem: function(item) {
                 const data = formatDate(item.data_creazione);
                 const uniqueId = `operations-${item.id}`;
+                const creditoId = `credito-${item.id}`;
 
-                setTimeout(() => caricaOperazioni(item.id, uniqueId), 0); // asincrono dopo il rendering
+                setTimeout(() => {
+                    caricaOperazioni(item.id, uniqueId);
+                    caricaCrediti(item.id, creditoId);
+                }, 0); // asincrono dopo il rendering
 
-
-                // Personalizzazione del rendering di ciascun presidente
-                return ` <div class="card-meta">
-                                <h3>ID Tratttiva: ${item.id}</h3>
+                return `
+                            <div class="card-meta">
+                                <h3>ID Trattativa: ${item.id}</h3>
                                 <span>Squadra 1: ${item.nome_squadra1}</span>
                                 <span>Squadra 2: ${item.nome_squadra2}</span>
                                 <span>Data: ${data}</span>
+                                <div>Descrizione: ${item.descrizione || 'Nessuna descrizione'}</div>
+                                <div>Stato: ${item.ufficializzata ? '<span style="color:green">Ufficializzata</span>' : '<span style="color:orange">In corso</span>'}</div>
                             </div>
-                            <div class="operations" id="${uniqueId}">
+
+                            <button class="btn btn-toggle" onclick="toggleVisibility('${uniqueId}')">Mostra/Nascondi Operazioni</button>
+                            <div class="operations collapsible" id="${uniqueId}">
                                 <em>Caricamento operazioni...</em>
-                            </div><div class="credito-container" id="credito-container">
+                            </div>
+
+                            <button class="btn btn-toggle" onclick="toggleVisibility('${creditoId}')">Mostra/Nascondi Crediti</button>
+                            <div class="credito-container collapsible" id="${creditoId}">
                                 <em>Caricamento crediti...</em>
                             </div>
 
-                <div class="card-actions">
-                    <button class="btn btn-warning edit-btn" onclick="crudManager.editItem(${item.id})">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 6px;">
-                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                        </svg>
-                        Modifica
-                    </button>
-                    <button class="btn btn-danger" onclick="crudManager.deleteItem(${item.id})">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 6px;">
-                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                        </svg>
-                        Elimina
-                    </button>
-                </div>`;
-
-
-            },
-            beforeCreate: function(data) {
-                console.log('Dati prima della creazione:', data);
-                // Qui è possibile validare o manipolare i dati prima dell'invio
-                return true; // Procedi con la creazione
+                            <div class="card-actions">
+                                <button class="btn btn-warning edit-btn" onclick="editItem(${item.id})">
+                                    ✏️ Modifica
+                                </button>
+                                <button class="btn btn-danger" onclick="crudManager.deleteItem(${item.id})">
+                                    🗑️ Elimina
+                                </button>
+                            </div>`;
             },
             afterLoad: function(items) {
                 console.log(`Caricati ${items.length} <?php echo $nomeSezione?>`);
             }
         });
 
-        // Inizializza i pulsanti del form
-        if (document.getElementById('toggle-add-form')) {
-            document.getElementById('toggle-add-form').addEventListener('click', function() {
-                crudManager.showAddForm();
-            });
-        }
-
-        if (document.getElementById('cancel-form')) {
-            document.getElementById('cancel-form').addEventListener('click', function(e) {
-                e.preventDefault();
-                crudManager.hideAddForm();
-            });
-        }
-
-        // Carica i dati all'avvio
-        crudManager.loadData();
-    });
-
-    // Funzione globale per editare un elemento (necessaria per i pulsanti di modifica)
-    function editItem(id) {
-        crudManager.editItem(id);
+    // Inizializza i pulsanti del form
+    if (document.getElementById('toggle-add-form')) {
+        document.getElementById('toggle-add-form').addEventListener('click', function() {
+            crudManager.showAddForm();
+        });
     }
+
+    if (document.getElementById('cancel-form')) {
+        document.getElementById('cancel-form').addEventListener('click', function(e) {
+            e.preventDefault();
+            crudManager.hideAddForm();
+        });
+    }
+
+    // Carica i dati all'avvio
+    crudManager.loadData();
+    });
 
     function formatDate(dateStr) {
         const date = new Date(dateStr);
@@ -193,7 +295,6 @@ $nomeSezione = "trattative"
             minute: '2-digit'
         });
     }
-
     function caricaOperazioni(id, containerId) {
         // Caricamento operazioni
         fetch('../endpoint/operazioni/read.php?id_trattativa=' + id)
@@ -203,7 +304,7 @@ $nomeSezione = "trattative"
                 container.innerHTML = '';
 
                 const operazioni = data.operazioni;
-                if (Array.isArray(operazioni)) {
+                if (Array.isArray(operazioni) && operazioni.length > 0) {
                     operazioni.forEach(op => {
                         const {
                             trattativa,
@@ -223,13 +324,13 @@ $nomeSezione = "trattative"
                         const div = document.createElement('div');
                         div.className = 'operazione';
                         div.innerHTML = `
-                        <h3>Operazione ID: ${op.id_operazione}</h3>
-                        <p><b>${calciatore.nome}</b> si muove dalla squadra <b>${trattativa.nome_squadra_1}</b> alla squadra <b>${trattativa.nome_squadra_2}</b></p>
-                        <p><b>Movimenti totali calciatore:</b> ${calciatore.n_movimenti}</p>
-                        <p>${scambiatoText}</p>
-                        <p><b>Tipo operazione:</b> ${scambio.metodo + ' ' + finestra_mercato.nome}</p>
-                        ${valoreRiscattoText}
-                    `;
+                    <h3>Operazione ID: ${op.id_operazione}</h3>
+                    <p><b>${calciatore.nome}</b> si muove dalla squadra <b>${trattativa.nome_squadra_1}</b> alla squadra <b>${trattativa.nome_squadra_2}</b></p>
+                    <p><b>Movimenti totali calciatore:</b> ${calciatore.n_movimenti}</p>
+                    <p>${scambiatoText}</p>
+                    <p><b>Tipo operazione:</b> ${scambio.metodo + ' ' + finestra_mercato.nome}</p>
+                    ${valoreRiscattoText}
+                `;
                         container.appendChild(div);
                     });
                 } else {
@@ -241,48 +342,188 @@ $nomeSezione = "trattative"
                 container.textContent = "Errore nel caricamento delle operazioni.";
                 console.error(err);
             });
+    }
 
-        // Caricamento crediti
+    function caricaCrediti(id, containerId) {
         fetch('../endpoint/credito/read.php?id_trattativa=' + id)
             .then(response => response.json())
             .then(data => {
-                const creditoContainer = document.getElementById('credito-container');
+                const creditoContainer = document.getElementById(containerId);
                 creditoContainer.innerHTML = '';
 
                 if (Array.isArray(data.credito) && data.credito.length > 0) {
-                    const creditiPerSquadra = {};
-
-                    data.credito.forEach(row => {
-                        if (!creditiPerSquadra[row.nome_squadra]) {
-                            creditiPerSquadra[row.nome_squadra] = [];
-                        }
-                        creditiPerSquadra[row.nome_squadra].push({
-                            finestra: row.fm_nome,
-                            credito: row.credito
-                        });
-                    });
-
-                    for (const [squadra, crediti] of Object.entries(creditiPerSquadra)) {
+                    data.credito.forEach(credito => {
                         const div = document.createElement('div');
-                        div.className = 'blocco-credito';
-                        div.innerHTML = `<h4>${squadra}</h4>`;
-
-                        crediti.forEach(c => {
-                            div.innerHTML += `<p><b>${c.finestra}:</b> ${c.credito} crediti</p>`;
-                        });
-
+                        div.className = 'credito';
+                        div.innerHTML = `
+                    <p><b>Squadra:</b> ${credito.nome_squadra}</p>
+                    <p><b>Finestra di mercato:</b> ${credito.fm_nome}</p>
+                    <p><b>Importo:</b> ${credito.credito} crediti</p>
+                    <hr>`;
                         creditoContainer.appendChild(div);
-                    }
+                    });
                 } else {
-                    creditoContainer.textContent = "Nessun credito registrato per questa trattativa.";
+                    creditoContainer.textContent = "Nessun credito registrato.";
                 }
             })
             .catch(err => {
-                console.error(err);
-                const creditoContainer = document.getElementById('credito-container');
+                const creditoContainer = document.getElementById(containerId);
                 creditoContainer.textContent = "Errore nel caricamento dei crediti.";
+                console.error(err);
+            });
+    }
+
+
+
+    function toggleVisibility(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.toggle('visible');
+        }
+    }
+
+    function editItem(id) {
+        const urlSingleTrattativa = `${window.location.protocol}//${window.location.host}/endpoint/<?php echo $nomeSezione ?>/read.php?id=${id}`;
+        fetch(urlSingleTrattativa)
+            .then(response => response.json())
+            .then(data => {
+                // Modifica qui: prendi il primo elemento dell'array news
+                const trattative = data.trattative[0]; // Aggiungi [0] per accedere al primo elemento dell'array
+                if (trattative) {
+                    apriFormModifica(trattative);
+                } else {
+                    console.error('Elemento non trovato');
+                }
+            })
+            .catch(error => console.error('Errore nel caricamento dell\'elemento:', error));
+    }
+
+    function apriFormModifica(dati) {
+        // Popola i campi
+        document.getElementById('id-edit').value = dati.id || '';
+        document.getElementById('ufficializzata').checked = dati.ufficializzata === "1" || dati.ufficializzata === 1 || dati.ufficializzata === true;
+
+        // // Mostra il form di modifica
+        document.getElementById('card-all').classList.add('hidden');
+        document.getElementById('pagination').classList.add('hidden');
+        document.getElementById('edit-form').classList.remove('hidden');
+    }
+
+    function closeFormModifica() {
+        document.getElementById('card-all').classList.remove('hidden');
+        document.getElementById('pagination').classList.remove('hidden');
+        document.getElementById('edit-form').classList.add('hidden');
+    }
+
+    let ArrayOperazioni = [];
+    let credito1= [];
+    let credito2= [];
+
+    function updateNews() {
+        const id = document.getElementById('id-edit').value;
+        const ufficializzata = document.getElementById('ufficializzata').checked ? 1 : 0;
+        const descrizione = quill.root.innerHTML;
+
+        const dataTrattativa = {
+            ufficializzata: ufficializzata,
+            descrizione: descrizione
+        };
+
+        console.log('Dati da inviare:', dataTrattativa);
+
+        // Prima aggiorniamo la trattativa
+        fetch(`../endpoint/<?php echo $nomeSezione ?>/update.php?id=${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataTrattativa)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(responseData => {
+                console.log('Aggiornamento avvenuto con successo:', responseData);
+
+                // Solo dopo un aggiornamento riuscito e se ufficializzata è 1, procediamo con le operazioni
+                if (ufficializzata === 1) {
+                    console.log('Scarico le operazioni');
+
+                    // Definiamo ArrayOperazioni qui dentro
+                    let ArrayOperazioni = [];
+                    // sommiamo i crediti delle operazioni di giugno per ogni squadra
+                    let credito1 = 0;
+                    let credito2 = 0;
+
+                    return fetch(`../endpoint/operazioni/read.php?id_trattativa=${id}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Errore nella risposta del server');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            let Operazioni = data.operazioni || [];
+                            Operazioni.forEach(op => {
+                                const {
+                                    trattativa,
+                                    calciatore,
+                                    scambio
+                                } = op;
+
+                                ArrayOperazioni.push({
+                                    id_associazione: parseInt(scambio.id_associazione),
+                                    id_squadra: trattativa.id_squadra_r,
+                                    scambiato: true,
+                                    n_movimenti: calciatore.n_movimenti + 1
+                                });
+                            });
+
+                            console.log('Array operazioni:', ArrayOperazioni);
+
+                            // Uso Promise.all per attendere che tutte le chiamate di aggiornamento siano completate
+                            const updatePromises = ArrayOperazioni.map(operazione => {
+                                const id_associazione = operazione.id_associazione;
+                                const id_squadra = operazione.id_squadra;
+                                const scambiato = operazione.scambiato;
+                                const n_movimenti = operazione.n_movimenti;
+
+                                console.log('Aggiorno:', operazione);
+
+                                return fetch(`../endpoint/associazioni/update.php?id=${id_associazione}`, {
+                                    method: 'PUT',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ id_squadra, scambiato, n_movimenti })
+                                })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error('Errore nella risposta del server');
+                                        }
+                                        return response.json();
+                                    });
+                            });
+
+                            return Promise.all(updatePromises);
+                        })
+                        .then(results => {
+                            console.log('Tutti gli aggiornamenti completati con successo', results);
+                            alert('Operazione completata con successo!');
+                            window.location.reload();
+                        });
+                }
+            })
+            .catch(error => {
+                console.error('Errore durante l\'operazione:', error.message || error);
+                alert('Si è verificato un errore: ' + (error.message || error));
             });
     }
 
 
 </script>
+</body>
+</html>
