@@ -12,17 +12,21 @@
     --blu-scuro: #152137;
     --blu: #294582;
     --accento: #3c74f5;
+    --oro: #ffcc00;
+
+    --verde: #63c623;
+    --rosso: #f21a3c;
 }
 
 body {
-    background-color: var(--blu-scurissimo);
+    background: var(--blu-scurissimo) url("public/background/pattern.svg") repeat;
+    z-index: 0; /* Modificato */
 }
 
 .main-container {
     display: flex;
     flex-direction: row;
     height: 100vh;
-    background-color: var(--blu-scurissimo);
     overflow: hidden;
 }
 
@@ -90,17 +94,21 @@ body {
     position: relative; /* Aggiunto */
 }
 
-.main-body::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url("https://barrettasalvatore.it/admin/pattern.svg") repeat;
-    opacity: 0.3;
-    z-index: 0; /* Modificato */
+.header-content{
+    align-self: center;
 }
+
+/*.main-body::before {*/
+/*    content: "";*/
+/*    position: absolute;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    background: url("https://barrettasalvatore.it/admin/pattern.svg") repeat;*/
+/*    opacity: 0.3;*/
+/*    z-index: 0; !* Modificato *!*/
+/*}*/
 
 .main-body-content {
     height: 100%;
