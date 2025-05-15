@@ -51,9 +51,6 @@
                             <h1>Dashboard</h1>
                             <a href="admin/login.php">Admin</a>
                         </div>
-                        <div class="header-content">
-                            <p>Elenco divisioni</p>
-                        </div>
                     </header>
 
                     <div class="main-body">
