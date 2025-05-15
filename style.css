@@ -81,7 +81,6 @@ body {
 
 .main-header h1 {
     font-size: 2rem;
-    margin-bottom: 5px;
 }
 
 .header-content p {
@@ -97,18 +96,6 @@ body {
 .header-content{
     align-self: center;
 }
-
-/*.main-body::before {*/
-/*    content: "";*/
-/*    position: absolute;*/
-/*    top: 0;*/
-/*    left: 0;*/
-/*    width: 100%;*/
-/*    height: 100%;*/
-/*    background: url("https://barrettasalvatore.it/admin/pattern.svg") repeat;*/
-/*    opacity: 0.3;*/
-/*    z-index: 0; !* Modificato *!*/
-/*}*/
 
 .main-body-content {
     height: 100%;
@@ -225,11 +212,14 @@ body {
 }
 
 .back-button{
-    height: 40px;
-    width: 40px;
     background: none;
     border: none;
     cursor: pointer;
+}
+
+.back-button img{
+    width: 30px;
+    height: 30px;
 }
 
 .chevron-left img:hover,
@@ -241,7 +231,7 @@ body {
 .main-text-header{
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: stretch;
 }
 
 /* Stili per Swiper nella sezione principale */
@@ -459,28 +449,6 @@ body {
     border: 1px solid #F44336;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .competizioni-table {
-        width: 95%;
-        font-size: 0.9rem;
-    }
-
-    .competizioni-table__header-cell,
-    .competizioni-table__cell {
-        padding: 12px 8px;
-    }
-    .main-menu{
-        display: none;
-    }
-    .main-content{
-        width: 100%;
-    }
-    *{
-        font-size: 0.8rem;
-    }
-
-}
 
 .comp-button
     {
@@ -566,4 +534,73 @@ tr:hover {
 
 tr:last-child td {
     border-bottom: none;
+}
+
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .competizioni-table {
+        width: 95%;
+        font-size: 1rem;
+    }
+
+    .competizioni-table__header-cell,
+    .competizioni-table__cell {
+        padding: 12px 8px;
+    }
+    .main-menu{
+        display: none;
+    }
+    .main-content{
+        width: 100%;
+    }
+    *{
+        font-size: 1rem;
+    }
+    th{
+        padding: 0;
+        text-align: center;
+        font-size: 1rem;
+    }
+    td{
+        padding: 10px 8px;
+        text-align: center;
+
+    }
+
+}
+@media (max-width: 740px) {
+    .competizioni-table {
+        width: 95%;
+        font-size: 0.9rem;
+    }
+
+    .competizioni-table__header-cell,
+    .competizioni-table__cell {
+        padding: 12px 8px;
+    }
+    .main-menu{
+        display: none;
+    }
+    .main-content{
+        width: 100%;
+    }
+    *{
+        font-size: 0.8rem;
+    }
+    th{
+
+        padding: 8px;
+        text-align: center;
+        font-size: 0.8rem;
+    }
+    td{
+        padding: 10px 8px;
+        text-align: center;
+
+    }
+    .main-header h1{
+        font-size: 1.3rem;
+    }
+
 }

@@ -44,12 +44,17 @@
             flex-direction: row;
             gap: 20px;
             align-items: flex-start;
+
+
         }
 
         .main-body {
             padding: 20px;
             overflow-y: auto;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('public/background/stadium.png');
+            background-position: center;
+            background-size: cover;
+
         }
 
         /* Stile per i tab di visualizzazione */
@@ -185,7 +190,7 @@
 
         .player-team {
             font-size: 12px;
-            color: var(--grigio);
+
             margin-bottom: 10px;
         }
 
@@ -193,7 +198,6 @@
             display: flex;
             justify-content: space-between;
             font-size: 12px;
-            color: var(--grigio);
         }
 
         .stat-value {
@@ -204,7 +208,7 @@
         /* Stile per l'overview */
         .overview-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -231,10 +235,6 @@
             font-size: 14px;
         }
 
-        .overview-label {
-            color: var(--grigio);
-        }
-
         .overview-value {
             font-weight: bold;
             color: white;
@@ -246,17 +246,17 @@
         }
 
         /* Responsive design */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .main-body-content {
                 flex-direction: column;
             }
 
             .overview-cards {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
 
             .grid-view {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
         }
     </style>
@@ -274,7 +274,7 @@
         <ul class="menu-list">
             <li class="menu-item"><a href="index.php">Dashboard</a></li>
             <li class="menu-item"><a href="albo.php">Albo d'oro</a></li>
-            <li class="menu-item"><a href="index.php">Squadre in vendita</a></li>
+            <li class="menu-item"><a href="vendita.php">Squadre in vendita</a></li>
             <li class="menu-item"><a href="tool.php">Tool scambi</a></li>
             <li class="menu-item"><a href="regolamento.php">Regolamento</a></li>
             <li class="menu-item"><a href="index.php">Ricerca</a></li>
@@ -347,26 +347,21 @@
                         $json_finanze = json_decode($finanze);
                     }
 
+                    $partecipazione = file_get_contents($baseUrl.'endpoint/partecipazione/read.php?id_squadra='.$id_squadra, false, stream_context_create([
+                        'http' => ['method' => 'GET', 'header' => 'Content-Type: application/json']
+                    ]));
+                    if ($partecipazione) {
+                        $json_partecipazione = json_decode($partecipazione);
+                    }
+
 
 
                     ?>
                 </h1>
-                <a href="admin/login.php">Admin</a>
+
             </div>
             <div class="header-content">
-                <?php
-                if ($data) {
-                    echo $json->squadra[0]->dirigenza->presidente ?? 'Presidente non trovato';
-                    if($json->squadra[0]->dirigenza->vicepresidente == ' '){
-                        echo '';
-                    }else{
-                        echo ' - ';
-                        echo $json->squadra[0]->dirigenza->vicepresidente;
-                    }
-                } else {
-                    echo 'Controlla dati squadra';
-                }
-                ?>
+
             </div>
         </header>
 
@@ -387,6 +382,25 @@
                     <div class="overview-card">
                         <h3>Informazioni Generali</h3>
                         <div class="overview-item">
+                            <span class="overview-label">Presidente:</span>
+                            <span class="overview-value"><?php
+                            if ($data) {
+                                echo $json->squadra[0]->dirigenza->presidente ?? 'Presidente non trovato';
+                                if($json->squadra[0]->dirigenza->vicepresidente == ' '){
+                                    echo '';
+                                }else{
+                                    echo ' </span> ';
+                                    echo '<div class="overview-item">';
+                                    echo '<span class="overview-label">Vicepresidente:</span>';
+                                    echo '<span class="overview-value">' . $json->squadra[0]->dirigenza->vicepresidente;
+                                    echo '</span>';
+                                    echo '</div>';
+                                }
+                            }
+                            ?>
+                            </span>
+                        </div>
+                        <div class="overview-item">
                             <span class="overview-label">In vendita:</span>
                             <span class="overview-value <?php echo $json->squadra[0]->vendita ? 'for-sale' : ''; ?>">
                                 <?php echo $json->squadra[0]->vendita ? 'Si' : 'No'; ?>
@@ -399,6 +413,10 @@
                         <div class="overview-item">
                             <span class="overview-label">Costo rinnovo:</span>
                             <span class="overview-value"><?php echo $json->squadra[0]->prezzo ?? '0'; ?> €</span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="overview-label">Campionato</span>
+                            <span class="overview-value"><?php echo $json_partecipazione->nome_competizione; ?></span>
                         </div>
                     </div>
 
@@ -452,7 +470,7 @@
                                     echo '<span class="overview-value">' . $finanze->crediti_residui_cassa .'</span>';
                                 echo '</div>';
                                 echo '<div class="overview-item">';
-                                    echo '<span class="overview-label">Totale crediti bilancio:</span>';
+                                    echo '<h3 class="overview-label">Totale crediti bilancio:</h3>';
                                     echo '<span class="overview-value">' . $finanze->totale_crediti_bilancio .'</span>';
                                 echo '</div>';
                             }
@@ -591,7 +609,6 @@
 
             <!-- Vista Stadio -->
             <div class="stadium-view" id="stadium-view">
-                <h2>Informazioni Stadio</h2>
                 <div class="overview-cards">
                     <div class="overview-card">
                         <h3>Dettagli Stadio</h3>
@@ -637,7 +654,6 @@
 
             <!-- Vista Albo d'Oro -->
             <div class="albo-view" id="albo-view">
-                <h2>Palmarès</h2>
                 <div class="overview-card">
                     <h3>Titoli Vinti</h3>
                     <?php
@@ -656,7 +672,6 @@
 
             <!-- Vista Settore Giovanile -->
             <div class="sgs-view" id="sgs-view">
-                <h2>Settore Giovanile</h2>
                 <div class="overview-cards">
                         <?php
                         if(!empty($json_settore_giovanile->settore_giovanile)) {
