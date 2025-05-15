@@ -223,7 +223,7 @@
             display: flex;
             justify-content: center;
         }
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .player-select-container {
                 flex-direction: column;
                 gap: 10px;
@@ -348,7 +348,7 @@
                 <a href="albo.php">Albo d'oro</a>
             </li>
             <li class="menu-item">
-                <a href="index.php">Squadre in vendita</a>
+                <a href="vendita.php">Squadre in vendita</a>
             </li>
             <li class="menu-item">
                 <a href="tool.php">Tool scambi</a>
@@ -375,7 +375,6 @@
                     <img src="chevronL.svg" alt="Indietro" height="40px" width="40px">
                 </button>
                 <h1>Tool Scambi</h1>
-                <a href="admin/login.php">Admin</a>
             </div>
         </header>
 
