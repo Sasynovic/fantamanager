@@ -50,10 +50,10 @@
     <div class="main-content">
         <header class="main-header">
             <div class="main-text-header">
-                <button class="back-button" onclick="window.history.back();">
+                <button class="back-button" onclick="window.location.href='index.php'">
                     <img src="chevronL.svg" alt="Indietro" height="40px" width="40px">
                 </button>
-                <h1>Tool Scambi</h1>
+                <h1>Regolamento</h1>
                 <a href="admin/login.php">Admin</a>
             </div>
         </header>
