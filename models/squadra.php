@@ -17,7 +17,7 @@ class squadra
         $this->conn = $db;
     }
 
-    public function count($vendita_filter = null, $search = null, $nome_presidente_filter = null, $id_squadra_filter = null)
+    public function count($prezzo=null,$rate=null,$vendita_filter = null, $search = null, $nome_presidente_filter = null, $id_squadra_filter = null)
     {
         $query = "SELECT COUNT(*) as total 
                         FROM " . $this->table_name . "  s
@@ -27,6 +27,13 @@ class squadra
                         WHERE 1=1
                         ";
 
+        if($prezzo !== null) {
+            $query .= " AND s.costo_iscrizione <= :prezzo";
+        }
+
+        if($rate !== null) {
+            $query .= " AND s.rate = :rate";
+        }
         // Aggiunta dinamica dei filtri
         if ($vendita_filter !== null) {
             $query .= " AND vendita = :vendita";
@@ -42,6 +49,14 @@ class squadra
         }
 
         $stmt = $this->conn->prepare($query);
+
+        if($prezzo !== null) {
+            $stmt->bindParam(':prezzo', $prezzo, PDO::PARAM_INT);
+        }
+
+        if($rate !== null) {
+            $stmt->bindParam(':rate', $rate, PDO::PARAM_INT);
+        }
 
         if ($search) {
             $search_term = "%$search%";
@@ -116,7 +131,7 @@ class squadra
         }
     }
 
-    public function read($vendita_filter = null, $search = null, $nome_presidente_filter = null, $id_squadra_filter = null, $limit = 10, $offset = 0)
+    public function read($prezzo=null,$rate=null,$vendita_filter = null, $search = null, $nome_presidente_filter = null, $id_squadra_filter = null, $limit = 10, $offset = 0)
     {
         $query =  "
                             SELECT 
@@ -150,6 +165,16 @@ class squadra
 
         // Aggiunta dinamica dei filtri
         $params = [];
+
+        if($prezzo !== null) {
+            $query .= " AND s.costo_iscrizione <= :prezzo";
+            $params[':prezzo'] = $prezzo;
+        }
+
+        if ($rate !== null) {
+            $query .= " AND s.rate = :rate";
+            $params[':rate'] = $rate;
+        }
 
         if ($vendita_filter !== null) {
             $query .= " AND s.vendita = :vendita";
