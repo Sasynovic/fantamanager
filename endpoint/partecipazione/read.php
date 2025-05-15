@@ -13,7 +13,8 @@ $db = $database->getConnection();
 $partecipazione = new partecipazione($db);
 
 $id_competizione = isset($_GET['id_competizione']) ? $_GET['id_competizione'] : null;
-$stmt = $partecipazione->read($id_competizione);
+$id_squadra = isset($_GET['id_squadra']) ? $_GET['id_squadra'] : null;
+$stmt = $partecipazione->read($id_squadra,$id_competizione);
 $num = $stmt->rowCount();
 
 if ($num > 0) {
