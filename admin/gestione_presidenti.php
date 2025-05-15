@@ -107,8 +107,7 @@ $nomeSezione = "presidenti";
                 // Personalizzazione del rendering di ciascun presidente
                 return `
                 <div class="card-meta">
-                    <span>ID ${item.id}</span>
-                    <span>Nome presidente ${item.nome}  ${item.cognome}</span>
+                    <h4>${item.nome}  ${item.cognome}</h4>
                 </div>
                 <div class="card-actions">
                     <button class="btn btn-warning edit-btn" onclick="crudManager.editItem(${item.id})">

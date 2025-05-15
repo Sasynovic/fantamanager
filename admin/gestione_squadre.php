@@ -190,13 +190,13 @@ $nomeSezione = "squadra";
                 // Personalizzazione del rendering di ciascun presidente
                 return `
                 <div class="card-meta">
-                    <span>ID: ${item.id}</span>
-                    <span>Nome squadra: ${item.nome_squadra}</span>
-                    <span>Presidente: ${item.presidente}<span>
-                    <span>Vice: ${item.vicepresidente}</span>
-                    <span>Stadio: ${item.stadio}</span>
-                    <span>Valore fvm: ${item.fvm}</span>
+                    <h4>${item.nome_squadra}</h4>
+                    <span>Presidente: ${item.dirigenza.presidente}<span>
+                    <span>Vice: ${item.dirigenza.vicepresidente}</span>
+                    <span>Stadio: ${item.stadio.nome_stadio}</span>
+                    <span>Valore fvm: ${item.valore_fvm}</span>
                     <span>In vendita: ${item.vendita}</span>
+                    <span>Credito: ${item.finanze.credito}</span>
                 </div>
                 <div class="card-actions">
                     <button class="btn btn-warning edit-btn" onclick="crudManager.editItem(${item.id})">
