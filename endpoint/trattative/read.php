@@ -17,14 +17,15 @@ $limit = isset($_GET['limit']) ? max(1, intval($_GET['limit'])) : 10;
 $offset = ($page - 1) * $limit;
 
 //Parametri di ricerca
-$ufficializzata = isset($_GET['ufficializzata']) ? $_GET['ufficializzata'] : false;
-$id_trattativa = isset($_GET['id']) ? $_GET['id'] : null;
+$ufficializzata = $_GET['ufficializzata'] ?? false;
+$id_trattativa = $_GET['id'] ?? null;
+$id_squadra = $_GET['id_squadra'] ?? null;
 
 // Conta il totale dei record
-$total_records = $trattative->count($ufficializzata);
+$total_records = $trattative->count($id_squadra,$id_trattativa,$ufficializzata);
 
 // Recupera i record paginati
-$stmt = $trattative->read($id_trattativa,$ufficializzata,$limit, $offset);
+$stmt = $trattative->read($id_squadra,$id_trattativa,$ufficializzata,$limit, $offset);
 $num = $stmt->rowCount();
 
 if ($num > 0) {

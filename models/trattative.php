@@ -12,9 +12,13 @@ class trattative
         $this->conn = $db;
     }
 
-    public function count($id_trattativa=null,$ufficializzata=null)
+    public function count($id_squadra=null,$id_trattativa=null,$ufficializzata=null)
     {
         $query = "SELECT COUNT(*) as total FROM " . $this->table_name . " WHERE 1=1";
+
+        if( $id_squadra !== null) {
+            $query .= " AND id_squadra1 = :idSquadra OR id_squadra2 = :idSquadra";
+        }
 
         if( $id_trattativa !== null) {
             $query .= " AND id = :idTrattativa";
@@ -26,6 +30,10 @@ class trattative
 
 
         $stmt = $this->conn->prepare($query);
+
+        if ($id_squadra !== null) {
+            $stmt->bindParam(':idSquadra', $id_squadra, PDO::PARAM_INT);
+        }
 
         if ($id_trattativa !== null) {
             $stmt->bindParam(':idTrattativa', $id_trattativa, PDO::PARAM_INT);
@@ -76,7 +84,7 @@ class trattative
 
     }
 
-    public function read($id_trattativa=null,$ufficializzata=null,$limit = 10, $offset = 0)
+    public function read($id_squadra=null,$id_trattativa=null,$ufficializzata=null,$limit = 10, $offset = 0)
     {
         $query = "SELECT
             t.id,
@@ -94,6 +102,10 @@ class trattative
               LEFT JOIN squadre s1 ON t.id_squadra1 = s1.id
               LEFT JOIN squadre s2 ON t.id_squadra2 = s2.id
               WHERE 1=1";
+        if( $id_squadra !== null) {
+            $query .= " AND (t.id_squadra1 = :idSquadra OR t.id_squadra2 = :idSquadra)";
+        }
+
         if ($id_trattativa !== null) {
             $query .= " AND t.id = :idTrattativa";
         }
@@ -108,6 +120,9 @@ class trattative
 
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        if ($id_squadra !== null) {
+            $stmt->bindParam(':idSquadra', $id_squadra, PDO::PARAM_INT);
+        }
         if ($id_trattativa !== null) {
             $stmt->bindParam(':idTrattativa', $id_trattativa, PDO::PARAM_INT);
         }
@@ -131,6 +146,8 @@ class trattative
         if (!is_array($data)) {
             throw new InvalidArgumentException("I dati per l'aggiornamento devono essere un array");
         }
+
+
 
         // Costruzione della query dinamica
         $fields = [];

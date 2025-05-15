@@ -32,7 +32,7 @@ class squadra
             $query .= " AND vendita = :vendita";
         }
         if ($id_squadra_filter !== null) {
-            $query .= " AND id = :id_squadra";
+            $query .= " AND s.id = :id_squadra";
         }
         if (!empty($search)) {
             $query .= " AND nome_squadra LIKE :search";

@@ -28,6 +28,7 @@ class associazioni
                 a.scambiato,
                 s.nome_squadra AS nome_squadra,
                 c.nome AS nome_calciatore,
+                c.squadra AS nome_squadra_calciatore,
                  c.fvm,
                 c.eta,
                 c.ruolo AS ruolo_calciatore

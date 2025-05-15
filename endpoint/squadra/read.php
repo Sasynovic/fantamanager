@@ -18,8 +18,8 @@ $offset = ($page - 1) * $limit;
 
 // Parametro di ricerca
 $vendita_filter = isset($_GET['vendita']) ? intval($_GET['vendita']) : null;
-$search = isset($_GET['search']) ? $_GET['search'] : null;
-$nome_presidente_filter = isset($_GET['nome_presidente']) ? $_GET['nome_presidente'] : null;
+$search = $_GET['search'] ?? null;
+$nome_presidente_filter = $_GET['nome_presidente'] ?? null;
 $id_squadra_filter = isset($_GET['id_squadra']) ? intval($_GET['id_squadra']) : null;
 
 //Conta il totale dei record
@@ -47,20 +47,28 @@ if ($num > 0) {
         $response['squadra'][] = [
             "id" => $row['id'],
             "nome_squadra" => $row['nome_squadra'],
-            "presidente" => $row['nome_pres'] . ' ' . $row['cognome_pres'],
-            "vicepresidente" => $row['nome_vice'] . ' ' . $row['cognome_vice'],
-            "valore_fvm" => $row['valore_fvm'],
-            "credito" => $row['credito'],
-            "stadio" => $row['nome_stadio'],
-            "livello_stadio" => $row['livello_stadio'],
-            "costo_manutenzione" => $row['costo_manutenzione'],
-            "bonus_casa_nazionale" => $row['bonus_casa_n'],
-            "bonus_casa_uefa" => $row['bonus_casa_u'],
-            "guadagno_crediti_campionato" => $row['guadagno_crediti_campionato'],
-            "guadagno_crediti_coppa" => $row['guadagno_crediti_coppa'],
             "rate" => $row['rate'],
             "vendita" => $row['vendita'],
             "prezzo" => $row['costo_iscrizione'],
+            "valore_fvm" => $row['valore_fvm'],
+
+            "dirigenza" => [
+                "presidente" => $row['nome_pres'] . ' ' . $row['cognome_pres'],
+                "vicepresidente" => $row['nome_vice'] . ' ' . $row['cognome_vice'],
+                ],
+            "finanze" => [
+                "credito" => $row['credito'],
+            ],
+
+            "stadio" => [
+                "nome_stadio" => $row['nome_stadio'],
+                "livello_stadio" => $row['livello_stadio'],
+                "costo_manutenzione" => $row['costo_manutenzione'],
+                "bonus_casa_nazionale" => $row['bonus_casa_n'],
+                "bonus_casa_uefa" => $row['bonus_casa_u'],
+                "guadagno_crediti_campionato" => $row['guadagno_crediti_campionato'],
+                "guadagno_crediti_coppa" => $row['guadagno_crediti_coppa'],
+            ],
         ];
     }
 

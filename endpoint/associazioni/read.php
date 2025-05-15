@@ -33,6 +33,7 @@ if ($num > 0) {
             "nome_calciatore" => $nome_calciatore,
             "ruolo_calciatore" => $ruolo_calciatore,
             "costo_calciatore" => $costo_calciatore,
+            "nome_squadra_calciatore" => $nome_squadra_calciatore,
             "eta" => $eta,
             "fvm" => $fvm,
             "n_movimenti" => $n_movimenti,

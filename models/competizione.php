@@ -109,7 +109,7 @@ class competizione
         if ($id_competizione) {
             $query .= " AND c.id = :id_competizione";
         }
-        $query .= " ORDER BY c.id DESC";
+        $query .= " ORDER BY d.nome_divisione, c.nome_competizione ASC";
         $query .= " LIMIT :limit OFFSET :offset";
 
         $stmt = $this->conn->prepare($query);
