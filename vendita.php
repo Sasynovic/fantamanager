@@ -117,9 +117,10 @@
                         <thead>
                         <tr>
                             <th>Squadra</th>
+                            <th>Competizione</th>
                             <th>Prezzo</th>
                             <th>Valutazione</th>
-                            <th>Azioni</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -193,20 +194,23 @@
         datiFiltrati.forEach(squadra => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-        <td>
-            <a href="squadra.php?id=${squadra.id}" class="view-btn">${squadra.nome_squadra}</a>
-        </td>
-        <td>${squadra.prezzo} €</td>
-        <td><span class="rating">${getRatingStars(squadra.rate)}</span></td>
-        <td class="action-buttons">
-            <button class="buy-btn">Acquista</button>
-        </td>
-    `;
+                    <td>
+                        <a href="squadra.php?id=${squadra.id}" class="view-btn">${squadra.nome_squadra}</a>
+                    </td>
+                    <td id="competizioni-${squadra.id}">Caricamento...</td>
+                    <td>${squadra.prezzo} €</td>
+                    <td><span class="rating">${getRatingStars(squadra.rate)}</span></td>
+                    <td class="action-buttons">
+                        <button class="buy-btn">Acquista</button>
+                    </td>
+                `;
             const button = tr.querySelector('.buy-btn');
             button.addEventListener('click', () => acquistaSquadra(squadra.nome_squadra));
             tbody.appendChild(tr);
-        });
 
+            // Carica le competizioni per questa squadra
+            loadCompetizioniSquadra(squadra.id);
+        });
     }
 
     function loadSquadre(page = 1) {
@@ -258,6 +262,31 @@
             });
     }
 
+    // Funzione per caricare le competizioni di una squadra
+    function loadCompetizioniSquadra(id) {
+        const cellCompetizioni = document.getElementById(`competizioni-${id}`);
+
+        fetch(`${window.location.protocol}//${window.location.host}/endpoint/partecipazione/read.php?id_squadra=${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Errore nella risposta del server');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    const nomiCompetizioni = data.nome_competizione;
+                    cellCompetizioni.textContent = nomiCompetizioni || 'Nessuna competizione';
+                } else {
+                    cellCompetizioni.textContent = 'Nessuna competizione';
+                }
+            })
+            .catch(error => {
+                console.error('Errore nel caricamento delle competizioni:', error);
+                cellCompetizioni.textContent = 'Errore caricamento';
+            });
+    }
+
     // Funzione per gestire l'acquisto di una squadra
     function acquistaSquadra(nomeSquadra) {
         const conferma1 = confirm(`Sei sicuro di voler acquistare ${nomeSquadra}?`);
@@ -280,7 +309,6 @@
 
         window.open(url);
     }
-
 
     // Gestori eventi per i filtri
     document.getElementById('filter-prezzo').addEventListener('change', function() {
