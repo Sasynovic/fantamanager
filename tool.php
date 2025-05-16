@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <script src="showmenu.js" defer></script>
 
     <style>
         .main-body-content{
@@ -283,21 +284,8 @@
             padding: 20px;
         }
 
-        .calcola-button {
-            background-color: #2e6be6;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
 
-        .calcola-button:hover {
-            background-color: #1c4cad;
-        }
+
 
         .risultato-trattativa {
             margin-top: 20px;
@@ -357,13 +345,10 @@
                 <a href="regolamento.php">Regolamento</a>
             </li>
             <li class="menu-item">
-                <a href="index.php">Ricerca</a>
+                <a href="ricerca.php">Ricerca</a>
             </li>
             <li class="menu-item">
-                <a href="index.php">News</a>
-            </li>
-            <li class="menu-item">
-                <a href="index.php">Contatti</a>
+                <a href="contatti.php">Contatti</a>
             </li>
         </ul>
     </aside>
@@ -375,6 +360,7 @@
                     <img src="chevronL.svg" alt="Indietro" height="40px" width="40px">
                 </button>
                 <h1>Tool Scambi</h1>
+                <h1 id="hamburger-menu">≡</h1>
             </div>
         </header>
 

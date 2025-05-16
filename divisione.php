@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
     <script src="renderFooter.js" defer></script>
+    <script src="showmenu.js" defer></script>
 </head>
 
 <body>
@@ -26,7 +27,7 @@
                 <a href="albo.php">Albo d'oro</a>
             </li>
             <li class="menu-item">
-                <a href="index.php">Squadre in vendita</a>
+                <a href="vendita.php">Squadre in vendita</a>
             </li>
             <li class="menu-item">
                 <a href="tool.php">Tool scambi</a>
@@ -35,13 +36,10 @@
                 <a href="regolamento.php">Regolamento</a>
             </li>
             <li class="menu-item">
-                <a href="index.php">Ricerca</a>
+                <a href="ricerca.php">Ricerca</a>
             </li>
             <li class="menu-item">
-                <a href="index.php">News</a>
-            </li>
-            <li class="menu-item">
-                <a href="index.php">Contatti</a>
+                <a href="contatti.php">Contatti</a>
             </li>
         </ul>
     </aside>
@@ -71,13 +69,13 @@
                     if ($data) {
                         $json = json_decode($data);
                         // Accedi al primo elemento dell'array divisioni
-                        echo isset($json->divisioni[0]->nome_divisione) ? $json->divisioni[0]->nome_divisione : 'Divisione non trovata';
+                        echo $json->divisioni[0]->nome_divisione ?? 'Divisione non trovata';
                     } else {
                         echo 'Divisione non trovata';
                     }
                     ?>
                 </h1>
-                <a href="admin/login.php">Admin</a>
+                <h1 id="hamburger-menu">≡</h1>
             </div>
         </header>
 
@@ -126,8 +124,6 @@
 
                         // Funzione per visualizzare i dati nella tabella
                         function displayCompetizioni(competizioni) {
-                            // Ordina le competizioni alfabeticamente per nome
-                            competizioni.sort((a, b) => a.nome_competizione.localeCompare(b.nome_competizione));
 
                             // Crea la tabella HTML
                             const tableHTML = `

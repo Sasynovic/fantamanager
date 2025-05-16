@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
     <script src="renderFooter.js" defer></script>
+    <script src="showmenu.js" defer></script>
 
     <style>
 
@@ -251,13 +252,6 @@
                 flex-direction: column;
             }
 
-            .overview-cards {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-
-            .grid-view {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
         }
     </style>
 </head>
@@ -277,9 +271,8 @@
             <li class="menu-item"><a href="vendita.php">Squadre in vendita</a></li>
             <li class="menu-item"><a href="tool.php">Tool scambi</a></li>
             <li class="menu-item"><a href="regolamento.php">Regolamento</a></li>
-            <li class="menu-item"><a href="index.php">Ricerca</a></li>
-            <li class="menu-item"><a href="index.php">News</a></li>
-            <li class="menu-item"><a href="index.php">Contatti</a></li>
+            <li class="menu-item"><a href="ricerca.php">Ricerca</a></li>
+            <li class="menu-item"><a href="contatti.php">Contatti</a></li>
         </ul>
     </aside>
 
@@ -358,6 +351,7 @@
 
                     ?>
                 </h1>
+                <h1 id="hamburger-menu">≡</h1>
 
             </div>
             <div class="header-content">
@@ -689,7 +683,10 @@
                                     echo '</div>';
                                 echo '</div>';
                         }} else {
+                            echo ' <div class="overview-card">';
+                            echo '<h3>Settore Giovanile</h3>';
                             echo '<p>Nessun giocatore nel settore giovanile</p>';
+                            echo '</div>';
                         }
                         ?>
                 </div>

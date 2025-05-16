@@ -7,10 +7,17 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <script src="renderFooter.js" defer></script>
     <script src="showmenu.js" defer></script>
 
+
     <style>
-        .main-body{height: 93%;}
+        .main-body-content{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
     </style>
 </head>
 <div class="main-container">
@@ -48,10 +55,10 @@
     <div class="main-content">
         <header class="main-header">
             <div class="main-text-header">
-                <button class="back-button" onclick="window.location.href='index.php'">
+                <button class="back-button" onclick="window.history.back();">
                     <img src="chevronL.svg" alt="Indietro" height="40px" width="40px">
                 </button>
-                <h1>Regolamento</h1>
+                <h1>Contatti</h1>
                 <h1 id="hamburger-menu">≡</h1>
             </div>
         </header>
@@ -59,8 +66,22 @@
 
         <div class="main-body">
             <div class="main-body-content" id="main-body-content">
-            <div style="position:relative;padding-top:0;width:100%;height:100%;">
-                <iframe style="position:absolute;border:none;width:100%;height:100%;left:0;top:0;" src="https://online.fliphtml5.com/ymmet/rgxe/"  seamless="seamless" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" ></iframe>
-            </div>
             </div>
         </div>
+
+        <footer class="main-footer">
+            <div class="swiper-container footer-swiper">
+                <div class="swiper-wrapper" id="footerList">
+                    <!-- Gli elementi division-ball verranno inseriti qui tramite JavaScript -->
+                </div>
+                <!-- Aggiunti i pulsanti di navigazione -->
+                <div class="swiper-button-prev footer-nav-prev">
+                    <img src="chevronL.svg" alt="Indietro">
+                </div>
+                <div class="swiper-button-next footer-nav-next">
+                    <img src="chevronR.svg" alt="Avanti">
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>

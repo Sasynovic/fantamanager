@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
     <script src="renderFooter.js" defer></script>
+    <script src="showmenu.js" defer></script>
     <style>
         /* STILE SPECIFICO PER L'ALBO D'ORO */
 
@@ -80,41 +81,10 @@
 
 
 
-        /* Stile paginazione */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            gap: 8px;
-        }
 
-        .page-btn {
-            background-color: var(--blu-scuro, #1a2c56);
-            color: white;
-            border: 1px solid var(--accento, #3c74f5);
-            border-radius: 4px;
-            padding: 8px 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .page-btn:hover:not(:disabled) {
-            background-color: var(--blu, #294582);
-            transform: translateY(-2px);
-        }
-
-        .page-btn.active {
-            background-color: var(--accento, #3c74f5);
-            font-weight: bold;
-        }
-
-        .page-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
 
         /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .albo-header {
                 flex-direction: column;
                 align-items: flex-start;
@@ -158,7 +128,7 @@
                 <a href="albo.php">Albo d'oro</a>
             </li>
             <li class="menu-item">
-                <a href="index.php">Squadre in vendita</a>
+                <a href="vendita.php">Squadre in vendita</a>
             </li>
             <li class="menu-item">
                 <a href="tool.php">Tool scambi</a>
@@ -167,13 +137,10 @@
                 <a href="regolamento.php">Regolamento</a>
             </li>
             <li class="menu-item">
-                <a href="index.php">Ricerca</a>
+                <a href="ricerca.php">Ricerca</a>
             </li>
             <li class="menu-item">
-                <a href="index.php">News</a>
-            </li>
-            <li class="menu-item">
-                <a href="index.php">Contatti</a>
+                <a href="contatti.php">Contatti</a>
             </li>
         </ul>
     </aside>
@@ -185,7 +152,7 @@
                     <img src="chevronL.svg" alt="Indietro" height="40px" width="40px">
                 </button>
                 <h1>🏆 Albo d'Oro</h1>
-                <a href="admin/login.php">Admin</a>
+                <h1 id="hamburger-menu">≡</h1>
             </div>
         </header>
 

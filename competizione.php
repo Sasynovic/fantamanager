@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
     <script src="renderFooter.js" defer></script>
+    <script src="showmenu.js" defer></script>
 </head>
 <style>
 
@@ -72,28 +73,28 @@
         gap: 5px;
     }
 
-    .page-button {
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        background: var(--accento);
-        cursor: pointer;
-        border-radius: 3px;
-    }
+    /*.page-btn {*/
+    /*    padding: 8px 12px;*/
+    /*    border: 1px solid #ddd;*/
+    /*    background: var(--accento);*/
+    /*    cursor: pointer;*/
+    /*    border-radius: 3px;*/
+    /*}*/
 
-    .page-button.active {
-        background-color: #2e6be6;
-        color: white;
-        border-color: #2e6be6;
-    }
+    /*.page-button.active {*/
+    /*    background-color: #2e6be6;*/
+    /*    color: white;*/
+    /*    border-color: #2e6be6;*/
+    /*}*/
 
-    .page-button:hover:not(.active) {
-        background-color: #f0f0f0;
-    }
+    /*.page-button:hover:not(.active) {*/
+    /*    background-color: #f0f0f0;*/
+    /*}*/
 
-    .page-button.disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
+    /*.page-button.disabled {*/
+    /*    opacity: 0.5;*/
+    /*    cursor: not-allowed;*/
+    /*}*/
     .tab{
         background: var(--blu-scurissimo);
         border-top: solid var(--accento);
@@ -106,8 +107,6 @@
     .news-contenuto *{
         color: black;
     }
-
-
 </style>
 
 <body>
@@ -126,7 +125,7 @@
                 <a href="albo.php">Albo d'oro</a>
             </li>
             <li class="menu-item">
-                <a href="index.php">Squadre in vendita</a>
+                <a href="vendita.php">Squadre in vendita</a>
             </li>
             <li class="menu-item">
                 <a href="tool.php">Tool scambi</a>
@@ -135,13 +134,10 @@
                 <a href="regolamento.php">Regolamento</a>
             </li>
             <li class="menu-item">
-                <a href="index.php">Ricerca</a>
+                <a href="ricerca.php">Ricerca</a>
             </li>
             <li class="menu-item">
-                <a href="index.php">News</a>
-            </li>
-            <li class="menu-item">
-                <a href="index.php">Contatti</a>
+                <a href="contatti.php">Contatti</a>
             </li>
         </ul>
     </aside>
@@ -177,7 +173,7 @@
                     }
                     ?>
                 </h1>
-                <a href="admin/login.php">Admin</a>
+                <h1 id="hamburger-menu">≡</h1>
             </div>
         </header>
 
@@ -253,7 +249,11 @@
                                         classificaHTML += `
                                                 <tr>
                                                     <td>${index + 1}</td>
-                                                    <td>${squadra.nome_squadra || 'N/D'}</td>
+                                                    <td>
+                                                      <a href="squadra.php?id=${squadra.id}">
+                                                        ${squadra.nome_squadra || 'N/D'}
+                                                      </a>
+                                                    </td>
                                                     <td>${squadra.penalizzazione || 0}</td>
                                                     <td>${squadra.giocate || 0}</td>
                                                     <td>${squadra.vittorie || 0}</td>
@@ -315,7 +315,7 @@
                                     // Funzione per caricare le news
                                     function loadNews(tab, page) {
                                         // Usa direttamente l'ID competizione dall'URL
-                                        let url = '/endpoint/news/read.php?id_competizione=' + <?php echo $id_competizione; ?> + '&page=' + page + '&limit=' + itemsPerPage;
+                                        let url = '/endpoint/news/read.php?visibile=1&id_competizione=' + <?php echo $id_competizione; ?> + '&page=' + page + '&limit=' + itemsPerPage;
 
                                         // Rimuoviamo questa parte che causa l'errore
                                         // Non sovrascriviamo l'ID competizione che è già nell'URL
@@ -336,7 +336,7 @@
                                             })
                                             .catch(error => {
                                                 console.error('Errore nel caricamento delle news:', error);
-                                                newsContent.innerHTML = `<div class="error-message">Errore nel caricamento delle news</div>`;
+                                                newsContent.innerHTML = `<div class="error-message">Nessuna news trovata per la competizione scelta</div>`;
                                                 paginationContainer.innerHTML = '';
                                             });
                                     }
@@ -351,15 +351,15 @@
                                         let html = '';
                                         newsItems.forEach(news => {
                                             html += `
-                <div class="news-item">
-                    <h3>${news.titolo}</h3>
-                    <div class="news-meta">
-                        ${formatDate(news.data_pubblicazione)} |
-                        ${news.nome_competizione || 'Generale'}
-                    </div>
-                    <div class="news-contenuto">${news.contenuto}</div>
-                </div>
-            `;
+                                                        <div class="news-item">
+                                                            <h3>${news.titolo}</h3>
+                                                            <div class="news-meta">
+                                                                ${formatDate(news.data_pubblicazione)} |
+                                                                ${news.nome_competizione || 'Generale'}
+                                                            </div>
+                                                            <div class="news-contenuto">${news.contenuto}</div>
+                                                        </div>
+                                                    `;
                                         });
 
                                         newsContent.innerHTML = html;
@@ -376,31 +376,31 @@
 
                                         // Pulsante "Precedente"
                                         html += `
-            <button class="page-button ${pagination.has_previous_page ? '' : 'disabled'}"
-                onclick="changePage(${currentPage - 1})"
-                ${!pagination.has_previous_page ? 'disabled' : ''}>
-                &laquo; Precedente
-            </button>
-        `;
+                                                        <button class="page-btn ${pagination.has_previous_page ? '' : 'disabled'}"
+                                                            onclick="changePage(${currentPage - 1})"
+                                                            ${!pagination.has_previous_page ? 'disabled' : ''}>
+                                                            &laquo;
+                                                        </button>
+                                                    `;
 
                                         // Numeri di pagina
                                         for (let i = 1; i <= pagination.total_pages; i++) {
                                             html += `
-                <button class="page-button ${i === currentPage ? 'active' : ''}"
-                    onclick="changePage(${i})">
-                    ${i}
-                </button>
-            `;
+                                                            <button class="page-btn ${i === currentPage ? 'active' : ''}"
+                                                                onclick="changePage(${i})">
+                                                                ${i}
+                                                            </button>
+                                                        `;
                                         }
 
                                         // Pulsante "Successivo"
                                         html += `
-            <button class="page-button ${pagination.has_next_page ? '' : 'disabled'}"
-                onclick="changePage(${currentPage + 1})"
-                ${!pagination.has_next_page ? 'disabled' : ''}>
-                Successivo &raquo;
-            </button>
-        `;
+                                                        <button class="page-btn ${pagination.has_next_page ? '' : 'disabled'}"
+                                                            onclick="changePage(${currentPage + 1})"
+                                                            ${!pagination.has_next_page ? 'disabled' : ''}>
+                                                            &raquo;
+                                                        </button>
+                                                    `;
 
                                         paginationContainer.innerHTML = html;
                                     }
