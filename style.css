@@ -30,6 +30,55 @@ body {
     overflow: hidden;
 }
 
+/* Stile paginazione */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 8px;
+}
+
+.page-btn {
+    background-color: var(--blu-scuro, #1a2c56);
+    color: white;
+    border: 1px solid var(--accento, #3c74f5);
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+    background-color: var(--blu, #294582);
+    transform: translateY(-2px);
+}
+
+.page-btn.active {
+    background-color: var(--accento, #3c74f5);
+    font-weight: bold;
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/*Comp button href in a usato in divisione.php*/
+
+button, .comp-button{
+    padding: 4px 8px;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background: var(--accento)
+}
+
+button:hover ,.comp-button:hover{
+    background-color: #1c4cad;
+}
+
 .main-menu {
     width: 20%;
     background-color: var(--blu);
@@ -231,7 +280,7 @@ body {
 .main-text-header{
     display: flex;
     align-items: center;
-    justify-content: stretch;
+    justify-content: space-between;
 }
 
 /* Stili per Swiper nella sezione principale */
@@ -450,21 +499,7 @@ body {
 }
 
 
-.comp-button
-    {
-    padding: 4px 8px;
-    border-radius: 30px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    background: var(--accento);
-    }
-    .comp-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-    }
+
 
 
 select {
@@ -539,6 +574,10 @@ tr:last-child td {
 
 /* Responsive */
 @media (max-width: 1024px) {
+
+    .main-container{
+        flex-direction: row-reverse;
+    }
     .competizioni-table {
         width: 95%;
         font-size: 1rem;
@@ -548,11 +587,52 @@ tr:last-child td {
     .competizioni-table__cell {
         padding: 12px 8px;
     }
-    .main-menu{
-        display: none;
+    .main-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 40%;
+        height: 100%;
+        transform: translateX(-100%);
     }
+
+    .main-menu.active {
+        transform: translateX(0);
+    }
+
+    .main-menu.active{
+        display: flex;
+    }
+
+
+
     .main-content{
         width: 100%;
+    }
+    .main-content.active{
+        width: 100%;
+        pointer-events: none; /* Blocca il clic */
+        /*filter: brightness(0.6);*/
+
+
+    }
+    .main-content.active::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.4); /* oscuramento */
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    #hamburger-menu {
+        font-size: 2rem;
+        cursor: pointer;
+        z-index: 3;
+        pointer-events: auto;
     }
     *{
         font-size: 1rem;
@@ -567,6 +647,7 @@ tr:last-child td {
         text-align: center;
 
     }
+
 
 }
 @media (max-width: 740px) {
