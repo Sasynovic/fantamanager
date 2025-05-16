@@ -12,7 +12,7 @@ class news
         $this->conn = $db;
     }
 
-    public function count($id=null,$id_competizione = null, $search = null)
+    public function count($visibile=null,$id=null,$id_competizione = null, $search = null)
     {
         $query = "SELECT COUNT(*) as total 
                         FROM " . $this->table_name . " n
@@ -20,6 +20,9 @@ class news
                         LEFT JOIN divisione d ON c.id_divisione = d.id
                          WHERE 1=1";
 
+        if ($visibile !== null) {
+            $query .= " AND n.visibile = :visibile";
+        }
         if ($id_competizione !== null) {
             $query .= " AND n.id_competizione = :id_competizione";
         }
@@ -30,7 +33,12 @@ class news
             $query .= " AND n.id = :id";
         }
 
+
         $stmt = $this->conn->prepare($query);
+
+        if ($visibile !== null) {
+            $stmt->bindParam(':visibile', $visibile, PDO::PARAM_BOOL);
+        }
 
         if ($id !== null) {
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -91,7 +99,7 @@ class news
         }
     }
 
-    public function read($id=null,$id_competizione = null, $search = null, $limit = null, $offset = 0) {
+    public function read($visibile=null,$id=null,$id_competizione = null, $search = null, $limit = null, $offset = 0) {
         $query = "
                         SELECT  
                             n.id,
@@ -110,6 +118,10 @@ class news
                         WHERE 1=1
                     ";
 
+        if ($visibile !== null) {
+            $query .= " AND n.visibile = :visibile";
+        }
+
         if ($id !== null) {
             $query .= " AND n.id = :id";
         }
@@ -125,6 +137,10 @@ class news
         $query .= " LIMIT :limit OFFSET :offset";
 
         $stmt = $this->conn->prepare($query);
+
+        if ($visibile !== null) {
+            $stmt->bindParam(':visibile', $visibile, PDO::PARAM_BOOL);
+        }
 
         if ($id !== null) {
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
