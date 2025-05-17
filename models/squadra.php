@@ -17,7 +17,7 @@ class squadra
         $this->conn = $db;
     }
 
-    public function count($prezzo=null,$rate=null,$vendita_filter = null, $search = null, $nome_presidente_filter = null, $id_squadra_filter = null)
+    public function count($prezzo=null,$rate=null,$vendita_filter = null, $search = null, $nome_presidente_filter = null,$nome_squadra_filter=null, $id_squadra_filter = null)
     {
         $query = "SELECT COUNT(*) as total 
                         FROM " . $this->table_name . "  s
@@ -47,6 +47,9 @@ class squadra
         if (!empty($nome_presidente_filter)) {
             $query .= " AND (pres.nome LIKE :nome_presidente OR pres.cognome LIKE :nome_presidente)";
         }
+        if (!empty($nome_squadra_filter)) {
+            $query .= " AND s.nome_squadra LIKE :nome_squadra";
+        }
 
         $stmt = $this->conn->prepare($query);
 
@@ -71,6 +74,10 @@ class squadra
         }
         if ($id_squadra_filter !== null) {
             $stmt->bindParam(':id_squadra', $id_squadra_filter, PDO::PARAM_INT);
+        }
+        if (!empty($nome_squadra_filter)) {
+            $search_term = "%$nome_squadra_filter%";
+            $stmt->bindParam(':nome_squadra', $search_term, PDO::PARAM_STR);
         }
 
         $stmt->execute();
@@ -131,7 +138,7 @@ class squadra
         }
     }
 
-    public function read($prezzo=null,$rate=null,$vendita_filter = null, $search = null, $nome_presidente_filter = null, $id_squadra_filter = null, $limit = 10, $offset = 0)
+    public function read($prezzo=null,$rate=null,$vendita_filter = null, $search = null, $nome_presidente_filter = null, $nome_squadra_filter=null,$id_squadra_filter = null, $limit = 10, $offset = 0)
     {
         $query =  "
                             SELECT 
@@ -182,17 +189,22 @@ class squadra
         }
 
         if (!empty($search)) {
-            $query .= " AND s.nome_squadra LIKE :search";
+            $query .= " AND LOWER(TRIM(s.nome_squadra)) LIKE LOWER(TRIM(:search))";
             $params['search'] = "%" . $search . "%";
         }
 
         if (!empty($nome_presidente_filter)) {
-            $query .= " AND (pres.nome LIKE :nome_presidente OR pres.cognome LIKE :nome_presidente)";
+            $query .= " AND LOWER(TRIM(CONCAT(pres.nome, ' ', pres.cognome))) LIKE LOWER(TRIM(:nome_presidente))";
             $params[':nome_presidente'] = "%" . $nome_presidente_filter . "%";
         }
+
         if ($id_squadra_filter !== null) {
             $query .= " AND s.id = :id_squadra";
             $params[':id_squadra'] = $id_squadra_filter;
+        }
+        if (!empty($nome_squadra_filter)) {
+            $query .= " AND s.nome_squadra LIKE :nome_squadra";
+            $params[':nome_squadra'] = "%" . $nome_squadra_filter . "%";
         }
 
         $query .= " ORDER BY s.id ASC";

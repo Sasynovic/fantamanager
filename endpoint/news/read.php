@@ -24,7 +24,6 @@ $id_competizione_filter = isset($_GET['id_competizione']) ? intval($_GET['id_com
 $search = $_GET['search'] ?? null;
 $visibile =$_GET['visibile'] ?? null;
 
-
 // Conta il totale dei record
 $total_records = $news->count($visibile,$id,$id_competizione_filter,$search);
 

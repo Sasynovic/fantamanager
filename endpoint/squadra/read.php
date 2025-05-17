@@ -20,15 +20,16 @@ $offset = ($page - 1) * $limit;
 $vendita_filter = isset($_GET['vendita']) ? intval($_GET['vendita']) : null;
 $search = $_GET['search'] ?? null;
 $nome_presidente_filter = $_GET['nome_presidente'] ?? null;
+$nome_squadra_filter = $_GET['nome_squadra'] ?? null;
 $id_squadra_filter = isset($_GET['id_squadra']) ? intval($_GET['id_squadra']) : null;
 $rate = isset($_GET['rate']) ? intval($_GET['rate']) : null;
 $prezzo = isset($_GET['prezzo']) ? intval($_GET['prezzo']) : null;
 
 //Conta il totale dei record
-$total_records = $squadra->count($prezzo,$rate,$vendita_filter, $search, $nome_presidente_filter, $id_squadra_filter);
+$total_records = $squadra->count($prezzo,$rate,$vendita_filter, $search, $nome_presidente_filter,$nome_squadra_filter, $id_squadra_filter);
 
 // Recupera i record paginati
-$stmt = $squadra->read($prezzo,$rate,$vendita_filter, $search, $nome_presidente_filter, $id_squadra_filter, $limit, $offset);
+$stmt = $squadra->read($prezzo,$rate,$vendita_filter, $search, $nome_presidente_filter,$nome_squadra_filter, $id_squadra_filter, $limit, $offset);
 $num = $stmt->rowCount();
 
 if ($num > 0) {
