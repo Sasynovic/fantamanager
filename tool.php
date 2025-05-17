@@ -6,19 +6,12 @@
     <title>FMPro</title>
     <link rel="icon" href="public/background/logo.png" type="image/png">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
-    <script src="showmenu.js" defer></script>
+    <script src="js/showmenu.js" defer></script>
 
     <style>
-        .main-body-content{
-            width: 100%;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-
-        }
         .tool-container{
             width: 90%;
             margin-top: 25px;
@@ -359,7 +352,7 @@
         <header class="main-header">
             <div class="main-text-header">
                 <button class="back-button" onclick="window.history.back();">
-                    <img src="chevronL.svg" alt="Indietro" height="40px" width="40px">
+                    <img src="public/chevron/chevronL.svg" alt="Indietro" height="40px" width="40px">
                 </button>
                 <h1>Tool Scambi</h1>
                 <h1 id="hamburger-menu">≡</h1>
@@ -617,9 +610,9 @@
             loadPlayers(id, squadraSelezionata, containers[teamLabel], selects[playerSelectKey]);
 
             // Carica il credito massimo della squadra
-            fetchData(`endpoint/squadra/read.php?id=${id}`)
+            fetchData(`endpoint/squadra/read.php?id_squadra=${id}`)
                 .then(data => {
-                    const creditoMassimo = data.squadra[0]?.credito || 0;
+                    const creditoMassimo = data.squadra[0]?.finanze.credito || 0;
                     if (squadraSelezionata === 'squadra1') {
                         maxCreditoTeam1 = creditoMassimo;
                         document.getElementById('maxCreditoTeam1').textContent = creditoMassimo;
@@ -932,95 +925,59 @@
         const creditoTeam2 = [creditoTeam2Subito, creditoTeam2Meta, creditoTeam2Fine];
 
         // Raccogli dettagli giocatori squadra 1
-        const giocatoriSquadra1 = Array.from(containers.selected1.querySelectorAll('.selected-player')).map(el => {
-            const playerId = el.querySelector('.remove-player').dataset.id;
+        function raccogliGiocatori(container) {
+            return Array.from(container.querySelectorAll('.selected-player')).map(el => {
+                const playerId = el.querySelector('.remove-player').dataset.id;
 
-            const tipoSelect = document.getElementById(`type-select-${playerId}`);
-            let tipoTrasferimento = tipoSelect ? tipoSelect.value : '';
+                // Gestione tipo trasferimento
+                const tipoSelect = document.getElementById(`type-select-${playerId}`);
+                let tipoTrasferimento = tipoSelect ? tipoSelect.value : '';
+                const tipoTrasferimentoText = tipoSelect && tipoSelect.value !== '' ?
+                    tipoSelect.options[tipoSelect.selectedIndex].text : '0';
 
-            const tipoTrasferimentoText = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex].text : '';
+                // Gestione date
+                const dataPrestitoEl = document.getElementById(`data-fine-prestito-${playerId}`);
+                const dataPrestito = dataPrestitoEl && dataPrestitoEl.style.display !== 'none' ? dataPrestitoEl.value : null;
 
-            const dataPrestitoEl = document.getElementById(`data-fine-prestito-${playerId}`);
-            const dataPrestito = dataPrestitoEl && dataPrestitoEl.style.display !== 'none' ? dataPrestitoEl.value : null;
+                const dataCreditoEl = document.getElementById(`data-fine-credito-${playerId}`);
+                const dataCredito = dataCreditoEl && dataCreditoEl.style.display !== 'none' ? dataCreditoEl.value : null;
 
-            const dataCreditoEl = document.getElementById(`data-fine-credito-${playerId}`);
-            const dataCredito = dataCreditoEl && dataCreditoEl.style.display !== 'none' ? dataCreditoEl.value : null;
+                // Gestione valore riscatto
+                const valoreRiscattoEl = document.getElementById(`riscatto-input-${playerId}`);
+                const valoreRiscatto = valoreRiscattoEl ? parseFloat(valoreRiscattoEl.value) : null;
 
-            let valore = 1;
+                // Determinazione valore trasferimento
+                let valore = 1; // Default
 
-            tipologieScambio.forEach(tipo => {
-                // Controlla prima se il tipo di trasferimento corrisponde
-                if (tipo.id_metodo === tipoTrasferimento) {
-                    // Se abbiamo un credito, usa quella data per trovare la finestra
-                    if (dataCredito !== null && tipo.id_finestra_mercato && tipo.id_finestra_mercato.toString() === dataCredito) {
-                        valore = tipo.id_tipologia;
-                    }
-                    // Altrimenti, se abbiamo un prestito, usa quella data
-                    else if (dataPrestito !== null && tipo.id_finestra_mercato && tipo.id_finestra_mercato.toString() === dataPrestito) {
-                        valore = tipo.id_tipologia;
-                    }
+                if (tipoTrasferimento) { // Solo se c'è un tipo selezionato
+                    tipologieScambio.forEach(tipo => {
+                        if (tipo.id_metodo === tipoTrasferimento) {
+                            if (dataCredito !== null && tipo.id_finestra_mercato && tipo.id_finestra_mercato.toString() === dataCredito) {
+                                valore = tipo.id_tipologia;
+                            }
+                            else if (dataPrestito !== null && tipo.id_finestra_mercato && tipo.id_finestra_mercato.toString() === dataPrestito) {
+                                valore = tipo.id_tipologia;
+                            }
+                        }
+                    });
+                } else {
+                    valore = 0; // Nessun tipo selezionato
                 }
+
+                return {
+                    id: playerId,
+                    tipoTrasferimento: valore,
+                    tipoTrasferimentoText: tipoTrasferimentoText,
+                    valoreRiscatto: valoreRiscatto,
+                    dataPrestito: dataPrestito,
+                    dataCredito: dataCredito
+                };
             });
+        }
 
-            console.log("Tipo trasferimento:", valore);
-
-            const valoreRiscattoEl = (document.getElementById(`riscatto-input-${playerId}`));
-            const valoreRiscatto = valoreRiscattoEl ? parseFloat(valoreRiscattoEl.value) : null;
-
-            return {
-                id: playerId,
-                tipoTrasferimento: valore,
-                tipoTrasferimentoText: tipoTrasferimentoText,
-                valoreRiscatto: valoreRiscatto,
-                dataPrestito: dataPrestito,
-                dataCredito: dataCredito
-            };
-        });
-
-        // Raccogli dettagli giocatori squadra 2
-        const giocatoriSquadra2 = Array.from(containers.selected2.querySelectorAll('.selected-player')).map(el => {
-            const playerId = el.querySelector('.remove-player').dataset.id;
-
-            const tipoSelect = document.getElementById(`type-select-${playerId}`);
-            let tipoTrasferimento = tipoSelect ? tipoSelect.value : '';
-
-            const tipoTrasferimentoText = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex].text : '';
-
-            const dataPrestitoEl = document.getElementById(`data-fine-prestito-${playerId}`);
-            const dataPrestito = dataPrestitoEl && dataPrestitoEl.style.display !== 'none' ? dataPrestitoEl.value : null;
-
-            const dataCreditoEl = document.getElementById(`data-fine-credito-${playerId}`);
-            const dataCredito = dataCreditoEl && dataCreditoEl.style.display !== 'none' ? dataCreditoEl.value : null;
-
-            const valoreRiscattoEl = (document.getElementById(`riscatto-input-${playerId}`));
-            const valoreRiscatto = valoreRiscattoEl ? parseFloat(valoreRiscattoEl.value) : null;
-
-            let valore = 1;
-
-            tipologieScambio.forEach(tipo => {
-                // Controlla prima se il tipo di trasferimento corrisponde
-                if (tipo.id_metodo === tipoTrasferimento) {
-                    // Se abbiamo un credito, usa quella data per trovare la finestra
-                    if (dataCredito !== null && tipo.id_finestra_mercato && tipo.id_finestra_mercato.toString() === dataCredito) {
-                        valore = tipo.id_tipologia;
-                    }
-                    // Altrimenti, se abbiamo un prestito, usa quella data
-                    else if (dataPrestito !== null && tipo.id_finestra_mercato && tipo.id_finestra_mercato.toString() === dataPrestito) {
-                        valore = tipo.id_tipologia;
-                    }
-                }
-            });
-
-
-            return {
-                id: playerId,
-                tipoTrasferimento: valore,
-                tipoTrasferimentoText: tipoTrasferimentoText,
-                valoreRiscatto: valoreRiscatto,
-                dataPrestito: dataPrestito,
-                dataCredito: dataCredito
-            };
-        });
+// Utilizzo
+        const giocatoriSquadra1 = raccogliGiocatori(containers.selected1);
+        const giocatoriSquadra2 = raccogliGiocatori(containers.selected2);
 
         // Costruisci l'oggetto dati completo
         const datiTrattativa = {
@@ -1057,51 +1014,25 @@
             return;
         }
 
-        if (giocatoriSquadra1.length === 0 && giocatoriSquadra2.length === 0 &&
-            (creditoTeam1 === '0' || !creditoTeam1) && (creditoTeam2 === '0' || !creditoTeam2)) {
+        // Verifica che le squadre scambino almeno un giocatore
+        if (giocatoriSquadra1.length === 0 && giocatoriSquadra2.length === 0) {
             risultatoEl.className = 'risultato-trattativa error';
-            risultatoEl.textContent = 'Seleziona almeno un giocatore o inserisci un credito per procedere.';
+            risultatoEl.textContent = 'Seleziona almeno un giocatore';
             return;
         }
 
         // Verifica che i tipi di trasferimento siano stati selezionati per tutti i giocatori
         const verificaTipiTrasferimento = (giocatori) => {
-            return giocatori.every(g => g.tipoTrasferimento && g.tipoTrasferimento !== '');
+            return giocatori.every(g => {
+                return g.tipoTrasferimento && g.tipoTrasferimentoText &&
+                    g.tipoTrasferimento !== '0' &&
+                    g.tipoTrasferimentoText !== '0';
+            });
         };
 
         if (!verificaTipiTrasferimento(giocatoriSquadra1) || !verificaTipiTrasferimento(giocatoriSquadra2)) {
             risultatoEl.className = 'risultato-trattativa error';
             risultatoEl.textContent = 'Seleziona il tipo di trasferimento per tutti i giocatori.';
-            return;
-        }
-
-        // Verifica che i riscatti siano stati inseriti dove richiesto
-        const verificaRiscatti = (giocatori, maxCrediti) => {
-            return giocatori.every(g => {
-                if (g.tipoTrasferimentoText === 'Prestito con obbligo di riscatto') {
-                    const riscattoInput = document.getElementById(`riscatto-input-${g.id}`);
-                    const riscatto = riscattoInput ? parseFloat(riscattoInput.value) : null;
-
-                    // Verifica che il riscatto sia valido
-                    if (riscatto === null || riscatto <= 0) {
-                        return false;
-                    }
-
-                    // Controllo per la finestra "Giugno" (value = '9')
-                    const dataCreditoSelect = document.getElementById(`data-fine-credito-${g.id}`);
-                    if (dataCreditoSelect && dataCreditoSelect.value === '9' && riscatto > maxCrediti) {
-                        return false;
-                    }
-                    return true;
-                }
-                return true;
-            });
-        };
-
-
-        if (!verificaRiscatti(giocatoriSquadra1, maxCreditoTeam1) || !verificaRiscatti(giocatoriSquadra2, maxCreditoTeam1)) {
-            risultatoEl.className = 'risultato-trattativa error';
-            risultatoEl.textContent = 'Inserisci un valore che sia compreso tra 1 ed il massimo credito disponibile per gli obblighi di riscatto di Giugno.';
             return;
         }
 
@@ -1236,13 +1167,13 @@
                     const creditiTeam1 = creditoTeam1.map((credito, index) => ({
                         id_squadra: idSquadra1,
                         id_trattativa: idTrattativa,
-                        id_fm: index + 8, // 8 per gennaio, 9 per giugno
+                        id_fm: index + 9, // 9 per gennaio, 10 per giugno
                         credito: credito
                     }));
                     const creditiTeam2 = creditoTeam2.map((credito, index) => ({
                         id_squadra: idSquadra2,
                         id_trattativa: idTrattativa,
-                        id_fm: index + 8, // 8 per gennaio, 9 per giugno
+                        id_fm: index + 9, // 9 per gennaio, 10 per giugno
                         credito: credito
                     }));
 
@@ -1318,13 +1249,15 @@
         // 1. Verifica che tutti i giocatori abbiano un tipo di trasferimento selezionato
         const verificaTipiTrasferimento = (giocatori) => {
             return giocatori.every(g => {
-                return !(!g.tipoTrasferimento || g.tipoTrasferimento === '');
+                return g.tipoTrasferimento && g.tipoTrasferimentoText &&
+                    g.tipoTrasferimento !== '0' &&
+                    g.tipoTrasferimentoText !== '0';
             });
         };
 
         const risultatoEl = document.getElementById('risultatoTrattativa');
         risultatoEl.style.display = 'block';
-
+        //
         if (!verificaTipiTrasferimento(datiTrattativa.squadra1.giocatori) ||
             !verificaTipiTrasferimento(datiTrattativa.squadra2.giocatori)) {
             risultatoEl.className = 'risultato-trattativa error';
@@ -1365,13 +1298,9 @@
                     const riscatto = riscattoInput ? parseFloat(riscattoInput.value) : 0;
                     if (!isNaN(riscatto) && riscatto > 0) {
                         riscatti += riscatto;
-                        console.log(`[RISCATTI RICEVUTI] +${riscatto} da giocatore ${giocatore.id} (${isTeam1 ? 'per Team1' : 'per Team2'})`);
                     }
                 }
             });
-
-            console.log(`[RISCATTI RICEVUTI] Totale riscatti ricevuti ${isTeam1 ? 'per Team1' : 'per Team2'}: ${riscatti}`);
-
             return riscatti;
         };
 
@@ -1404,6 +1333,7 @@
             let errore = false;
             const squadraOpposta = isTeam1 ? datiTrattativa.squadra2 : datiTrattativa.squadra1;
             const squadraOppostaMaxCredito = isTeam1 ? maxCreditoTeam2 : maxCreditoTeam1;
+            const squadraMaxCredito = isTeam1 ? maxCreditoTeam1 : maxCreditoTeam2;
 
             // Calcoliamo i riscatti di giugno separatamente
             let riscattiGiugno = 0;
@@ -1416,8 +1346,8 @@
                     const riscattoSelect = document.getElementById(`data-fine-credito-${g.id}`);
                     const riscattoPeriodo = riscattoSelect ? riscattoSelect.value : null;
 
-                    // Somma solo i riscatti di giugno (value = "9")
-                    if (riscattoPeriodo === "9" && riscatto > 0) {
+                    // Somma solo i riscatti di giugno (value = "10")
+                    if (riscattoPeriodo === "10" && riscatto > 0) {
                         riscattiGiugno += riscatto;
                     }
                 }
@@ -1426,10 +1356,10 @@
             // Ora verifichiamo se la somma del credito di giugno e i riscatti di giugno supera il massimo
             const somma = creditiTeam.credito3 + riscattiGiugno;
 
-            if (somma > squadraOppostaMaxCredito) {
+            if (somma > squadraMaxCredito) {
                 errore = true;
                 risultatoEl.className = 'risultato-trattativa error';
-                risultatoEl.innerHTML = `La somma tra credito di Giugno e i riscatti ricevuti di Giugno per la ${teamName} supera ${squadraOppostaMaxCredito} (totale: ${somma.toFixed(2)}). Trattativa non valida.`;
+                risultatoEl.innerHTML = `La somma tra credito di Giugno e i riscatti ricevuti di Giugno per la ${teamName} supera ${squadraMaxCredito} (totale: ${somma.toFixed(2)}). Trattativa non valida.`;
             }
 
             return !errore;
