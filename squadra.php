@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fantacalcio Manageriale</title>
+    <title>FMPro</title>
+    <link rel="icon" href="public/background/logo.png" type="image/png">
+
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
@@ -182,6 +184,11 @@
             margin: 10px 0;
         }
 
+        input{
+            width: auto;
+            margin: 5px;
+        }
+
         .player-name {
             font-weight: bold;
             font-size: 16px;
@@ -246,11 +253,26 @@
             font-weight: bold;
         }
 
+        .modulo-content{
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+
+        }
+
         /* Responsive design */
         @media (max-width: 1024px) {
             .main-body-content {
                 flex-direction: column;
             }
+            .modulo-content{
+                display: grid;
+                grid-auto-columns: min-content;
+            }
+
+
 
         }
     </style>
@@ -261,8 +283,8 @@
     <!-- Menu laterale -->
     <aside class="main-menu">
         <div class="menu-header">
-            <h1>Fantacalcio</h1>
-            <h3>Manageriale</h3>
+            <img src="public/background/logo.png" alt="Logo" class="logo" width="80px" height="80px">
+            <h3>FMPro</h3>
         </div>
 
         <ul class="menu-list">
@@ -601,8 +623,41 @@
                 <!-- I giocatori verranno inseriti qui via JavaScript -->
             </div>
 
+
             <!-- Vista Stadio -->
             <div class="stadium-view" id="stadium-view">
+                <div class="overview-cards">
+                    <div class="overview-card" id="upgradeCard" style="
+                                                display: flex;
+                                                justify-content: space-between;
+                                                align-items: center;
+                                            ">
+                        <h3>Ampliamento stadio</h3>
+                        <button onclick="openStadiumUpgrade()">Amplia</button>
+                    </div>
+                </div>
+                <div class="overview-cards" id="moduloStadium" style="display: none">
+                    <div class="overview-card">
+                        <div class="modulo-header" style="
+                                            display: flex;
+                                            flex-direction: row;
+                                            width: 100%;
+                                            align-items: center;
+                                            justify-content: space-between;
+                                            padding-bottom: 8px;
+                                        ">
+                            <h3>Modulo Ampliamento Stadio</h3>
+                            <button onclick="closeStadiumUpgrade()">X</button>
+                        </div>
+                        <div class="modulo-content">
+                            <div class="modulo-input">
+                                <label for="livelloStadio">Livello desiderato:</label>
+                                <input type="number" id="livelloStadio" min="1" max="10" placeholder="Inserisci livello (1-10)">
+                            </div>
+                            <button id="inviaModuloStadium" onclick="sendStadiumUpgrade('<?php echo addslashes($json->squadra[0]->nome_squadra); ?>')">Invia richiesta</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="overview-cards">
                     <div class="overview-card">
                         <h3>Dettagli Stadio</h3>
@@ -646,6 +701,7 @@
                 </div>
             </div>
 
+
             <!-- Vista Albo d'Oro -->
             <div class="albo-view" id="albo-view">
                 <div class="overview-card">
@@ -666,6 +722,112 @@
 
             <!-- Vista Settore Giovanile -->
             <div class="sgs-view" id="sgs-view">
+                <div class="overview-cards">
+                    <div class="overview-card" id="buyCard" style="
+                                                                        display: flex;
+                                                                        justify-content: space-between;
+                                                                        align-items: center;
+                                                                    ">
+                        <h3>Acquista calciatori settore giovanile</h3>
+                        <button onclick="openSgs()">Acquista</button>
+                    </div>
+                </div>
+                <div class="overview-cards" id="moduloSgs" style="display: none">
+                    <div class="overview-card">
+                            <div class="modulo-header" style="
+                                                                                    display: flex;
+                                                                                    flex-direction: row;
+                                                                                    width: 100%;
+                                                                                    align-items: center;
+                                                                                    justify-content: space-between;
+                                                                                    padding-bottom: 8px;
+                                                                                ">
+                                <h3>Modulo Settore Giovanile</h3>
+                                <button onclick="closeSgs()">X</button>
+                            </div>
+                            <div class="modulo-content" >
+                                <div class="modulo-input">
+                                    <label for="nome1">Calciatore 1:</label>
+                                    <input type="text" id="nome1" placeholder="Nome calciatore 1">
+                                    <input type="number" id="offerta1" min="1" max="10" placeholder="Offerta calciatore 1">
+                                </div>
+                                <div class="modulo-input">
+                                    <label for="nome2">Calciatore 2:</label>
+                                    <input type="text" id="nome2" placeholder="Nome calciatore 2">
+                                    <input type="number" id="offerta2" min="1" max="10" placeholder="Offerta calciatore 2">
+                                </div>
+                                <div class="modulo-input">
+                                    <label for="nome3">Calciatore 3:</label>
+                                    <input type="text" id="nome3" placeholder="Nome calciatore 3">
+                                    <input type="number" id="offerta3" min="1" max="10" placeholder="Offerta calciatore 3">
+                                </div>
+                                <button id="inviaModuloSgs" onclick="sendSgs('<?php echo addslashes($json->squadra[0]->nome_squadra); ?>')">Invia</button>
+                            </div>
+
+
+
+                            <script>
+                                // Gestione dei tab - VERSIONE DEFINITIVA
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const tabs = document.querySelectorAll('.view-tab');
+
+                                    tabs.forEach(tab => {
+                                        tab.addEventListener('click', function(e) {
+                                            e.preventDefault();
+
+                                            // Rimuovi active da tutti i tab
+                                            tabs.forEach(t => t.classList.remove('active'));
+                                            // Aggiungi active al tab cliccato
+                                            this.classList.add('active');
+
+                                            // Nascondi tutte le view
+                                            document.querySelectorAll('.overview, .grid-view, .stadium-view, .albo-view, .sgs-view')
+                                                .forEach(v => v.classList.remove('active'));
+
+                                            // Mostra la view corretta
+                                            const viewId = this.getAttribute('data-view') + '-view';
+                                            const targetView = document.getElementById(viewId);
+                                            if(targetView) {
+                                                targetView.classList.add('active');
+                                            }
+                                        });
+                                    });
+
+                                    // Caricamento dei giocatori
+                                    fetch('endpoint/associazioni/read.php?id_squadra=<?php echo $id_squadra; ?>')
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            const players = data.associazioni;
+                                            const gridView = document.getElementById('grid-view');
+
+                                            // Ordina i giocatori per ruolo (P, D, C, A)
+                                            const sortedPlayers = players.sort((a, b) => {
+                                                const order = { 'P': 0, 'D': 1, 'C': 2, 'A': 3 };
+                                                return order[a.ruolo_calciatore] - order[b.ruolo_calciatore];
+                                            });
+
+                                            sortedPlayers.forEach(player => {
+                                                const card = document.createElement('div');
+                                                card.className = `grid-player-card-${player.ruolo_calciatore}`;
+                                                card.innerHTML = `
+                                    <div class="player-role-badge role-${player.ruolo_calciatore}">${player.ruolo_calciatore}</div>
+                                    <div class="player-main-info">
+                                        <div class="player-name">${player.nome_calciatore}</div>
+                                        <div class="player-team">${player.nome_squadra_calciatore || 'N/A'}</div>
+                                        <div class="player-stats">
+                                            <span>Costo: <span class="stat-value">${player.costo_calciatore} FVM</span></span>
+                                            <span>FVM: <span class="stat-value">${player.fvm} FVM</span></span>
+                                        </div>
+                                    </div>
+                                `;
+                                                gridView.appendChild(card);
+                                            });
+                                        })
+                                        .catch(error => console.error('Errore nel recupero dei dati:', error));
+                                });
+                            </script>
+                        </div>
+                    </div>
                 <div class="overview-cards">
                         <?php
                         if(!empty($json_settore_giovanile->settore_giovanile)) {
@@ -693,66 +855,7 @@
                 </div>
             </div>
 
-            <script>
-                // Gestione dei tab - VERSIONE DEFINITIVA
-                document.addEventListener('DOMContentLoaded', function() {
-                    const tabs = document.querySelectorAll('.view-tab');
 
-                    tabs.forEach(tab => {
-                        tab.addEventListener('click', function(e) {
-                            e.preventDefault();
-
-                            // Rimuovi active da tutti i tab
-                            tabs.forEach(t => t.classList.remove('active'));
-                            // Aggiungi active al tab cliccato
-                            this.classList.add('active');
-
-                            // Nascondi tutte le view
-                            document.querySelectorAll('.overview, .grid-view, .stadium-view, .albo-view, .sgs-view')
-                                .forEach(v => v.classList.remove('active'));
-
-                            // Mostra la view corretta
-                            const viewId = this.getAttribute('data-view') + '-view';
-                            const targetView = document.getElementById(viewId);
-                            if(targetView) {
-                                targetView.classList.add('active');
-                            }
-                        });
-                    });
-
-                    // Caricamento dei giocatori
-                    fetch('endpoint/associazioni/read.php?id_squadra=<?php echo $id_squadra; ?>')
-                        .then(response => response.json())
-                        .then(data => {
-                            const players = data.associazioni;
-                            const gridView = document.getElementById('grid-view');
-
-                            // Ordina i giocatori per ruolo (P, D, C, A)
-                            const sortedPlayers = players.sort((a, b) => {
-                                const order = { 'P': 0, 'D': 1, 'C': 2, 'A': 3 };
-                                return order[a.ruolo_calciatore] - order[b.ruolo_calciatore];
-                            });
-
-                            sortedPlayers.forEach(player => {
-                                const card = document.createElement('div');
-                                card.className = `grid-player-card-${player.ruolo_calciatore}`;
-                                card.innerHTML = `
-                                    <div class="player-role-badge role-${player.ruolo_calciatore}">${player.ruolo_calciatore}</div>
-                                    <div class="player-main-info">
-                                        <div class="player-name">${player.nome_calciatore}</div>
-                                        <div class="player-team">${player.nome_squadra_calciatore || 'N/A'}</div>
-                                        <div class="player-stats">
-                                            <span>Costo: <span class="stat-value">${player.costo_calciatore} FVM</span></span>
-                                            <span>FVM: <span class="stat-value">${player.fvm} FVM</span></span>
-                                        </div>
-                                    </div>
-                                `;
-                                gridView.appendChild(card);
-                            });
-                        })
-                        .catch(error => console.error('Errore nel recupero dei dati:', error));
-                });
-            </script>
 
         <footer class="main-footer">
             <div class="swiper-container footer-swiper">
@@ -773,3 +876,92 @@
 </div>
 </body>
 </html>
+
+<script>
+    // Funzione per gestire l'acquisto di una squadra
+    function openSgs() {
+        const modulo = document.getElementById('moduloSgs');
+        const buyCard = document.getElementById('buyCard');
+        modulo.style.display = 'block';
+        buyCard.style.display = 'none';
+    }
+
+    function closeSgs() {
+        const modulo = document.getElementById('moduloSgs');
+        const buyCard = document.getElementById('buyCard');
+        modulo.style.display = 'none';
+        buyCard.style.display = 'flex';
+    }
+
+    function sendSgs(nomeSquadra){
+        const getNome1 = document.getElementById('nome1').value;
+        const getNome2 = document.getElementById('nome2').value;
+        const getNome3 = document.getElementById('nome3').value;
+        const getOfferta1 = document.getElementById('offerta1').value || 0;
+        const getOfferta2 = document.getElementById('offerta2').value || 0;
+        const getOfferta3 = document.getElementById('offerta3').value || 0;
+
+        const tot = parseInt(getOfferta1) + parseInt(getOfferta2) + parseInt(getOfferta3);
+
+        if(tot>10){
+            alert("L'offerta totale non può superare 10 FVM");
+            return;
+        }
+
+        const numeroWhatsApp = "3371447208";
+
+        const messaggio = `Ciao, sono ${nomeSquadra} e interessato ai seguenti calciatori del settore giovanile:\n\n` +
+            `1. Nome: ${getNome1}, Offerta: ${getOfferta1} FVM\n` +
+            `2. Nome: ${getNome2}, Offerta: ${getOfferta2} FVM\n` +
+            `3. Nome: ${getNome3}, Offerta: ${getOfferta3} FVM`;
+        const url = `https://wa.me/${numeroWhatsApp}?text=${messaggio}`;
+
+        const conferma1 = confirm(`Sei sicuro di voler acquistare i calciatori indicati?`);
+        if (!conferma1) return;
+
+        const conferma2 = confirm("Questa operazione è irreversibile! Sei sicuro?");
+        if (!conferma2) return;
+
+        window.open(url);
+    }
+
+    function openStadiumUpgrade() {
+        const modulo = document.getElementById('moduloStadium');
+        const upgradeCard = document.getElementById('upgradeCard');
+        modulo.style.display = 'block';
+        upgradeCard.style.display = 'none';
+    }
+
+    function closeStadiumUpgrade() {
+        const modulo = document.getElementById('moduloStadium');
+        const upgradeCard = document.getElementById('upgradeCard');
+        modulo.style.display = 'none';
+        upgradeCard.style.display = 'flex';
+    }
+
+    function sendStadiumUpgrade(nomeSquadra) {
+        const livelloStadio = document.getElementById('livelloStadio').value;
+
+        if (!livelloStadio || livelloStadio < 1 || livelloStadio > 10) {
+            alert("Inserisci un livello valido tra 1 e 10");
+            return;
+        }
+
+        const numeroWhatsApp = "3371447208";
+
+        const messaggio = `Ciao, sono ${nomeSquadra} e vorrei richiedere un ampliamento dello stadio:\n\n` +
+            `Livello desiderato: ${livelloStadio}\n` +
+            `Attendo conferma dei costi e dell'operazione.`;
+
+        const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(messaggio)}`;
+
+        const conferma1 = confirm(`Sei sicuro di voler richiedere l'ampliamento dello stadio al livello ${livelloStadio}?`);
+        if (!conferma1) return;
+
+        const conferma2 = confirm("Questa operazione comporterà dei costi! Sei sicuro di voler procedere?");
+        if (!conferma2) return;
+
+        window.open(url);
+    }
+
+</script>
