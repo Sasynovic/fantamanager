@@ -6,12 +6,13 @@
     <title>FMPro</title>
     <link rel="icon" href="public/background/logo.png" type="image/png">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
-    <script src="showmenu.js" defer></script>
+    <script src="js/showmenu.js" defer></script>
 
     <style>
+        /*necessario per il corretto funzionamento della pagina*/
         .main-body{height: 93%;}
     </style>
 </head>
@@ -51,7 +52,7 @@
         <header class="main-header">
             <div class="main-text-header">
                 <button class="back-button" onclick="window.location.href='index.php'">
-                    <img src="chevronL.svg" alt="Indietro" height="40px" width="40px">
+                    <img src="public/chevron/chevronL.svg" alt="Indietro" height="40px" width="40px">
                 </button>
                 <h1>Regolamento</h1>
                 <h1 id="hamburger-menu">≡</h1>

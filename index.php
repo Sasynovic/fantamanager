@@ -6,10 +6,10 @@
             <title>FMPro</title>
             <link rel="icon" href="public/background/logo.png" type="image/png">
 
-            <link rel="stylesheet" href="style.css">
+            <link rel="stylesheet" href="css/style.css">
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
             <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
-            <script src="showmenu.js" defer></script>
+            <script src="js/showmenu.js" defer></script>
         </head>
 
         <body>
@@ -54,17 +54,17 @@
                     </header>
 
                     <div class="main-body">
-                        <div class="main-body-content" style="position: relative;">
+                        <div class="main-body-content">
                             <div class="swiper-container main-swiper">
                                 <div class="swiper-wrapper" id="mainDivisionList">
                                     <!-- Gli elementi divisione verranno inseriti qui tramite JavaScript -->
                                 </div>
                                 <!-- Aggiunti i pulsanti di navigazione -->
                                 <div class="swiper-button-prev main-nav-prev">
-                                    <img src="chevronL.svg" alt="Indietro">
+                                    <img src="public/chevron/chevronL.svg" alt="Indietro">
                                 </div>
                                 <div class="swiper-button-next main-nav-next">
-                                    <img src="chevronR.svg" alt="Avanti">
+                                    <img src="public/chevron/chevronR.svg" alt="Avanti">
                                 </div>
                             </div>
                         </div>
@@ -77,10 +77,10 @@
                             </div>
                             <!-- Aggiunti i pulsanti di navigazione -->
                             <div class="swiper-button-prev footer-nav-prev">
-                                <img src="chevronL.svg" alt="Indietro">
+                                <img src="public/chevron/chevronL.svg" alt="Indietro">
                             </div>
                             <div class="swiper-button-next footer-nav-next">
-                                <img src="chevronR.svg" alt="Avanti">
+                                <img src="public/chevron/chevronR.svg" alt="Avanti">
                             </div>
                         </div>
                     </footer>

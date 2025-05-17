@@ -6,16 +6,12 @@
     <title>FMPro</title>
     <link rel="icon" href="public/background/logo.png" type="image/png">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
-    <script src="showmenu.js" defer></script>
+    <script src="js/showmenu.js" defer></script>
     <style>
         /* STILE SPECIFICO PER LE SQUADRE IN VENDITA */
-
-        .main-body-content{
-           margin-top: 20px;
-        }
         .filter-section{
             display: flex;
             align-items: center;
@@ -82,7 +78,7 @@
         <header class="main-header">
             <div class="main-text-header">
                 <button class="back-button" onclick="window.history.back();">
-                    <img src="chevronL.svg" alt="Indietro" height="40px" width="40px">
+                    <img src="public/chevron/chevronL.svg" alt="Indietro" height="40px" width="40px">
                 </button>
                 <h1>Squadre in vendita</h1>
                 <h1 id="hamburger-menu">≡</h1>
@@ -91,7 +87,7 @@
 
         <div class="main-body">
             <h3  style="text-align: center; padding: 10px; background-color: var(--accento)" >   Clicca sul nome della squadra per maggiori dettagli</h3>
-            <div class="main-body-content" id="main-body-content" style="position: relative;">
+            <div class="main-body-content" id="main-body-content">
 
                 <div class="filter-section">
                     <div class="filter-control">

@@ -6,11 +6,11 @@
     <title>FMPro</title>
     <link rel="icon" href="public/background/logo.png" type="image/png">
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
-    <script src="renderFooter.js" defer></script>
-    <script src="showmenu.js" defer></script>
+    <script src="js/renderFooter.js" defer></script>
+    <script src="js/showmenu.js" defer></script>
 
     <style>
 
@@ -39,16 +39,6 @@
             text-align: center;
             padding: 20px;
             color: #666;
-        }
-
-
-        .main-body-content {
-            display: flex;
-            flex-direction: row;
-            gap: 20px;
-            align-items: flex-start;
-
-
         }
 
         .main-body {
@@ -184,11 +174,6 @@
             margin: 10px 0;
         }
 
-        input{
-            width: auto;
-            margin: 5px;
-        }
-
         .player-name {
             font-weight: bold;
             font-size: 16px;
@@ -226,6 +211,7 @@
             border-radius: 8px;
             padding: 15px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
         }
 
         .overview-card h3 {
@@ -264,9 +250,6 @@
 
         /* Responsive design */
         @media (max-width: 1024px) {
-            .main-body-content {
-                flex-direction: column;
-            }
             .modulo-content{
                 display: grid;
                 grid-auto-columns: min-content;
@@ -303,7 +286,7 @@
         <header class="main-header">
             <div class="main-text-header">
                 <button class="back-button" onclick="window.history.back();">
-                    <img src="chevronL.svg" alt="Indietro" height="40px" width="40px">
+                    <img src="public/chevron/chevronL.svg" alt="Indietro" height="40px" width="40px">
                 </button>
                 <h1>
                     <?php
@@ -626,8 +609,8 @@
 
             <!-- Vista Stadio -->
             <div class="stadium-view" id="stadium-view">
-                <div class="overview-cards">
-                    <div class="overview-card" id="upgradeCard" style="
+                <div class="overview-cards" id="upgradeCard" >
+                    <div class="overview-card" style="
                                                 display: flex;
                                                 justify-content: space-between;
                                                 align-items: center;
@@ -651,7 +634,7 @@
                         </div>
                         <div class="modulo-content">
                             <div class="modulo-input">
-                                <label for="livelloStadio">Livello desiderato:</label>
+                                <label for="livelloStadio"></label>
                                 <input type="number" id="livelloStadio" min="1" max="10" placeholder="Inserisci livello (1-10)">
                             </div>
                             <button id="inviaModuloStadium" onclick="sendStadiumUpgrade('<?php echo addslashes($json->squadra[0]->nome_squadra); ?>')">Invia richiesta</button>
@@ -722,8 +705,8 @@
 
             <!-- Vista Settore Giovanile -->
             <div class="sgs-view" id="sgs-view">
-                <div class="overview-cards">
-                    <div class="overview-card" id="buyCard" style="
+                <div class="overview-cards" id="buyCard" >
+                    <div class="overview-card" style="
                                                                         display: flex;
                                                                         justify-content: space-between;
                                                                         align-items: center;
@@ -747,17 +730,17 @@
                             </div>
                             <div class="modulo-content" >
                                 <div class="modulo-input">
-                                    <label for="nome1">Calciatore 1:</label>
+                                    <label for="nome1"></label>
                                     <input type="text" id="nome1" placeholder="Nome calciatore 1">
                                     <input type="number" id="offerta1" min="1" max="10" placeholder="Offerta calciatore 1">
                                 </div>
                                 <div class="modulo-input">
-                                    <label for="nome2">Calciatore 2:</label>
+                                    <label for="nome2"></label>
                                     <input type="text" id="nome2" placeholder="Nome calciatore 2">
                                     <input type="number" id="offerta2" min="1" max="10" placeholder="Offerta calciatore 2">
                                 </div>
                                 <div class="modulo-input">
-                                    <label for="nome3">Calciatore 3:</label>
+                                    <label for="nome3"></label>
                                     <input type="text" id="nome3" placeholder="Nome calciatore 3">
                                     <input type="number" id="offerta3" min="1" max="10" placeholder="Offerta calciatore 3">
                                 </div>
@@ -864,10 +847,10 @@
                 </div>
                 <!-- Aggiunti i pulsanti di navigazione -->
                 <div class="swiper-button-prev footer-nav-prev">
-                    <img src="chevronL.svg" alt="Indietro">
+                    <img src="public/chevron/chevronL.svg" alt="Indietro">
                 </div>
                 <div class="swiper-button-next footer-nav-next">
-                    <img src="chevronR.svg" alt="Avanti">
+                    <img src="public/chevron/chevronR.svg" alt="Avanti">
                 </div>
             </div>
         </footer>
