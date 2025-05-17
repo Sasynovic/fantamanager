@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fantacalcio Manageriale</title>
+    <title>FMPro</title>
+    <link rel="icon" href="public/background/logo.png" type="image/png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
@@ -15,9 +16,9 @@
 <div class="main-container">
     <aside class="main-menu">
         <div class="menu-header">
-            <h1>Fantacalcio</h1>
-            <h3>Manageriale</h3>
-        </div>
+                <img src="public/background/logo.png" alt="Logo" class="logo" width="80px" height="80px">
+                <h3>FMPro</h3>
+            </div>
 
         <ul class="menu-list">
             <li class="menu-item">
