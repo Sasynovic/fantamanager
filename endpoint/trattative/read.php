@@ -45,6 +45,8 @@ if ($num > 0) {
         $response['trattative'][] = [
             'id' => $row['id'],
             'descrizione' => $row['descrizione'],
+            'id_squadra1' => $row['id_squadra1'],
+            'id_squadra2' => $row['id_squadra2'],
             'id_competizione' => $row['id_competizione'],
             'nome_squadra1' => $row['nome_squadra1'],
             'nome_squadra2' => $row['nome_squadra2'],
