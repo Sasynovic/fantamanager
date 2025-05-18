@@ -14,7 +14,6 @@
     <style>
         .tool-container{
             width: 90%;
-            margin-top: 25px;
         }
 
         .select-container{
@@ -986,9 +985,9 @@
                 id: idSquadra1,
                 giocatori: giocatoriSquadra1,
                 credito: {
-                    10: creditoTeam1Subito,
-                    8: creditoTeam1Meta,
-                    9: creditoTeam1Fine
+                    8: creditoTeam1Subito,
+                    9: creditoTeam1Meta,
+                    10: creditoTeam1Fine
                 }
 
             },
@@ -996,9 +995,9 @@
                 id: idSquadra2,
                 giocatori: giocatoriSquadra2,
                 credito: {
-                    10: creditoTeam2Subito,
-                    8: creditoTeam2Meta,
-                    9: creditoTeam2Fine
+                    8: creditoTeam2Subito,
+                    9: creditoTeam2Meta,
+                    10: creditoTeam2Fine
                 }
             }
         };
@@ -1167,13 +1166,13 @@
                     const creditiTeam1 = creditoTeam1.map((credito, index) => ({
                         id_squadra: idSquadra1,
                         id_trattativa: idTrattativa,
-                        id_fm: index + 9, // 9 per gennaio, 10 per giugno
+                        id_fm: index + 8, // 9 per gennaio, 10 per giugno
                         credito: credito
                     }));
                     const creditiTeam2 = creditoTeam2.map((credito, index) => ({
                         id_squadra: idSquadra2,
                         id_trattativa: idTrattativa,
-                        id_fm: index + 9, // 9 per gennaio, 10 per giugno
+                        id_fm: index + 8, // 9 per gennaio, 10 per giugno
                         credito: credito
                     }));
 

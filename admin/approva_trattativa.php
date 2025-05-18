@@ -122,31 +122,6 @@ $nomeSezione = "trattative"
         <ul id="card-list" class="card-grid"></ul>
     </div>
 
-    <div class="card hidden" id="add-form">
-        <div class="card-header">
-            <h2 class="card-title">Modifica <?php echo $nomeSezione?></h2>
-        </div>
-
-        <div class="form-group">
-            <label for="editor-container">Descrizione</label>
-            <div id="editor-container"></div>
-            <input type="hidden" id="descrizione" name="descrizione">
-        </div>
-
-        <div class="checkbox-label">
-            <span>Stato</span>
-            <label class="toggle-switch">
-                <input type="checkbox" name="ufficializzata" id="ufficializzata-edit" checked>
-                <span class="toggle-slider"></span>
-            </label>
-        </div>
-
-        <div class="btn-group">
-            <button id="submit" class="btn btn-primary">📰Pubblica</button>
-            <button id="cancel-form" class="btn btn-outline">Annulla</button>
-        </div>
-    </div>
-
     <div class="card hidden" id="edit-form">
         <div class="card-header">
             <h2 class="card-title">Modifica <?php echo $nomeSezione?></h2>
@@ -185,6 +160,10 @@ $nomeSezione = "trattative"
 <script src="CRUDManager.js" defer></script>
 
 <script>
+    let ArrayAssociazioni = [];
+    let ArrayOperazioni = [];
+    let crudManager;
+
     const quill = new Quill('#editor-container', {
         theme: 'snow',
         modules: {
@@ -202,13 +181,8 @@ $nomeSezione = "trattative"
         placeholder: 'Scrivi la descrizione della trattativa qui...'
     });
 
-    let ArrayAssociazioni = [];
-
-    let crudManager;
     document.addEventListener('DOMContentLoaded', function() {
-        // Inizializza il gestore CRUD per i "trattative"
         crudManager = new CRUDManager('<?php echo $nomeSezione?>', 'https://barrettasalvatore.it', {
-            // Override degli elementi DOM, personalizzando i nomi degli elementi
             cardList: document.getElementById('card-list'),
             filterLimit: document.getElementById('filter-card'),
             searchInput: document.getElementById('search-card'),
@@ -222,7 +196,6 @@ $nomeSezione = "trattative"
             pagination: document.getElementById('pagination'),
             cardAll: document.querySelector('.card-all')
         }, {
-            // Callback personalizzati
             renderItem: function(item) {
                 const data = formatDate(item.data_creazione);
                 const uniqueId = `operations-${item.id}`;
@@ -231,58 +204,56 @@ $nomeSezione = "trattative"
                 setTimeout(() => {
                     caricaOperazioni(item.id, uniqueId);
                     caricaCrediti(item.id, creditoId);
-                }, 0); // asincrono dopo il rendering
+                }, 0);
 
                 return `
-                            <div class="card-meta">
-                                <h3>ID Trattativa: ${item.id}</h3>
-                                <span>Squadra 1: ${item.nome_squadra1}</span>
-                                <span>Squadra 2: ${item.nome_squadra2}</span>
-                                <span>Data: ${data}</span>
-                                <div>Descrizione: ${item.descrizione || 'Nessuna descrizione'}</div>
-                                <div>Stato: ${item.ufficializzata ? '<span style="color:green">Ufficializzata</span>' : '<span style="color:orange">In corso</span>'}</div>
-                            </div>
+                    <div class="card-meta">
+                        <h3>ID Trattativa: ${item.id}</h3>
+                        <span>Squadra 1: ${item.nome_squadra1}</span>
+                        <span>Squadra 2: ${item.nome_squadra2}</span>
+                        <span>Data: ${data}</span>
+                        <div>Descrizione: ${item.descrizione || 'Nessuna descrizione'}</div>
+                        <div>Stato: ${item.ufficializzata ? '<span style="color:green">Ufficializzata</span>' : '<span style="color:orange">In corso</span>'}</div>
+                    </div>
 
-                            <button class="btn btn-toggle" onclick="toggleVisibility('${uniqueId}')">Mostra/Nascondi Operazioni</button>
-                            <div class="operations collapsible" id="${uniqueId}">
-                                <em>Caricamento operazioni...</em>
-                            </div>
+                    <button class="btn btn-toggle" onclick="toggleVisibility('${uniqueId}')">Mostra/Nascondi Operazioni</button>
+                    <div class="operations collapsible" id="${uniqueId}">
+                        <em>Caricamento operazioni...</em>
+                    </div>
 
-                            <button class="btn btn-toggle" onclick="toggleVisibility('${creditoId}')">Mostra/Nascondi Crediti</button>
-                            <div class="credito-container collapsible" id="${creditoId}">
-                                <em>Caricamento crediti...</em>
-                            </div>
+                    <button class="btn btn-toggle" onclick="toggleVisibility('${creditoId}')">Mostra/Nascondi Crediti</button>
+                    <div class="credito-container collapsible" id="${creditoId}">
+                        <em>Caricamento crediti...</em>
+                    </div>
 
-                            <div class="card-actions">
-                                <button class="btn btn-warning edit-btn" onclick="editItem(${item.id})">
-                                    ✏️ Modifica
-                                </button>
-                                <button class="btn btn-danger" onclick="crudManager.deleteItem(${item.id})">
-                                    🗑️ Elimina
-                                </button>
-                            </div>`;
+                    <div class="card-actions">
+                        <button class="btn btn-warning edit-btn" onclick="editItem(${item.id})">
+                            ✏️ Modifica
+                        </button>
+                        <button class="btn btn-danger" onclick="crudManager.deleteItem(${item.id})">
+                            🗑️ Elimina
+                        </button>
+                    </div>`;
             },
             afterLoad: function(items) {
                 console.log(`Caricati ${items.length} <?php echo $nomeSezione?>`);
             }
         });
 
-    // Inizializza i pulsanti del form
-    if (document.getElementById('toggle-add-form')) {
-        document.getElementById('toggle-add-form').addEventListener('click', function() {
-            crudManager.showAddForm();
-        });
-    }
+        if (document.getElementById('toggle-add-form')) {
+            document.getElementById('toggle-add-form').addEventListener('click', function() {
+                crudManager.showAddForm();
+            });
+        }
 
-    if (document.getElementById('cancel-form')) {
-        document.getElementById('cancel-form').addEventListener('click', function(e) {
-            e.preventDefault();
-            crudManager.hideAddForm();
-        });
-    }
+        if (document.getElementById('cancel-form')) {
+            document.getElementById('cancel-form').addEventListener('click', function(e) {
+                e.preventDefault();
+                crudManager.hideAddForm();
+            });
+        }
 
-    // Carica i dati all'avvio
-    crudManager.loadData();
+        crudManager.loadData();
     });
 
     function formatDate(dateStr) {
@@ -295,8 +266,8 @@ $nomeSezione = "trattative"
             minute: '2-digit'
         });
     }
+
     function caricaOperazioni(id, containerId) {
-        // Caricamento operazioni
         fetch('../endpoint/operazioni/read.php?id_trattativa=' + id)
             .then(response => response.json())
             .then(data => {
@@ -306,12 +277,7 @@ $nomeSezione = "trattative"
                 const operazioni = data.operazioni;
                 if (Array.isArray(operazioni) && operazioni.length > 0) {
                     operazioni.forEach(op => {
-                        const {
-                            trattativa,
-                            calciatore,
-                            scambio,
-                            finestra_mercato
-                        } = op;
+                        const { trattativa, calciatore, scambio, finestra_mercato } = op;
 
                         const scambiatoText = calciatore.scambiato
                             ? '<b style="color: green;">Già scambiato</b>'
@@ -324,13 +290,13 @@ $nomeSezione = "trattative"
                         const div = document.createElement('div');
                         div.className = 'operazione';
                         div.innerHTML = `
-                    <h3>Operazione ID: ${op.id_operazione}</h3>
-                    <p><b>${calciatore.nome}</b> si muove dalla squadra <b>${trattativa.nome_squadra_1}</b> alla squadra <b>${trattativa.nome_squadra_2}</b></p>
-                    <p><b>Movimenti totali calciatore:</b> ${calciatore.n_movimenti}</p>
-                    <p>${scambiatoText}</p>
-                    <p><b>Tipo operazione:</b> ${scambio.metodo + ' ' + finestra_mercato.nome}</p>
-                    ${valoreRiscattoText}
-                `;
+                            <h3>Operazione ID: ${op.id_operazione}</h3>
+                            <p><b>${calciatore.nome}</b> si muove dalla squadra <b>${trattativa.nome_squadra_1}</b> alla squadra <b>${trattativa.nome_squadra_2}</b></p>
+                            <p><b>Movimenti totali calciatore:</b> ${calciatore.n_movimenti}</p>
+                            <p>${scambiatoText}</p>
+                            <p><b>Tipo operazione:</b> ${scambio.metodo + ' ' + finestra_mercato.nome}</p>
+                            ${valoreRiscattoText}
+                        `;
                         container.appendChild(div);
                     });
                 } else {
@@ -356,10 +322,10 @@ $nomeSezione = "trattative"
                         const div = document.createElement('div');
                         div.className = 'credito';
                         div.innerHTML = `
-                    <p><b>Squadra:</b> ${credito.nome_squadra}</p>
-                    <p><b>Finestra di mercato:</b> ${credito.fm_nome}</p>
-                    <p><b>Importo:</b> ${credito.credito} crediti</p>
-                    <hr>`;
+                            <p><b>Squadra:</b> ${credito.nome_squadra}</p>
+                            <p><b>Finestra di mercato:</b> ${credito.fm_nome}</p>
+                            <p><b>Importo:</b> ${credito.credito} crediti</p>
+                            <hr>`;
                         creditoContainer.appendChild(div);
                     });
                 } else {
@@ -373,8 +339,6 @@ $nomeSezione = "trattative"
             });
     }
 
-
-
     function toggleVisibility(id) {
         const el = document.getElementById(id);
         if (el) {
@@ -387,8 +351,7 @@ $nomeSezione = "trattative"
         fetch(urlSingleTrattativa)
             .then(response => response.json())
             .then(data => {
-                // Modifica qui: prendi il primo elemento dell'array news
-                const trattative = data.trattative[0]; // Aggiungi [0] per accedere al primo elemento dell'array
+                const trattative = data.trattative[0];
                 if (trattative) {
                     apriFormModifica(trattative);
                 } else {
@@ -399,11 +362,8 @@ $nomeSezione = "trattative"
     }
 
     function apriFormModifica(dati) {
-        // Popola i campi
         document.getElementById('id-edit').value = dati.id || '';
         document.getElementById('ufficializzata').checked = dati.ufficializzata === "1" || dati.ufficializzata === 1 || dati.ufficializzata === true;
-
-        // // Mostra il form di modifica
         document.getElementById('card-all').classList.add('hidden');
         document.getElementById('pagination').classList.add('hidden');
         document.getElementById('edit-form').classList.remove('hidden');
@@ -415,9 +375,6 @@ $nomeSezione = "trattative"
         document.getElementById('edit-form').classList.add('hidden');
     }
 
-    let ArrayOperazioni = [];
-    let credito1= [];
-    let credito2= [];
 
     function updateNews() {
         const id = document.getElementById('id-edit').value;
@@ -431,99 +388,322 @@ $nomeSezione = "trattative"
 
         console.log('Dati da inviare:', dataTrattativa);
 
-        // Prima aggiorniamo la trattativa
-        fetch(`../endpoint/<?php echo $nomeSezione ?>/update.php?id=${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(dataTrattativa)
-        })
+        // 1. Recupera i dettagli della trattativa
+        fetch(`../endpoint/<?php echo $nomeSezione ?>/read.php?id=${id}`)
             .then(response => {
                 if (!response.ok) {
-                    return response.json().then(err => { throw err; });
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.json();
             })
-            .then(responseData => {
-                console.log('Aggiornamento avvenuto con successo:', responseData);
+            .then(data => {
+                // Controllo robusto della struttura dati
+                if (!data || !data.trattative || !Array.isArray(data.trattative) || data.trattative.length === 0) {
+                    throw new Error('Dati trattativa non validi o mancanti');
+                }
 
-                // Solo dopo un aggiornamento riuscito e se ufficializzata è 1, procediamo con le operazioni
-                if (ufficializzata === 1) {
-                    console.log('Scarico le operazioni');
+                const trattativa = data.trattative[0];
+                if (!trattativa || typeof trattativa !== 'object') {
+                    throw new Error('Oggetto trattativa non valido');
+                }
 
-                    // Definiamo ArrayOperazioni qui dentro
-                    let ArrayOperazioni = [];
-                    // sommiamo i crediti delle operazioni di giugno per ogni squadra
-                    let credito1 = 0;
-                    let credito2 = 0;
+                const idSquadra1 = parseInt(trattativa.id_squadra1);
+                const idSquadra2 = parseInt(trattativa.id_squadra2);
 
-                    return fetch(`../endpoint/operazioni/read.php?id_trattativa=${id}`)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Errore nella risposta del server');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            let Operazioni = data.operazioni || [];
-                            Operazioni.forEach(op => {
-                                const {
-                                    trattativa,
-                                    calciatore,
-                                    scambio
-                                } = op;
+                if (isNaN(idSquadra1) || isNaN(idSquadra2)) {
+                    throw new Error('ID squadre non validi');
+                }
 
-                                ArrayOperazioni.push({
-                                    id_associazione: parseInt(scambio.id_associazione),
-                                    id_squadra: trattativa.id_squadra_r,
-                                    scambiato: true,
-                                    n_movimenti: calciatore.n_movimenti + 1
-                                });
-                            });
-
-                            console.log('Array operazioni:', ArrayOperazioni);
-
-                            // Uso Promise.all per attendere che tutte le chiamate di aggiornamento siano completate
-                            const updatePromises = ArrayOperazioni.map(operazione => {
-                                const id_associazione = operazione.id_associazione;
-                                const id_squadra = operazione.id_squadra;
-                                const scambiato = operazione.scambiato;
-                                const n_movimenti = operazione.n_movimenti;
-
-                                console.log('Aggiorno:', operazione);
-
-                                return fetch(`../endpoint/associazioni/update.php?id=${id_associazione}`, {
-                                    method: 'PUT',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify({ id_squadra, scambiato, n_movimenti })
-                                })
-                                    .then(response => {
-                                        if (!response.ok) {
-                                            throw new Error('Errore nella risposta del server');
-                                        }
-                                        return response.json();
-                                    });
-                            });
-
-                            return Promise.all(updatePromises);
-                        })
-                        .then(results => {
-                            console.log('Tutti gli aggiornamenti completati con successo', results);
+                // 2. Aggiorna la trattativa
+                return fetch(`../endpoint/<?php echo $nomeSezione ?>/update.php?id=${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataTrattativa)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => { throw err; });
+                        }
+                        return response.json();
+                    })
+                    .then(() => {
+                        if (ufficializzata !== 1) {
                             alert('Operazione completata con successo!');
                             window.location.reload();
-                        });
-                }
+                            return Promise.resolve();
+                        }
+
+                        // 3. Se ufficializzata, processa operazioni e crediti
+                        let creditoSquadra1 = 0;
+                        let creditoSquadra2 = 0;
+                        let ArrayOperazioni = [];
+
+                        // 3.1 Recupera le operazioni
+                        return fetch(`../endpoint/operazioni/read.php?id_trattativa=${id}`)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`Errore nel fetch operazioni: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                // Controllo struttura dati operazioni
+                                if (!data || !Array.isArray(data.operazioni)) {
+                                    console.warn('Nessuna operazione trovata o formato non valido');
+                                    return [];
+                                }
+                                return data.operazioni;
+                            })
+                            .then(operazioni => {
+                                // Processa ogni operazione
+                                operazioni.forEach(op => {
+                                    try {
+                                        // Controllo completo della struttura dell'operazione
+                                        if (!op || !op.trattativa || !op.calciatore || !op.scambio) {
+                                            console.warn('Operazione con struttura incompleta:', op);
+                                            return;
+                                        }
+
+                                        const { trattativa, calciatore, scambio } = op;
+
+                                        // Controllo valori riscatto
+                                        if (scambio.valore_riscatto > 0 && scambio.id_tipologia === 12) {
+                                            const valore = parseFloat(scambio.valore_riscatto) || 0;
+                                            if (trattativa.id_squadra_c === idSquadra1) {
+                                                creditoSquadra2 += valore;
+                                            } else if (trattativa.id_squadra_c === idSquadra2) {
+                                                creditoSquadra1 += valore;
+                                            }
+                                        }
+
+                                        // Aggiungi all'array operazioni
+                                        if (scambio.id_associazione) {
+                                            ArrayOperazioni.push({
+                                                id_associazione: parseInt(scambio.id_associazione),
+                                                id_squadra: trattativa.id_squadra_r,
+                                                scambiato: true,
+                                                n_movimenti: (parseInt(calciatore.n_movimenti) || 0) + 1
+                                            });
+                                        }
+                                    } catch (e) {
+                                        console.error('Errore nel processare operazione:', op, e);
+                                    }
+                                });
+
+                                // 3.2 Recupera i crediti
+                                return fetch(`../endpoint/credito/read.php?id_trattativa=${id}`)
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error(`Errore nel fetch crediti: ${response.status}`);
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        // Controllo completo struttura dati crediti
+                                        if (!data || !Array.isArray(data.credito)) {
+                                            console.warn('Nessun credito trovato o formato non valido');
+                                            return;
+                                        }
+
+                                        data.credito.forEach(credito => {
+                                            try {
+                                                // Controllo completo struttura credito
+                                                if (!credito || typeof credito !== 'object') {
+                                                    console.warn('Credito con struttura non valida:', credito);
+                                                    return;
+                                                }
+
+                                                if (credito.id_fm === 10) {
+                                                    const creditoVal = parseFloat(credito.credito) || 0;
+                                                    if (credito.id_squadra === idSquadra1) {
+                                                        creditoSquadra1 += creditoVal;
+                                                    } else if (credito.id_squadra === idSquadra2) {
+                                                        creditoSquadra2 += creditoVal;
+                                                    }
+                                                }
+                                            } catch (e) {
+                                                console.error('Errore nel processare credito:', credito, e);
+                                            }
+                                        });
+
+                                        // 3.3 Recupera i crediti attuali delle squadre
+                                        const promises = [
+                                            fetch(`../endpoint/squadra/read.php?id_squadra=${idSquadra1}`)
+                                                .then(response => {
+                                                    if (!response.ok) {
+                                                        throw new Error(`Errore nel fetch squadra1: ${response.status}`);
+                                                    }
+                                                    return response.json();
+                                                })
+                                                .then(data => {
+                                                    // Log the exact data structure received
+                                                    console.log('Struttura dati squadra 1:', JSON.stringify(data));
+
+                                                    if (!data || !data.squadra) {
+                                                        throw new Error('Struttura dati squadra 1 non valida');
+                                                    }
+
+                                                    // Handle both array and object formats
+                                                    const squadraData = Array.isArray(data.squadra) ? data.squadra[0] : data.squadra;
+
+                                                    if (!squadraData) {
+                                                        throw new Error('Dati squadra 1 non disponibili');
+                                                    }
+
+                                                    // Handle different possible structures for financial data
+                                                    let creditoValue = 0;
+
+                                                    // Case 1: finanze as array
+                                                    if (squadraData.finanze && Array.isArray(squadraData.finanze) && squadraData.finanze.length > 0) {
+                                                        creditoValue = parseFloat(squadraData.finanze[0].credito) || 0;
+                                                    }
+                                                    // Case 2: finanze as object
+                                                    else if (squadraData.finanze && typeof squadraData.finanze === 'object') {
+                                                        creditoValue = parseFloat(squadraData.finanze.credito) || 0;
+                                                    }
+                                                    // Case 3: direct credito property
+                                                    else if (squadraData.credito !== undefined) {
+                                                        creditoValue = parseFloat(squadraData.credito) || 0;
+                                                    }
+                                                    // Case 4: no finance data found, use 0 as default
+                                                    else {
+                                                        console.warn('Nessun dato finanziario trovato per squadra 1, usando 0 come valore predefinito');
+                                                    }
+
+                                                    return creditoValue;
+                                                }),
+                                            fetch(`../endpoint/squadra/read.php?id_squadra=${idSquadra2}`)
+                                                .then(response => {
+                                                    if (!response.ok) {
+                                                        throw new Error(`Errore nel fetch squadra2: ${response.status}`);
+                                                    }
+                                                    return response.json();
+                                                })
+                                                .then(data => {
+                                                    // Log the exact data structure received
+                                                    console.log('Struttura dati squadra 2:', JSON.stringify(data));
+
+                                                    if (!data || !data.squadra) {
+                                                        throw new Error('Struttura dati squadra 2 non valida');
+                                                    }
+
+                                                    // Handle both array and object formats
+                                                    const squadraData = Array.isArray(data.squadra) ? data.squadra[0] : data.squadra;
+
+                                                    if (!squadraData) {
+                                                        throw new Error('Dati squadra 2 non disponibili');
+                                                    }
+
+                                                    // Handle different possible structures for financial data
+                                                    let creditoValue = 0;
+
+                                                    // Case 1: finanze as array
+                                                    if (squadraData.finanze && Array.isArray(squadraData.finanze) && squadraData.finanze.length > 0) {
+                                                        creditoValue = parseFloat(squadraData.finanze[0].credito) || 0;
+                                                    }
+                                                    // Case 2: finanze as object
+                                                    else if (squadraData.finanze && typeof squadraData.finanze === 'object') {
+                                                        creditoValue = parseFloat(squadraData.finanze.credito) || 0;
+                                                    }
+                                                    // Case 3: direct credito property
+                                                    else if (squadraData.credito !== undefined) {
+                                                        creditoValue = parseFloat(squadraData.credito) || 0;
+                                                    }
+                                                    // Case 4: no finance data found, use 0 as default
+                                                    else {
+                                                        console.warn('Nessun dato finanziario trovato per squadra 2, usando 0 come valore predefinito');
+                                                    }
+
+                                                    return creditoValue;
+                                                })
+                                        ];
+
+                                        return Promise.all(promises)
+                                            .then(([creditoAttuale1, creditoAttuale2]) => {
+                                                console.log("Crediti attuali:", {
+                                                    squadra1: creditoAttuale1,
+                                                    squadra2: creditoAttuale2,
+                                                    delta1: creditoSquadra1,
+                                                    delta2: creditoSquadra2
+                                                });
+
+                                                // Calcola i nuovi valori dei crediti
+                                                const nuovoCreditoSquadra1 = creditoAttuale1 - creditoSquadra1;
+                                                const nuovoCreditoSquadra2 = creditoAttuale2 - creditoSquadra2;
+
+                                                console.log("Nuovi crediti da impostare:", {
+                                                    squadra1: nuovoCreditoSquadra1,
+                                                    squadra2: nuovoCreditoSquadra2
+                                                });
+
+                                                // 3.4 Prepara le promesse per aggiornare i crediti delle squadre
+                                                const creditPromises = [
+                                                    // Aggiorna il credito della squadra 1
+                                                    fetch(`../endpoint/squadra/update.php?id=${idSquadra1}`, {
+                                                        method: 'PUT',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({
+                                                            credito: nuovoCreditoSquadra1
+                                                        })
+                                                    }).then(response => {
+                                                        if (!response.ok) {
+                                                            throw new Error(`Errore nell'aggiornamento del credito della squadra ${idSquadra1}`);
+                                                        }
+                                                        return response.json();
+                                                    }),
+
+                                                    // Aggiorna il credito della squadra 2
+                                                    fetch(`../endpoint/squadra/update.php?id=${idSquadra2}`, {
+                                                        method: 'PUT',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({
+                                                            credito: nuovoCreditoSquadra2
+                                                        })
+                                                    }).then(response => {
+                                                        if (!response.ok) {
+                                                            throw new Error(`Errore nell'aggiornamento del credito della squadra ${idSquadra2}`);
+                                                        }
+                                                        return response.json();
+                                                    })
+                                                ];
+
+                                                // 3.5 Aggiorna le associazioni
+                                                const updatePromises = ArrayOperazioni.map(operazione => {
+                                                    return fetch(`../endpoint/associazioni/update.php?id=${operazione.id_associazione}`, {
+                                                        method: 'PUT',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({
+                                                            id_squadra: operazione.id_squadra,
+                                                            scambiato: operazione.scambiato,
+                                                            n_movimenti: operazione.n_movimenti
+                                                        })
+                                                    }).then(response => {
+                                                        if (!response.ok) {
+                                                            throw new Error(`Errore nell'aggiornamento associazione ${operazione.id_associazione}`);
+                                                        }
+                                                        return response.json();
+                                                    });
+                                                });
+
+                                                // Esegui tutte le promesse: prima aggiorna i crediti, poi le associazioni
+                                                return Promise.all(creditPromises)
+                                                    .then(() => Promise.all(updatePromises));
+                                            });
+                                    });
+                            });
+                    });
+            })
+            .then(() => {
+                alert('Operazione completata con successo!');
+                window.location.reload();
             })
             .catch(error => {
-                console.error('Errore durante l\'operazione:', error.message || error);
-                alert('Si è verificato un errore: ' + (error.message || error));
+                console.error('Errore durante l\'operazione:', error);
+                alert('Si è verificato un errore: ' + (error.message || 'Dettagli non disponibili'));
             });
     }
-
-
 </script>
 </body>
 </html>
