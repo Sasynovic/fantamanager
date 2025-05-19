@@ -43,5 +43,5 @@ try {
         echo json_encode(["success" => false, "message" => "Utente non trovato"]);
     }
 } catch (Exception $e) {
-    echo json_encode(["success" => false, "message" => "Errore: " . $e->getMessage()]);
+    echo json_encode(["success" => false, "message" => "Credenziali non valide"]);
 }
