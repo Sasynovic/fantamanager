@@ -1,0 +1,15 @@
+# Abilita la riscrittura URL
+RewriteEngine On
+
+# Forza HTTPS (opzionale, se hai SSL attivo)
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Imposta charset e tipo di file predefinito
+AddDefaultCharset UTF-8
+
+# Previeni la visualizzazione dei file .ht*
+<Files .ht*>
+    Order allow,deny
+    Deny from all
+</Files>

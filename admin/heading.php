@@ -106,3 +106,21 @@
 </div>
 </body>
 </html>
+
+<script>
+    let timeout = 120000; // 600.00 ms = 1 minuto
+    let timer;
+
+    function resetTimer() {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            // Redirige alla pagina di logout
+            window.location.href = "logout.php";
+        }, timeout);
+    }
+
+    // Eventi che indicano attività
+    window.onload = resetTimer;
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
+</script>
