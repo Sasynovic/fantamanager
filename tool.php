@@ -258,6 +258,10 @@
             gap: 10px;
         }
 
+        input{
+            width: 100%;
+        }
+
 
         .credito-box select {
             padding: 8px;
