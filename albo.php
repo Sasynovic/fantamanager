@@ -18,6 +18,10 @@
             justify-content: center;
         }
 
+        .main-body-content{
+            margin-top: 20px;
+        }
+
         .albo-header {
             display: flex;
             justify-content: space-between;
@@ -88,11 +92,6 @@
                 width: 100%;
             }
 
-            th, td {
-                padding: 10px;
-                font-size: 0.9rem;
-            }
-
             .pagination {
                 flex-wrap: wrap;
             }
@@ -109,9 +108,9 @@
 <div class="main-container">
     <aside class="main-menu">
         <div class="menu-header">
-                <img src="public/background/logo.png" alt="Logo" class="logo" width="80px" height="80px">
-                <h3>FMPro</h3>
-            </div>
+            <img src="public/background/logo.png" alt="Logo" class="logo" width="80px" height="80px">
+            <h3>FMPro</h3>
+        </div>
         <ul class="menu-list">
             <li class="menu-item">
                 <a href="index.php">Dashboard</a>
@@ -149,28 +148,28 @@
         </header>
 
 
-    <div class="main-body">
-        <div class="main-body-content" id="main-body-content">
-            <div class="filter-section">
-                <select id="filter-competizione">
-                    <option value="Tutte">Tutte le competizioni</option>
-                </select>
+        <div class="main-body">
+            <div class="main-body-content" id="main-body-content">
+                <div class="filter-section">
+                    <select id="filter-competizione">
+                        <option value="Tutte">Tutte le competizioni</option>
+                    </select>
+                </div>
+                <table id="alboTable">
+                    <thead>
+                    <tr>
+                        <th>Competizione</th>
+                        <th>Anno</th>
+                        <th>Squadra</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr><td colspan="3">Caricamento dati...</td></tr>
+                    </tbody>
+                </table>
+                <div id="pagination" class="pagination">
+                </div>
             </div>
-            <table id="alboTable">
-                <thead>
-                <tr>
-                    <th>Competizione</th>
-                    <th>Anno</th>
-                    <th>Squadra</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr><td colspan="3">Caricamento dati...</td></tr>
-                </tbody>
-            </table>
-            <div id="pagination" class="pagination">
-        </div>
-    </div>
 
 
         </div>

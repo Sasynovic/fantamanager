@@ -23,9 +23,9 @@
 <div class="main-container">
     <aside class="main-menu">
         <div class="menu-header">
-                <img src="public/background/logo.png" alt="Logo" class="logo" width="80px" height="80px">
-                <h3>FMPro</h3>
-            </div>
+            <img src="public/background/logo.png" alt="Logo" class="logo" width="80px" height="80px">
+            <h3>FMPro</h3>
+        </div>
 
         <ul class="menu-list">
             <li class="menu-item">

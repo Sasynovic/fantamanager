@@ -19,9 +19,9 @@
 <div class="main-container">
     <aside class="main-menu">
         <div class="menu-header">
-                <img src="public/background/logo.png" alt="Logo" class="logo" width="80px" height="80px">
-                <h3>FMPro</h3>
-            </div>
+            <img src="public/background/logo.png" alt="Logo" class="logo" width="80px" height="80px">
+            <h3>FMPro</h3>
+        </div>
 
         <ul class="menu-list">
             <li class="menu-item">
@@ -61,9 +61,7 @@
 
 
         <div class="main-body">
-            <div class="main-body-content" id="main-body-content">
-            <div style="position:relative;padding-top:0;width:100%;height:100%;">
-                <iframe style="position:absolute;border:none;width:100%;height:100%;left:0;top:0;" src="https://online.fliphtml5.com/ymmet/rgxe/"  seamless="seamless" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" ></iframe>
-            </div>
+            <div class="main-body-content" id="main-body-content" style="height: 100%">
+                <div style="position:relative;padding-top:max(60%,324px);width:100%;height:100%;"><iframe style="position:absolute;border:none;width:100%;height:100%;left:0;top:0;" src="https://online.fliphtml5.com/ymmet/rgxe/"  seamless="seamless" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" ></iframe></div>
             </div>
         </div>

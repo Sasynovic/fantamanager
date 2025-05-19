@@ -21,23 +21,30 @@
 
         .main-body {
             height: 92%;
+            overflow-y: scroll;
         }
-            .filter-control {
+        .table-container{
+            width: 100%;
+        }
+        .filter-control {
             display: flex;
             flex-direction: column;
             gap: 5px;
         }
 
-        .filter-control label {
-            font-size: 14px;
-            color: #ddd;
-        }
-
         /* Stile per le stelline */
         .rating {
-            color: gold;
-            font-size: 18px;
+            color: var(--oro);
         }
+
+        @media (max-width: 992px) {
+            .main-body-content{
+                width: auto;
+                margin: 15px;
+            }
+
+        }
+
     </style>
 </head>
 
@@ -114,10 +121,10 @@
                     <table id="venditaTable">
                         <thead>
                         <tr>
-                            <th>Squadra</th>
-                            <th>Competizione</th>
+                            <th>Nome</th>
+                            <th>Comp.</th>
                             <th>Prezzo</th>
-                            <th>Valutazione</th>
+                            <th>Val.</th>
                             <th></th>
                         </tr>
                         </thead>

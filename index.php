@@ -1,92 +1,93 @@
 <!DOCTYPE html>
-    <html lang="it">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>FMPro</title>
-            <link rel="icon" href="public/background/logo.png" type="image/png">
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMPro</title>
+    <link rel="icon" href="public/background/logo.png" type="image/png">
 
-            <link rel="stylesheet" href="css/style.css">
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
-            <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
-            <script src="js/showmenu.js" defer></script>
-        </head>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <script src="js/showmenu.js" defer></script>
+</head>
 
-        <body>
-            <div class="main-container">
-                <aside class="main-menu">
-                    <div class="menu-header">
-                        <img src="public/background/logo.png" alt="Logo" class="logo" width="80px" height="80px">
-                        <h3>FMPro</h3>
+<body>
+<div class="main-container">
+    <aside class="main-menu">
+        <div class="menu-header">
+            <img src="public/background/logo.png" alt="Logo" class="logo" width="80px" height="80px">
+            <h3>FMPro</h3>
+        </div>
+
+        <ul class="menu-list">
+            <li class="menu-item">
+                <a href="index.php">Dashboard</a>
+            </li>
+            <li class="menu-item">
+                <a href="albo.php">Albo d'oro</a>
+            </li>
+            <li class="menu-item">
+                <a href="vendita.php">Squadre in vendita</a>
+            </li>
+            <li class="menu-item">
+                <a href="tool.php">Tool scambi</a>
+            </li>
+            <li class="menu-item">
+                <a href="regolamento.php">Regolamento</a>
+            </li>
+            <li class="menu-item">
+                <a href="ricerca.php">Ricerca</a>
+            </li>
+            <li class="menu-item">
+                <a href="contatti.php">Contatti</a>
+            </li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <header class="main-header">
+            <div class="main-text-header">
+                <h1></h1>
+                <h1>Dashboard</h1>
+                <h1 id="hamburger-menu">≡</h1>
+            </div>
+        </header>
+
+        <div class="main-body">
+            <div class="main-body-content" style="height: 100%;">
+                <div class="swiper-container main-swiper">
+                    <div class="swiper-wrapper" id="mainDivisionList">
+                        <!-- Gli elementi divisione verranno inseriti qui tramite JavaScript -->
                     </div>
-
-                    <ul class="menu-list">
-                        <li class="menu-item">
-                            <a href="index.php">Dashboard</a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="albo.php">Albo d'oro</a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="vendita.php">Squadre in vendita</a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="tool.php">Tool scambi</a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="regolamento.php">Regolamento</a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="ricerca.php">Ricerca</a>
-                        </li>
-                        <li class="menu-item">
-                            <a href="contatti.php">Contatti</a>
-                        </li>
-                    </ul>
-                </aside>
-
-                <div class="main-content">
-                    <header class="main-header">
-                        <div class="main-text-header">
-                            <h1>Dashboard</h1>
-                            <h1 id="hamburger-menu">≡</h1>
-                        </div>
-                    </header>
-
-                    <div class="main-body">
-                        <div class="main-body-content">
-                            <div class="swiper-container main-swiper">
-                                <div class="swiper-wrapper" id="mainDivisionList">
-                                    <!-- Gli elementi divisione verranno inseriti qui tramite JavaScript -->
-                                </div>
-                                <!-- Aggiunti i pulsanti di navigazione -->
-                                <div class="swiper-button-prev main-nav-prev">
-                                    <img src="public/chevron/chevronL.svg" alt="Indietro">
-                                </div>
-                                <div class="swiper-button-next main-nav-next">
-                                    <img src="public/chevron/chevronR.svg" alt="Avanti">
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Aggiunti i pulsanti di navigazione -->
+                    <div class="swiper-button-prev main-nav-prev">
+                        <img src="public/chevron/chevronL.svg" alt="Indietro">
                     </div>
-
-                    <footer class="main-footer">
-                        <div class="swiper-container footer-swiper">
-                            <div class="swiper-wrapper" id="footerList">
-                                <!-- Gli elementi division-ball verranno inseriti qui tramite JavaScript -->
-                            </div>
-                            <!-- Aggiunti i pulsanti di navigazione -->
-                            <div class="swiper-button-prev footer-nav-prev">
-                                <img src="public/chevron/chevronL.svg" alt="Indietro">
-                            </div>
-                            <div class="swiper-button-next footer-nav-next">
-                                <img src="public/chevron/chevronR.svg" alt="Avanti">
-                            </div>
-                        </div>
-                    </footer>
+                    <div class="swiper-button-next main-nav-next">
+                        <img src="public/chevron/chevronR.svg" alt="Avanti">
+                    </div>
                 </div>
             </div>
-        </body>
+        </div>
+
+        <footer class="main-footer">
+            <div class="swiper-container footer-swiper">
+                <div class="swiper-wrapper" id="footerList">
+                    <!-- Gli elementi division-ball verranno inseriti qui tramite JavaScript -->
+                </div>
+                <!-- Aggiunti i pulsanti di navigazione -->
+                <div class="swiper-button-prev footer-nav-prev">
+                    <img src="public/chevron/chevronL.svg" alt="Indietro">
+                </div>
+                <div class="swiper-button-next footer-nav-next">
+                    <img src="public/chevron/chevronR.svg" alt="Avanti">
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+</body>
 </html>
 <!-- Script per inizializzare Swiper -->
 <script>

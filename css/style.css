@@ -156,10 +156,8 @@ button:hover ,.comp-button:hover{
 }
 
 .main-body-content {
-    height: 100%;
     width: 100%;
     position: relative;
-    z-index: 1; /* Il contenuto deve stare sopra lo sfondo */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -205,7 +203,7 @@ button:hover ,.comp-button:hover{
 }
 
 .main-footer {
-    height: 13%;
+    height: 10%;
     background-color: var(--blu-scuro);
     border-top: solid 5px var(--blu);
     display: flex;
@@ -278,6 +276,8 @@ button:hover ,.comp-button:hover{
     background: none;
     border: none;
     cursor: pointer;
+    box-shadow: none;
+
 }
 
 .back-button img{
@@ -406,13 +406,13 @@ button:hover ,.comp-button:hover{
      border-radius: 50%;
  }
 
- .division-link{
-     padding: 35px;
-     position: absolute;
-     border-radius: 50%;
- }
+.division-link{
+    padding: 35px;
+    position: absolute;
+    border-radius: 50%;
+}
 
- /*stile per la tabella*/
+/*stile per la tabella*/
 /* BLOCK: Tabella competizioni */
 .competizioni-table {
     width: 90%;
@@ -501,15 +501,15 @@ button:hover ,.comp-button:hover{
 /* MODIFIER: Badge attivo */
 .badge--active {
     background-color: rgba(76, 175, 80, 0.2);
-    color: #4CAF50;
-    border: 1px solid #4CAF50;
+    color: var(--verde);
+    border: 1px solid var(--verde);
 }
 
 /* MODIFIER: Badge inattivo */
 .badge--inactive {
     background-color: rgba(244, 67, 54, 0.2);
-    color: #F44336;
-    border: 1px solid #F44336;
+    color: var(--rosso);
+    border: 1px solid var(--rosso);
 }
 
 select {
@@ -583,7 +583,7 @@ tr:last-child td {
 
 
 /* Responsive */
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
 
     .main-container{
         flex-direction: row-reverse;
@@ -660,7 +660,7 @@ tr:last-child td {
 
 
 }
-@media (max-width: 740px) {
+@media (max-width: 992px) {
     .competizioni-table {
         width: 95%;
         /*font-size: 0.9rem;*/
@@ -672,26 +672,33 @@ tr:last-child td {
     }
     .main-menu{
         display: none;
+        width: 50%;
     }
     .main-content{
         width: 100%;
     }
     *{
-        /*font-size: 0.8rem;*/
+        font-size: 0.9rem;
     }
-    th{
-
-        padding: 8px;
+    th, td{
+        padding: 4px;
         text-align: center;
-        /*font-size: 0.8rem;*/
-    }
-    td{
-        padding: 10px 8px;
-        text-align: center;
-
+        font-size: 0.8rem;
     }
     .main-header h1{
-        /*font-size: 1.3rem;*/
+        font-size: 1.3rem;
     }
+
+    .division-ball{
+        width: 50px;
+        height: 50px;
+    }
+    .division-link{
+        padding: 25px;
+    }
+
+    .back-button img {
+        width: 20px;
+        height: 20px;}
 
 }

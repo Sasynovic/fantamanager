@@ -14,6 +14,11 @@
 </head>
 <style>
 
+    .main-body-content{
+        height: 100%;
+        overflow-y: scroll;
+    }
+
 
 
     .news-container {
@@ -25,23 +30,30 @@
 
     .tablinks {
         padding: 10px 20px;
-        background: none;
-        border: none;
+        background-color: var(--blu);
+        border-radius: 5px;
         cursor: pointer;
-        font-size: 16px;
-        border-bottom: 3px solid transparent;
-        transition: all 0.3s;
+        transition: all 0.3sease;
+        font-weight: bold;
+        color: white;
+        border: none;
+        outline: none;
+        font-size: 1rem;
     }
 
     .tablinks.active {
-        border-bottom-color: #2e6be6;
-        color: #2e6be6;
-        font-weight: bold;
+        background-color: var(--oro);
+        color: var(--blu-scurissimo);
     }
 
     .tablinks:hover:not(.active) {
         background-color: var(--accento);
     }
+
+    .tablinks:hover:not(.active) {
+        background-color: #2a3a5a;
+    }
+
 
     .news-content {
         min-height: 300px;
@@ -75,34 +87,15 @@
         gap: 5px;
     }
 
-    /*.page-btn {*/
-    /*    padding: 8px 12px;*/
-    /*    border: 1px solid #ddd;*/
-    /*    background: var(--accento);*/
-    /*    cursor: pointer;*/
-    /*    border-radius: 3px;*/
-    /*}*/
-
-    /*.page-button.active {*/
-    /*    background-color: #2e6be6;*/
-    /*    color: white;*/
-    /*    border-color: #2e6be6;*/
-    /*}*/
-
-    /*.page-button:hover:not(.active) {*/
-    /*    background-color: #f0f0f0;*/
-    /*}*/
-
-    /*.page-button.disabled {*/
-    /*    opacity: 0.5;*/
-    /*    cursor: not-allowed;*/
-    /*}*/
     .tab{
-        background: var(--blu-scurissimo);
-        border-top: solid var(--accento);
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
     }
     .container{
-
+        width: 100%;
         height: 100%;
 
     }
@@ -115,9 +108,9 @@
 <div class="main-container">
     <aside class="main-menu">
         <div class="menu-header">
-                <img src="public/background/logo.png" alt="Logo" class="logo" width="80px" height="80px">
-                <h3>FMPro</h3>
-            </div>
+            <img src="public/background/logo.png" alt="Logo" class="logo" width="80px" height="80px">
+            <h3>FMPro</h3>
+        </div>
 
         <ul class="menu-list">
             <li class="menu-item">
@@ -150,7 +143,7 @@
                 <button class="back-button" onclick="window.history.back();">
                     <img src="public/chevron/chevronL.svg" alt="Indietro" height="40px" width="40px">
                 </button>
-                    <h1>
+                <h1>
                     <?php
                     // Recupera l'ID competizione dall'URL
                     $urlParams = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
@@ -180,6 +173,7 @@
         </header>
 
         <div class="main-body">
+            <h3  style="text-align: center; padding: 10px; background-color: var(--accento)" >   Clicca sul nome della squadra per maggiori dettagli</h3>
             <div class="main-body-content" id="main-body-content">
                 <div class="container">
 
@@ -231,7 +225,7 @@
                                             <table class="classifica-table">
                                                 <thead>
                                                     <tr>
-                                                        <th>Pos</th>
+                                                        <th></th>
                                                         <th>Squadra</th>
                                                         <th>Pn</th>
                                                         <th>G</th>

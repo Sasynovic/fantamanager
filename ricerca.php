@@ -25,6 +25,11 @@
         .filter-item{
             margin: 10px 0;
         }
+        .main-body-content{
+            height: 100%;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
     </style>
 
 </head>
@@ -65,11 +70,11 @@
                     <h2>Filtri di ricerca</h2>
                     <div class="filter-item">
                         <label for="team"></label>
-                        <input type="text" id="team" placeholder="Inserisci il nome della squadra" />
+                        <input type="text" id="team" placeholder="Squadra" />
                     </div>
                     <div class="filter-item">
                         <label for="player"></label>
-                        <input type="text" id="player" placeholder="Inserisci il nome del presidente" />
+                        <input type="text" id="player" placeholder="Presidente" />
                     </div>
                     <button id="search-button">Cerca</button>
                 </div>

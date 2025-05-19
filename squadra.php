@@ -383,20 +383,20 @@
                         <div class="overview-item">
                             <span class="overview-label">Presidente:</span>
                             <span class="overview-value"><?php
-                            if ($data) {
-                                echo $json->squadra[0]->dirigenza->presidente ?? 'Presidente non trovato';
-                                if($json->squadra[0]->dirigenza->vicepresidente == ' '){
-                                    echo '';
-                                }else{
-                                    echo ' </span> ';
-                                    echo '<div class="overview-item">';
-                                    echo '<span class="overview-label">Vicepresidente:</span>';
-                                    echo '<span class="overview-value">' . $json->squadra[0]->dirigenza->vicepresidente;
-                                    echo '</span>';
-                                    echo '</div>';
+                                if ($data) {
+                                    echo $json->squadra[0]->dirigenza->presidente ?? 'Presidente non trovato';
+                                    if($json->squadra[0]->dirigenza->vicepresidente == ' '){
+                                        echo '';
+                                    }else{
+                                        echo ' </span> ';
+                                        echo '<div class="overview-item">';
+                                        echo '<span class="overview-label">Vicepresidente:</span>';
+                                        echo '<span class="overview-value">' . $json->squadra[0]->dirigenza->vicepresidente;
+                                        echo '</span>';
+                                        echo '</div>';
+                                    }
                                 }
-                            }
-                            ?>
+                                ?>
                             </span>
                         </div>
                         <div class="overview-item">
@@ -433,44 +433,44 @@
                         if(!empty($json_finanze->finanze_squadra)) {
                             foreach ($json_finanze->finanze_squadra as $finanze) {
                                 echo '<div class="overview-item">';
-                                    echo '<span class="overview-label">Guadagno crediti stadio campionato:</span>';
-                                    echo '<span class="overview-value">' . $finanze->guadagno_crediti_stadio_league .'</span>';
+                                echo '<span class="overview-label">Guadagno crediti stadio campionato:</span>';
+                                echo '<span class="overview-value">' . $finanze->guadagno_crediti_stadio_league .'</span>';
                                 echo '</div>';
                                 echo '<div class="overview-item">';
-                                    echo '<span class="overview-label">Guadagno crediti stadio coppa:</span>';
-                                    echo '<span class="overview-value">' . $finanze->guadagno_crediti_stadio_cup .'</span>';
+                                echo '<span class="overview-label">Guadagno crediti stadio coppa:</span>';
+                                echo '<span class="overview-value">' . $finanze->guadagno_crediti_stadio_cup .'</span>';
                                 echo '</div>';
                                 echo '<div class="overview-item">';
-                                    echo '<span class="overview-label">Premi campionato:</span>';
-                                    echo '<span class="overview-value">' . $finanze->premi_league .'</span>';
+                                echo '<span class="overview-label">Premi campionato:</span>';
+                                echo '<span class="overview-value">' . $finanze->premi_league .'</span>';
                                 echo '</div>';
                                 echo '<div class="overview-item">';
-                                    echo '<span class="overview-label">Premi coppa:</span>';
-                                    echo '<span class="overview-value">' . $finanze->premi_cup .'</span>';
+                                echo '<span class="overview-label">Premi coppa:</span>';
+                                echo '<span class="overview-value">' . $finanze->premi_cup .'</span>';
                                 echo '</div>';
                                 echo '<div class="overview-item">';
-                                    echo '<span class="overview-label">Guadagno crediti stadio campionato:</span>';
-                                    echo '<span class="overview-value">' . $finanze->prequalifiche_uefa_stadio .'</span>';
+                                echo '<span class="overview-label">Guadagno crediti stadio campionato:</span>';
+                                echo '<span class="overview-value">' . $finanze->prequalifiche_uefa_stadio .'</span>';
                                 echo '</div>';
                                 echo '<div class="overview-item">';
-                                    echo '<span class="overview-label">Prequalifiche uefa premio:</span>';
-                                    echo '<span class="overview-value">' . $finanze->prequalifiche_uefa_premio .'</span>';
+                                echo '<span class="overview-label">Prequalifiche uefa premio:</span>';
+                                echo '<span class="overview-value">' . $finanze->prequalifiche_uefa_premio .'</span>';
                                 echo '</div>';
                                 echo '<div class="overview-item">';
-                                    echo '<span class="overview-label">Competizione uefa stadio:</span>';
-                                    echo '<span class="overview-value">' . $finanze->competizioni_uefa_stadio .'</span>';
+                                echo '<span class="overview-label">Competizione uefa stadio:</span>';
+                                echo '<span class="overview-value">' . $finanze->competizioni_uefa_stadio .'</span>';
                                 echo '</div>';
                                 echo '<div class="overview-item">';
-                                    echo '<span class="overview-label">Competizione uefa premio:</span>';
-                                    echo '<span class="overview-value">' . $finanze->competizioni_uefa_premio .'</span>';
+                                echo '<span class="overview-label">Competizione uefa premio:</span>';
+                                echo '<span class="overview-value">' . $finanze->competizioni_uefa_premio .'</span>';
                                 echo '</div>';
                                 echo '<div class="overview-item">';
-                                    echo '<span class="overview-label">Crediti residui cassa:</span>';
-                                    echo '<span class="overview-value">' . $finanze->crediti_residui_cassa .'</span>';
+                                echo '<span class="overview-label">Crediti residui cassa:</span>';
+                                echo '<span class="overview-value">' . $finanze->crediti_residui_cassa .'</span>';
                                 echo '</div>';
                                 echo '<div class="overview-item">';
-                                    echo '<h3 class="overview-label">Totale crediti bilancio:</h3>';
-                                    echo '<span class="overview-value">' . $finanze->totale_crediti_bilancio .'</span>';
+                                echo '<h3 class="overview-label">Totale crediti bilancio:</h3>';
+                                echo '<span class="overview-value">' . $finanze->totale_crediti_bilancio .'</span>';
                                 echo '</div>';
                             }
                         } else {
@@ -692,10 +692,10 @@
                     <?php
                     if(!empty($json_albo->albo)) {
                         foreach ($json_albo->albo as $albo) {
-                                echo '<div class="overview-item">';
-                                    echo '<span class="overview-label">Nome competizione:</span>';
-                                     echo '<span class="overview-value">' . $albo->nome_competizione . ' ' . $albo->anno . '</span>';
-                                echo '</div>';
+                            echo '<div class="overview-item">';
+                            echo '<span class="overview-label">Nome competizione:</span>';
+                            echo '<span class="overview-value">' . $albo->nome_competizione . ' ' . $albo->anno . '</span>';
+                            echo '</div>';
                         }} else {
                         echo '<p>Nessun titolo vinto</p>';
                     }
@@ -717,7 +717,7 @@
                 </div>
                 <div class="overview-cards" id="moduloSgs" style="display: none">
                     <div class="overview-card">
-                            <div class="modulo-header" style="
+                        <div class="modulo-header" style="
                                                                                     display: flex;
                                                                                     flex-direction: row;
                                                                                     width: 100%;
@@ -725,74 +725,74 @@
                                                                                     justify-content: space-between;
                                                                                     padding-bottom: 8px;
                                                                                 ">
-                                <h3>Modulo Settore Giovanile</h3>
-                                <button onclick="closeSgs()">X</button>
+                            <h3>Modulo Settore Giovanile</h3>
+                            <button onclick="closeSgs()">X</button>
+                        </div>
+                        <div class="modulo-content" >
+                            <div class="modulo-input">
+                                <label for="nome1"></label>
+                                <input type="text" id="nome1" placeholder="Nome calciatore 1">
+                                <input type="number" id="offerta1" min="1" max="10" placeholder="Offerta calciatore 1">
                             </div>
-                            <div class="modulo-content" >
-                                <div class="modulo-input">
-                                    <label for="nome1"></label>
-                                    <input type="text" id="nome1" placeholder="Nome calciatore 1">
-                                    <input type="number" id="offerta1" min="1" max="10" placeholder="Offerta calciatore 1">
-                                </div>
-                                <div class="modulo-input">
-                                    <label for="nome2"></label>
-                                    <input type="text" id="nome2" placeholder="Nome calciatore 2">
-                                    <input type="number" id="offerta2" min="1" max="10" placeholder="Offerta calciatore 2">
-                                </div>
-                                <div class="modulo-input">
-                                    <label for="nome3"></label>
-                                    <input type="text" id="nome3" placeholder="Nome calciatore 3">
-                                    <input type="number" id="offerta3" min="1" max="10" placeholder="Offerta calciatore 3">
-                                </div>
-                                <button id="inviaModuloSgs" onclick="sendSgs('<?php echo addslashes($json->squadra[0]->nome_squadra); ?>')">Invia</button>
+                            <div class="modulo-input">
+                                <label for="nome2"></label>
+                                <input type="text" id="nome2" placeholder="Nome calciatore 2">
+                                <input type="number" id="offerta2" min="1" max="10" placeholder="Offerta calciatore 2">
                             </div>
+                            <div class="modulo-input">
+                                <label for="nome3"></label>
+                                <input type="text" id="nome3" placeholder="Nome calciatore 3">
+                                <input type="number" id="offerta3" min="1" max="10" placeholder="Offerta calciatore 3">
+                            </div>
+                            <button id="inviaModuloSgs" onclick="sendSgs('<?php echo addslashes($json->squadra[0]->nome_squadra); ?>')">Invia</button>
+                        </div>
 
 
 
-                            <script>
-                                // Gestione dei tab - VERSIONE DEFINITIVA
-                                document.addEventListener('DOMContentLoaded', function() {
-                                    const tabs = document.querySelectorAll('.view-tab');
+                        <script>
+                            // Gestione dei tab - VERSIONE DEFINITIVA
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const tabs = document.querySelectorAll('.view-tab');
 
-                                    tabs.forEach(tab => {
-                                        tab.addEventListener('click', function(e) {
-                                            e.preventDefault();
+                                tabs.forEach(tab => {
+                                    tab.addEventListener('click', function(e) {
+                                        e.preventDefault();
 
-                                            // Rimuovi active da tutti i tab
-                                            tabs.forEach(t => t.classList.remove('active'));
-                                            // Aggiungi active al tab cliccato
-                                            this.classList.add('active');
+                                        // Rimuovi active da tutti i tab
+                                        tabs.forEach(t => t.classList.remove('active'));
+                                        // Aggiungi active al tab cliccato
+                                        this.classList.add('active');
 
-                                            // Nascondi tutte le view
-                                            document.querySelectorAll('.overview, .grid-view, .stadium-view, .albo-view, .sgs-view')
-                                                .forEach(v => v.classList.remove('active'));
+                                        // Nascondi tutte le view
+                                        document.querySelectorAll('.overview, .grid-view, .stadium-view, .albo-view, .sgs-view')
+                                            .forEach(v => v.classList.remove('active'));
 
-                                            // Mostra la view corretta
-                                            const viewId = this.getAttribute('data-view') + '-view';
-                                            const targetView = document.getElementById(viewId);
-                                            if(targetView) {
-                                                targetView.classList.add('active');
-                                            }
-                                        });
+                                        // Mostra la view corretta
+                                        const viewId = this.getAttribute('data-view') + '-view';
+                                        const targetView = document.getElementById(viewId);
+                                        if(targetView) {
+                                            targetView.classList.add('active');
+                                        }
                                     });
+                                });
 
-                                    // Caricamento dei giocatori
-                                    fetch('endpoint/associazioni/read.php?id_squadra=<?php echo $id_squadra; ?>')
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            const players = data.associazioni;
-                                            const gridView = document.getElementById('grid-view');
+                                // Caricamento dei giocatori
+                                fetch('endpoint/associazioni/read.php?id_squadra=<?php echo $id_squadra; ?>')
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        const players = data.associazioni;
+                                        const gridView = document.getElementById('grid-view');
 
-                                            // Ordina i giocatori per ruolo (P, D, C, A)
-                                            const sortedPlayers = players.sort((a, b) => {
-                                                const order = { 'P': 0, 'D': 1, 'C': 2, 'A': 3 };
-                                                return order[a.ruolo_calciatore] - order[b.ruolo_calciatore];
-                                            });
+                                        // Ordina i giocatori per ruolo (P, D, C, A)
+                                        const sortedPlayers = players.sort((a, b) => {
+                                            const order = { 'P': 0, 'D': 1, 'C': 2, 'A': 3 };
+                                            return order[a.ruolo_calciatore] - order[b.ruolo_calciatore];
+                                        });
 
-                                            sortedPlayers.forEach(player => {
-                                                const card = document.createElement('div');
-                                                card.className = `grid-player-card-${player.ruolo_calciatore}`;
-                                                card.innerHTML = `
+                                        sortedPlayers.forEach(player => {
+                                            const card = document.createElement('div');
+                                            card.className = `grid-player-card-${player.ruolo_calciatore}`;
+                                            card.innerHTML = `
                                     <div class="player-role-badge role-${player.ruolo_calciatore}">${player.ruolo_calciatore}</div>
                                     <div class="player-main-info">
                                         <div class="player-name">${player.nome_calciatore}</div>
@@ -803,40 +803,40 @@
                                         </div>
                                     </div>
                                 `;
-                                                gridView.appendChild(card);
-                                            });
-                                        })
-                                        .catch(error => console.error('Errore nel recupero dei dati:', error));
-                                });
-                            </script>
-                        </div>
+                                            gridView.appendChild(card);
+                                        });
+                                    })
+                                    .catch(error => console.error('Errore nel recupero dei dati:', error));
+                            });
+                        </script>
                     </div>
-                <div class="overview-cards">
-                        <?php
-                        if(!empty($json_settore_giovanile->settore_giovanile)) {
-                            foreach ($json_settore_giovanile->settore_giovanile as $giocatore) {
-                                echo '<div class="overview-card">';
-                                    echo '<div class="overview-item">';
-                                        echo '<span class="overview-label">Nome:</span>';
-                                        echo '<span class="overview-value">' . $giocatore->nome_calciatore . '</span>';
-                                        echo '<span class="overview-label">Stagione:</span>';
-                                        echo '<span class="overview-value">' . $giocatore->stagione . '</span>';
-                                        echo '<span class="overview-label">Fuori listone:</span>';
-                                        echo '<span class="overview-value">' . ($giocatore->fuori_listone == 1 ? 'Sì' : 'No') . '</span>';
-                                        echo '<span class="overview-label">Prima squadra:</span>';
-                                        echo '<span class="overview-value">' . ($giocatore->prima_squadra == 1 ? 'Sì' : 'No') . '</span>';
-                                    echo '</div>';
-                                echo '</div>';
-                        }} else {
-                            echo ' <div class="overview-card">';
-                            echo '<h3>Settore Giovanile</h3>';
-                            echo '<p>Nessun giocatore nel settore giovanile</p>';
-                            echo '</div>';
-                        }
-                        ?>
                 </div>
+                <div class="overview-cards">
+                    <?php
+                    if(!empty($json_settore_giovanile->settore_giovanile)) {
+                        foreach ($json_settore_giovanile->settore_giovanile as $giocatore) {
+                            echo '<div class="overview-card">';
+                            echo '<div class="overview-item">';
+                            echo '<span class="overview-label">Nome:</span>';
+                            echo '<span class="overview-value">' . $giocatore->nome_calciatore . '</span>';
+                            echo '<span class="overview-label">Stagione:</span>';
+                            echo '<span class="overview-value">' . $giocatore->stagione . '</span>';
+                            echo '<span class="overview-label">Fuori listone:</span>';
+                            echo '<span class="overview-value">' . ($giocatore->fuori_listone == 1 ? 'Sì' : 'No') . '</span>';
+                            echo '<span class="overview-label">Prima squadra:</span>';
+                            echo '<span class="overview-value">' . ($giocatore->prima_squadra == 1 ? 'Sì' : 'No') . '</span>';
+                            echo '</div>';
+                            echo '</div>';
+                        }} else {
+                        echo ' <div class="overview-card">';
+                        echo '<h3>Settore Giovanile</h3>';
+                        echo '<p>Nessun giocatore nel settore giovanile</p>';
+                        echo '</div>';
+                    }
+                    ?>
                 </div>
             </div>
+        </div>
 
 
 

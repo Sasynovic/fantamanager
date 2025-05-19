@@ -214,10 +214,6 @@
             cursor: pointer;
             font-size: 16px;
         }
-        .main-body{
-            display: flex;
-            justify-content: center;
-        }
         @media (max-width: 1024px) {
             .player-select-container {
                 flex-direction: column;
@@ -311,6 +307,9 @@
             height: 100%;
             overflow-y: scroll;
         }
+        .main-body-content{
+            margin-top: 20px;
+        }
     </style>
 </head>
 
@@ -364,66 +363,63 @@
 
                 <div class="tool-container">
 
-                <div class="select-container">
-                    <select id="selectDivisione" name="selectDivisione" class="player-select">
-                        <option value="" disabled selected>Seleziona una divisione</option>
-                    </select>
-
-                    <select id="selectCompetizione" name="selectCompetizione" class="player-select">
-                        <option value="" disabled selected>Seleziona una competizione</option>
-                    </select>
-
-                    <select id="selectSquadra1" name="selectSquadra1" class="player-select">
-                        <option value="" disabled selected>Seleziona squadra 1</option>
-                    </select>
-
-                    <select id="selectSquadra2" name="selectSquadra2" class="player-select">
-                        <option value="" disabled selected>Seleziona squadra 2</option>
-                    </select>
-                </div>
-
-                <!-- Area per la selezione e visualizzazione dei calciatori -->
-                <div class="player-select-container">
-                    <!-- Squadra 1 -->
-                    <div class="team-container">
-                        <div class="team-header" id="team1-name">Squadra 1</div>
-                        <select id="playerSelect1" class="player-select">
-                            <option value="" disabled selected>Seleziona un calciatore</option>
+                    <div class="select-container">
+                        <select id="selectDivisione" name="selectDivisione" class="player-select">
+                            <option value="" disabled selected>Seleziona una divisione</option>
                         </select>
-                        <div class="selected-players-title">Calciatori selezionati:</div>
-                        <div id="selectedPlayers1" class="selected-players-container">
-                            <!-- I calciatori selezionati verranno visualizzati qui -->
-                        </div>
+
+                        <select id="selectCompetizione" name="selectCompetizione" class="player-select">
+                            <option value="" disabled selected>Seleziona una competizione</option>
+                        </select>
+
+                        <select id="selectSquadra1" name="selectSquadra1" class="player-select">
+                            <option value="" disabled selected>Seleziona squadra 1</option>
+                        </select>
+
+                        <select id="selectSquadra2" name="selectSquadra2" class="player-select">
+                            <option value="" disabled selected>Seleziona squadra 2</option>
+                        </select>
                     </div>
 
-                    <!-- Squadra 2 -->
-                    <div class="team-container">
-                        <div class="team-header" id="team2-name">Squadra 2</div>
-                        <select id="playerSelect2" class="player-select">
-                            <option value="" disabled selected>Seleziona un calciatore</option>
-                        </select>
-                        <div class="selected-players-title">Calciatori selezionati:</div>
-                        <div id="selectedPlayers2" class="selected-players-container">
-                            <!-- I calciatori selezionati verranno visualizzati qui -->
+                    <!-- Area per la selezione e visualizzazione dei calciatori -->
+                    <div class="player-select-container">
+                        <!-- Squadra 1 -->
+                        <div class="team-container">
+                            <div class="team-header" id="team1-name">Squadra 1</div>
+                            <select id="playerSelect1" class="player-select">
+                                <option value="" disabled selected>Seleziona un calciatore</option>
+                            </select>
+                            <div class="selected-players-title">Calciatori selezionati:</div>
+                            <div id="selectedPlayers1" class="selected-players-container">
+                                <!-- I calciatori selezionati verranno visualizzati qui -->
+                            </div>
+                        </div>
+
+                        <!-- Squadra 2 -->
+                        <div class="team-container">
+                            <div class="team-header" id="team2-name">Squadra 2</div>
+                            <select id="playerSelect2" class="player-select">
+                                <option value="" disabled selected>Seleziona un calciatore</option>
+                            </select>
+                            <div class="selected-players-title">Calciatori selezionati:</div>
+                            <div id="selectedPlayers2" class="selected-players-container">
+                                <!-- I calciatori selezionati verranno visualizzati qui -->
+                            </div>
                         </div>
                     </div>
-                </div>
 
                     <div class="credito-container">
                         <div class="credito-box">
                             <h4>Credito massimo disponibile: <span id="maxCreditoTeam1">0</span></h4>
                             <div class="finestra-credito">
-                                <label>Subito :</label>
                                 <input type="hidden" id="subitoTeam1" value="8">
                                 <input type="number" id="creditoTeam1_1" min="0" placeholder="Subito">
                             </div>
                             <div class="finestra-credito">
-                                <label>Gennaio :</label>
                                 <input type="hidden" id="metaTeam1" value="9">
                                 <input type="number" id="creditoTeam1_2" min="0" placeholder="Gennaio">
                             </div>
                             <div class="finestra-credito">
-                                <label>Giugno :</label>
                                 <input type="hidden" id="fineTeam1" value="10">
                                 <input type="number" id="creditoTeam1_3" min="0" max="200" placeholder="Giugno">
                             </div>
@@ -436,17 +432,14 @@
                         <div class="credito-box">
                             <h4>Credito massimo disponibile: <span id="maxCreditoTeam2">0</span></h4>
                             <div class="finestra-credito">
-                                <label>Subito :</label>
                                 <input type="hidden" id="subitoTeam2" value="8">
                                 <input type="number" id="creditoTeam2_1" min="0" placeholder="Subito">
                             </div>
                             <div class="finestra-credito">
-                                <label>Gennaio :</label>
                                 <input type="hidden" id="metaTeam2" value="9">
                                 <input type="number" id="creditoTeam2_2" min="0" placeholder="Gennaio">
                             </div>
                             <div class="finestra-credito">
-                                <label>Giugno :</label>
                                 <input type="hidden" id="fineTeam2" value="10">
                                 <input type="number" id="creditoTeam2_3" min="0"  max="200" placeholder="Giugno">
                             </div>
@@ -457,13 +450,13 @@
                         </div>
                     </div>
 
-                <div class="calcola-container">
-                    <button id="calcolaTrattativa" class="calcola-button">Calcola Trattativa</button>
-                    <div id="risultatoTrattativa" class="risultato-trattativa"></div>
+                    <div class="calcola-container">
+                        <button id="calcolaTrattativa" class="calcola-button">Calcola Trattativa</button>
+                        <div id="risultatoTrattativa" class="risultato-trattativa"></div>
+                    </div>
                 </div>
             </div>
         </div>
-            </div>
 
     </div>
 </div>
