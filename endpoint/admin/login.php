@@ -5,7 +5,7 @@ header("Content-Type: application/json");
 session_start();
 
 header("Content-Type: application/json; charset=UTF-8");
-ini_set('display_errors', 1);
+;
 require_once '../../config/database.php';
 
 use component\database;
