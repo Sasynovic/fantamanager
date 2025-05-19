@@ -352,7 +352,6 @@
         if (competizioneId !== 'Tutte') {
             urlAlbo += `&id_competizione=${competizioneId}`;
         }
-        console.log(urlAlbo);
 
         // Mostra indicatore di caricamento
         document.querySelector('#alboTable tbody').innerHTML =

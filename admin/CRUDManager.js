@@ -207,7 +207,6 @@ class CRUDManager {
 
         // Costruisci URL
         const url = `${this.apiUrl.read}?${params.toString()}`;
-        console.log('URL:', url);
 
         // Mostra stato di caricamento
         this.elements.cardList.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 2rem;">Caricamento dati...</div>';
@@ -299,7 +298,6 @@ class CRUDManager {
      * @param {Object} data - Dati dell'elemento da creare
      */
     createItem(data) {
-        console.log("Dati creatItem:", data);
 
         fetch(this.apiUrl.create, {
             method: this.apiMethod.create,

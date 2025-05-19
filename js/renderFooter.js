@@ -110,7 +110,6 @@
 
                 // Aggiungi click event per mostrare la divisione selezionata
                 li.addEventListener('click', function() {
-                    console.log('Divisione selezionata:', division);
                     // Qui puoi aggiungere il codice per mostrare la divisione selezionata
                 });
 

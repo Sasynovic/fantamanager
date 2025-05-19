@@ -236,7 +236,6 @@ $nomeSezione = "trattative"
                     </div>`;
             },
             afterLoad: function(items) {
-                console.log(`Caricati ${items.length} <?php echo $nomeSezione?>`);
             }
         });
 
@@ -385,8 +384,6 @@ $nomeSezione = "trattative"
             ufficializzata: ufficializzata,
             descrizione: descrizione
         };
-
-        console.log('Dati da inviare:', dataTrattativa);
 
         // 1. Recupera i dettagli della trattativa
         fetch(`../endpoint/<?php echo $nomeSezione ?>/read.php?id=${id}`)
@@ -539,7 +536,6 @@ $nomeSezione = "trattative"
                                                 })
                                                 .then(data => {
                                                     // Log the exact data structure received
-                                                    console.log('Struttura dati squadra 1:', JSON.stringify(data));
 
                                                     if (!data || !data.squadra) {
                                                         throw new Error('Struttura dati squadra 1 non valida');
@@ -583,7 +579,6 @@ $nomeSezione = "trattative"
                                                 })
                                                 .then(data => {
                                                     // Log the exact data structure received
-                                                    console.log('Struttura dati squadra 2:', JSON.stringify(data));
 
                                                     if (!data || !data.squadra) {
                                                         throw new Error('Struttura dati squadra 2 non valida');
@@ -622,21 +617,10 @@ $nomeSezione = "trattative"
 
                                         return Promise.all(promises)
                                             .then(([creditoAttuale1, creditoAttuale2]) => {
-                                                console.log("Crediti attuali:", {
-                                                    squadra1: creditoAttuale1,
-                                                    squadra2: creditoAttuale2,
-                                                    delta1: creditoSquadra1,
-                                                    delta2: creditoSquadra2
-                                                });
 
                                                 // Calcola i nuovi valori dei crediti
                                                 const nuovoCreditoSquadra1 = creditoAttuale1 - creditoSquadra1;
                                                 const nuovoCreditoSquadra2 = creditoAttuale2 - creditoSquadra2;
-
-                                                console.log("Nuovi crediti da impostare:", {
-                                                    squadra1: nuovoCreditoSquadra1,
-                                                    squadra2: nuovoCreditoSquadra2
-                                                });
 
                                                 // 3.4 Prepara le promesse per aggiornare i crediti delle squadre
                                                 const creditPromises = [

@@ -546,8 +546,6 @@
                     // Aggiungi altre tipologie se necessario
                 });
 
-                console.log("Tipologie di scambio caricate:", tipologieScambio);
-                console.log("Finestre di mercato organizzate:", finestreMercato);
             }
         })
         .catch(error => {
@@ -1058,7 +1056,6 @@
 
         if (isValid) {
             // Rimuovi eventuali bottoni precedenti
-            console.log("Dati trattativa validi:", datiTrattativa);
             const existingButton = document.querySelector('.inviaTrattativa');
             if (existingButton) {
                 existingButton.remove();
@@ -1082,7 +1079,6 @@
                         id_squadra2: idSquadra2
                     };
 
-                    console.log("Invio dati trattativa principale:", trattativaData);
 
                     // Invio alla trattativa principale
                     const responseTrattativa = await fetch('endpoint/trattative/create.php', {
@@ -1111,8 +1107,6 @@
                             id_squadra_r: idSquadra2
                         };
 
-                        console.log("Invio associazione giocatore squadra 1:", associazioneData);
-
                         associazioniPromises.push(
                             fetch('endpoint/operazioni/create.php', {
                                 method: 'POST',
@@ -1139,8 +1133,6 @@
                             id_squadra_c: idSquadra2,
                             id_squadra_r: idSquadra1
                         };
-
-                        console.log("Invio associazione giocatore squadra 2:", associazioneData);
 
                         associazioniPromises.push(
                             fetch('endpoint/operazioni/create.php', {

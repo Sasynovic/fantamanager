@@ -19,8 +19,6 @@
         overflow-y: scroll;
     }
 
-
-
     .news-container {
         max-width: 1000px;
         margin: 0 auto;
@@ -33,7 +31,6 @@
         background-color: var(--blu);
         border-radius: 5px;
         cursor: pointer;
-        transition: all 0.3sease;
         font-weight: bold;
         color: white;
         border: none;
@@ -148,7 +145,7 @@
                     // Recupera l'ID competizione dall'URL
                     $urlParams = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
                     parse_str($urlParams, $params);
-                    $id_competizione = isset($params['id']) ? $params['id'] : 0;
+                    $id_competizione = $params['id'] ?? 0;
 
                     $baseUrl = 'https://' . $_SERVER['HTTP_HOST'] . '/';  // Prende il dominio automaticamente
 
@@ -192,7 +189,6 @@
                                     return response.json();
                                 })
                                 .then(data => {
-                                    console.log('Dati ricevuti:', data); // Debug
 
                                     // Verifica che data.squadre esista e sia un array
                                     if (!data.squadre || !Array.isArray(data.squadre)) {
@@ -461,7 +457,7 @@
 
 <script>
     function openTab(evt, tabName) {
-        var i, tabcontent, tablinks;
+        let i, tabcontent, tablinks;
         tabcontent = document.getElementsByName("tabcontent");
         for (i = 0; i < tabcontent.length; i++) {
             tabcontent[i].style.display = "none";

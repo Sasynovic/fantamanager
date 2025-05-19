@@ -147,7 +147,6 @@
 
                 // Aggiungi click event per mostrare la divisione selezionata
                 divItem.addEventListener('click', function() {
-                    console.log('Divisione principale selezionata:', division);
                     // Qui puoi aggiungere il codice per mostrare la divisione selezionata
                 });
 
@@ -253,7 +252,6 @@
 
                 // Aggiungi click event per mostrare la divisione selezionata
                 li.addEventListener('click', function() {
-                    console.log('Divisione selezionata:', division);
                     // Qui puoi aggiungere il codice per mostrare la divisione selezionata
                 });
 

@@ -226,12 +226,10 @@ $nomeSezione = "squadra";
                     alert("Il valore fvm deve essere un numero positivo.");
                     return false; // Non procedere con la creazione
                 }
-                console.log('Dati prima della creazione:', data);
                 // Qui è possibile validare o manipolare i dati prima dell'invio
                 return true; // Procedi con la creazione
             },
             afterLoad: function(items) {
-                console.log(`Caricati ${items.length} <?php echo $nomeSezione?>`);
             }
         });
 

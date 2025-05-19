@@ -280,12 +280,10 @@ $nomeSezione = "news";
             beforeCreate: function(data) {
                 data.contenuto = quill.root.innerHTML;
                 document.getElementById('contenuto').value = data.contenuto;
-                console.log('Dati prima della creazione:', data);
                 // Qui è possibile validare o manipolare i dati prima dell'invio
                 return true; // Procedi con la creazione
             },
             afterLoad: function(items) {
-                console.log(`Caricati ${items.length} <?php echo $nomeSezione?>`);
             }
         });
 
@@ -316,9 +314,7 @@ $nomeSezione = "news";
                 const news = data.news[0]; // Aggiungi [0] per accedere al primo elemento dell'array
                 if (news) {
                     apriFormModifica(news);
-                    console.log('Dati della notizia:', news);
                 } else {
-                    console.error('Elemento non trovato');
                 }
             })
             .catch(error => console.error('Errore nel caricamento dell\'elemento:', error));
@@ -363,8 +359,6 @@ $nomeSezione = "news";
             visibile: visibile
         };
 
-        console.log(data);
-
         fetch(`../endpoint/<?php echo $nomeSezione ?>/update.php?id=${id}`, {
                 method: 'PUT', // o 'POST' se necessario
             headers: {
@@ -380,7 +374,6 @@ $nomeSezione = "news";
                 return response.json();
             })
             .then(data => {
-                console.log('Successo:', data);
                 window.location.reload(); // Ricarica la pagina per mostrare le modifiche
                 // Aggiorna la lista delle news o fai un redirect se necessario
             })

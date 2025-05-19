@@ -233,7 +233,6 @@
 
         urlSquadre += `&limit=${itemsPerPage}&page=${page}`;
 
-        console.log(urlSquadre);
 
         // Mostra indicatore di caricamento
         document.querySelector('#venditaTable tbody').innerHTML =
