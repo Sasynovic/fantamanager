@@ -160,9 +160,7 @@ class squadra
                                 st.livello_stadio,
                                 st.costo_manutenzione,
                                 st.bonus_casa_n,
-                                st.bonus_casa_u,
-                                st.guadagno_crediti_coppa,
-                                st.guadagno_crediti_campionato
+                                st.bonus_casa_u
                             
                             FROM " . $this->table_name . " s
                             LEFT JOIN presidenti pres ON s.id_pres = pres.id

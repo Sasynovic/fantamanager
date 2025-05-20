@@ -87,9 +87,7 @@ if ($num > 0) {
                 "livello_stadio" => $row['livello_stadio'],
                 "costo_manutenzione" => $row['costo_manutenzione'],
                 "bonus_casa_nazionale" => $row['bonus_casa_n'],
-                "bonus_casa_uefa" => $row['bonus_casa_u'],
-                "guadagno_crediti_campionato" => $row['guadagno_crediti_campionato'],
-                "guadagno_crediti_coppa" => $row['guadagno_crediti_coppa'],
+                "bonus_casa_uefa" => $row['bonus_casa_u']
             ],
         ];
     }

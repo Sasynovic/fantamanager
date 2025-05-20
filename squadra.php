@@ -670,17 +670,6 @@
                         </div>
                     </div>
 
-                    <div class="overview-card">
-                        <h3>Guadagni</h3>
-                        <div class="overview-item">
-                            <span class="overview-label">Campionato:</span>
-                            <span class="overview-value"><?php echo $json->squadra[0]->stadio->guadagno_crediti_campionato ?? 'N/A'; ?> FVM</span>
-                        </div>
-                        <div class="overview-item">
-                            <span class="overview-label">Coppa:</span>
-                            <span class="overview-value"><?php echo $json->squadra[0]->stadio->guadagno_crediti_coppa ?? 'N/A'; ?> FVM</span>
-                        </div>
-                    </div>
                 </div>
             </div>
 
