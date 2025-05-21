@@ -159,7 +159,7 @@
                     <thead>
                     <tr>
                         <th>Competizione</th>
-                        <th>Anno</th>
+                        <th>Stagione</th>
                         <th>Squadra</th>
                     </tr>
                     </thead>
@@ -257,7 +257,7 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
             <td>${r.nome_competizione}</td>
-            <td>${r.anno}</td>
+            <td>${r.stagione}</td>
             <td>${r.nome_squadra}</td>
         `;
             tbody.appendChild(tr);

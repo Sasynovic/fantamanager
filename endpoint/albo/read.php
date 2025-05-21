@@ -25,6 +25,9 @@ if (in_array($origin, $allowed_origins)) {
 // Gli altri header CORS rimangono invariati
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 require_once '../../config/database.php';
 require_once '../../models/albo.php';
 
@@ -66,7 +69,7 @@ if ($num > 0) {
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
        $response['albo'][] = [
             "id" => $row['id'],
-            "anno" => $row['anno'],
+            "stagione" => $row['stagione'],
             "id_competizione" => $row['id_competizione'],
             "nome_competizione" => $row['nome_divisione'] .' '. $row['nome_competizione'],
             "nome_squadra" => $row['nome_squadra'],

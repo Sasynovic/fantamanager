@@ -662,11 +662,11 @@
                         <h3>Bonus Partite</h3>
                         <div class="overview-item">
                             <span class="overview-label">Nazionale:</span>
-                            <span class="overview-value"><?php echo $json->squadra[0]->stadio->bonus_casa_nazionale ?? 'N/A'; ?> FVM</span>
+                            <span class="overview-value"><?php echo $json->squadra[0]->stadio->bonus_casa_nazionale ?? 'N/A'; ?> Pt</span>
                         </div>
                         <div class="overview-item">
                             <span class="overview-label">UEFA:</span>
-                            <span class="overview-value"><?php echo $json->squadra[0]->stadio->bonus_casa_uefa ?? 'N/A'; ?> FVM</span>
+                            <span class="overview-value"><?php echo $json->squadra[0]->stadio->bonus_casa_uefa ?? 'N/A'; ?> Pt</span>
                         </div>
                     </div>
 
@@ -683,7 +683,7 @@
                         foreach ($json_albo->albo as $albo) {
                             echo '<div class="overview-item">';
                             echo '<span class="overview-label">Nome competizione:</span>';
-                            echo '<span class="overview-value">' . $albo->nome_competizione . ' ' . $albo->anno . '</span>';
+                            echo '<span class="overview-value">' . $albo->nome_competizione . ' ' . $albo->stagione . '</span>';
                             echo '</div>';
                         }} else {
                         echo '<p>Nessun titolo vinto</p>';

@@ -17,17 +17,18 @@ class albo
 
     public function count($id_squadra_filter = null, $anno_filter = null, $id_competizione_filter = null){
         $query = "SELECT COUNT(*) as total 
-                        FROM " . $this->table_name . " a
+                         FROM  ".$this->table_name." a
+                        LEFT JOIN stagioni_sportive ss ON a.id_stagione = ss.id
                         LEFT JOIN competizione c ON a.id_competizione = c.id
                         LEFT JOIN squadre s ON a.id_squadra = s.id
                         LEFT JOIN divisione d ON c.id_divisione = d.id
-                         WHERE 1=1";
+                        WHERE 1=1";
 
         if ($id_squadra_filter !== null) {
             $query .= " AND a.id_squadra = :id_squadra";
         }
         if ($anno_filter !== null) {
-            $query .= " AND a.anno = :anno";
+            $query .= " AND ss.stagione = :anno";
         }
         if ($id_competizione_filter !== null) {
             $query .= " AND a.id_competizione = :id_competizione";
@@ -56,28 +57,35 @@ class albo
         $query = "
             SELECT  
                 a.id,
-                a.anno,
                 a.id_competizione,
                 a.id_squadra,
+                
                 c.id_divisione AS id_divisione,
                 c.nome_competizione AS nome_competizione,
+                
                 s.nome_squadra AS nome_squadra,
-                d.nome_divisione AS nome_divisione
+                d.nome_divisione AS nome_divisione,
+                
+                ss.stagione as stagione
+            
+            
             FROM  ".$this->table_name." a
+            LEFT JOIN stagioni_sportive ss ON a.id_stagione = ss.id
             LEFT JOIN competizione c ON a.id_competizione = c.id
             LEFT JOIN squadre s ON a.id_squadra = s.id
-            LEFT JOIN divisione d ON c.id_divisione = d.id";
+            LEFT JOIN divisione d ON c.id_divisione = d.id
+            WHERE 1=1";
 
         if ($id_squadra_filter !== null) {
-            $query .= " WHERE a.id_squadra = :id_squadra";
+            $query .= " AND a.id_squadra = :id_squadra";
         }
         if ($anno_filter !== null) {
-            $query .= " WHERE a.anno = :anno";
+            $query .= " AND ss.stagione = :anno";
         }
         if ($id_competizione_filter !== null) {
-            $query .= " WHERE a.id_competizione = :id_competizione";
+            $query .= " AND a.id_competizione = :id_competizione";
         }
-        $query .= " ORDER BY anno DESC, nome_competizione ASC";
+        $query .= " ORDER BY ss.stagione DESC, nome_competizione ASC";
         $query .= " LIMIT :limit OFFSET :offset";
 
         $stmt = $this->conn->prepare($query);
