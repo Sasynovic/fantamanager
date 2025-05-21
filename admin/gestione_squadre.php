@@ -379,7 +379,7 @@ $nomeSezione = "squadra";
             document.getElementById('card-all').classList.add('hidden');
             document.getElementById('pagination').classList.add('hidden');
             document.getElementById('edit-form').classList.remove('hidden');
-        },100 );
+        },200 );
 
 
     }
