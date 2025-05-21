@@ -75,7 +75,9 @@ if ($num > 0) {
             "valore_fvm" => $row['valore_fvm'],
 
             "dirigenza" => [
+                "id_pres" => $row['id_pres'],
                 "presidente" => $row['nome_pres'] . ' ' . $row['cognome_pres'],
+                "id_vice" => $row['id_vice'],
                 "vicepresidente" => $row['nome_vice'] . ' ' . $row['cognome_vice'],
                 ],
             "finanze" => [
@@ -83,6 +85,7 @@ if ($num > 0) {
             ],
 
             "stadio" => [
+                "id_stadio" => $row['id_stadio'],
                 "nome_stadio" => $row['nome_stadio'],
                 "livello_stadio" => $row['livello_stadio'],
                 "costo_manutenzione" => $row['costo_manutenzione'],

@@ -49,7 +49,7 @@ $nomeSezione = "squadra";
         </button>
     </div>
 
-    <div class="card-all">
+    <div class="card-all" id="card-all">
         <div class="filter-section">
             <div class="form-group">
                 <label for="filter-card"><?php echo $nomeSezione?> da mostrare</label>
@@ -91,7 +91,7 @@ $nomeSezione = "squadra";
         </div>
 
         <div class="form-group">
-            <label for="id_vice">Selezione presidente</label>
+            <label for="id_vice">Selezione vice presidente</label>
             <select id="id_vice" name="id_vice" class="form-control">
                 <option value="NULL" selected>Nessun vice</option>
             </select>
@@ -126,24 +126,24 @@ $nomeSezione = "squadra";
 
             // Carica i presidenti
             function fetchPresidenti(select){
-            fetch(presidentiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    const presidenti = data.presidenti;
+                fetch(presidentiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        const presidenti = data.presidenti;
 
-                    if (Array.isArray(presidenti)) {
-                        presidenti.forEach(presidente => {
-                            const option = document.createElement('option');
-                            option.value = presidente.id;
-                            option.textContent = presidente.nome + ' ' + presidente.cognome;
+                        if (Array.isArray(presidenti)) {
+                            presidenti.forEach(presidente => {
+                                const option = document.createElement('option');
+                                option.value = presidente.id;
+                                option.textContent = presidente.nome + ' ' + presidente.cognome;
 
-                            select.appendChild(option);
-                        });
-                    } else {
-                        console.error("Il campo 'president' non è un array:", presidenti);
-                    }
-                })
-                .catch(error => console.error('Errore nel caricamento dei presidenti:', error));
+                                select.appendChild(option);
+                            });
+                        } else {
+                            console.error("Il campo 'president' non è un array:", presidenti);
+                        }
+                    })
+                    .catch(error => console.error('Errore nel caricamento dei presidenti:', error));
             }
             function fetchStadi(select){
                 fetch(stadiUrl)
@@ -180,6 +180,62 @@ $nomeSezione = "squadra";
         </div>
     </div>
 
+    <div class="card hidden" id="edit-form">
+        <div class="card-header">
+            <h2 class="card-title">Modifica <?php echo $nomeSezione?></h2>
+        </div>
+
+        <div class="form-group">
+            <label for="id-edit"></label>
+            <input type="hidden" id="id-edit" name="id_edit" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="nome_squadra_edit">Nome squadra</label>
+            <input type="text" id="nome_squadra_edit" name="nome_squadra_edit" placeholder="Inserisci nome squadra">
+        </div>
+
+        <div class="form-group">
+            <label for="id_pres_edit">Selezione presidente</label>
+            <select id="id_pres_edit" name="id_pres_edit" class="form-control">
+                <option value="" disabled selected>Seleziona un presidente</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="id_vice_edit">Selezione vice presidente</label>
+            <select id="id_vice_edit" name="id_vice_edit" class="form-control">
+                <option value="NULL" selected>Nessun vice</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="id_stadio_edit">Selezione uno stadio</label>
+            <select id="id_stadio_edit" name="id_stadio_edit" class="form-control">
+                <option value="" selected disabled>Seleziona uno stadio</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="valore_fvm_edit">Valore fvm</label>
+            <input type="text" id="valore_fvm_edit" name="valore_fvm_edit" placeholder="Valore fvm squadra">
+        </div>
+
+        <div class="checkbox-label">
+            <span>In vendita</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="vendita_edit" name="vendita_edit">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+
+        <div class="btn-group">
+            <button id="submit-edit" class="btn btn-primary" onclick="updateSquadra()">Modifica <?php echo $nomeSezione?></button>
+            <button id="cancel-edit-form" class="btn btn-outline" onclick="closeFormModifica()">Annulla</button>
+        </div>
+    </div>
+
+
     <div id="pagination" class="pagination"></div>
 
 </div>
@@ -187,12 +243,12 @@ $nomeSezione = "squadra";
 <script src="CRUDManager.js" defer></script>
 <script>
     /**
-     * Implementazione per la gestione dei presidenti
+     * Implementazione per la gestione delle squadre
      */
     let crudManager;
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Inizializza il gestore CRUD per i "presidenti"
+        // Inizializza il gestore CRUD per le "squadre"
         crudManager = new CRUDManager('<?php echo $nomeSezione?>', 'https://barrettasalvatore.it', {
             // Override degli elementi DOM, personalizzando i nomi degli elementi
             cardList: document.getElementById('card-list'),
@@ -208,7 +264,7 @@ $nomeSezione = "squadra";
         }, {
             // Callback personalizzati
             renderItem: function(item) {
-                // Personalizzazione del rendering di ciascun presidente
+                // Personalizzazione del rendering di ciascuna squadra
                 return `
                 <div class="card-meta">
                     <h4>${item.nome_squadra}</h4>
@@ -220,7 +276,7 @@ $nomeSezione = "squadra";
                     <span>Credito: ${item.finanze.credito}</span>
                 </div>
                 <div class="card-actions">
-                    <button class="btn btn-warning edit-btn" onclick="crudManager.editItem(${item.id})">
+                    <button class="btn btn-warning edit-btn" onclick="editItem(${item.id})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 6px;">
                             <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
                         </svg>
@@ -272,9 +328,164 @@ $nomeSezione = "squadra";
         crudManager.loadData();
     });
 
-    // Funzione globale per editare un elemento (necessaria per i pulsanti di modifica)
     function editItem(id) {
-        crudManager.editItem(id);
+        const urlSingle = `${window.location.protocol}//${window.location.host}/endpoint/squadra/read.php?id_squadra=${id}`;
+        fetch(urlSingle)
+            .then(response => response.json())
+            .then(data => {
+                // Accedi alla squadra dai dati ricevuti
+                const squadra = data.squadra[0]; // Assumendo che i dati siano restituiti in un array 'squadra'
+                if (squadra) {
+                    apriFormModifica(squadra);
+                } else {
+                    console.error('Nessuna squadra trovata con questo ID');
+                }
+            })
+            .catch(error => console.error('Errore nel caricamento della squadra:', error));
+    }
+
+    function apriFormModifica(dati) {
+        // Mostra il form di modifica e nascondi gli altri elementi
+        document.getElementById('card-all').classList.add('hidden');
+        document.getElementById('pagination').classList.add('hidden');
+        document.getElementById('edit-form').classList.remove('hidden');
+        // Popola i campi del form di modifica
+        document.getElementById('id-edit').value = dati.id || '';
+        document.getElementById('nome_squadra_edit').value = dati.nome_squadra || '';
+        document.getElementById('valore_fvm_edit').value = dati.valore_fvm || '';
+        document.getElementById('vendita_edit').checked = dati.vendita === "1" || dati.vendita === 1 || dati.vendita === true;
+
+        // Carica i dati per i menu a discesa
+        loadSelectOptions();
+
+        // Imposta i valori attuali dopo il caricamento delle opzioni
+        setTimeout(() => {
+            // Popola i select di presidenti, vice e stadio
+            if (dati.dirigenza && dati.dirigenza.id_pres) {
+                document.getElementById('id_pres_edit').value = dati.dirigenza.id_pres;
+            }
+
+            if (dati.dirigenza && dati.dirigenza.id_vice) {
+                document.getElementById('id_vice_edit').value = dati.dirigenza.id_vice;
+            } else {
+                document.getElementById('id_vice_edit').value = "NULL";
+            }
+
+            if (dati.stadio && dati.stadio.id_stadio) {
+                document.getElementById('id_stadio_edit').value = dati.stadio.id_stadio;
+            }
+        }, ); // Piccolo ritardo per permettere il caricamento dei dati
+
+
+    }
+
+    function loadSelectOptions() {
+        // Carica i presidenti per i select del form di modifica
+        const presUrl = `${window.location.protocol}//${window.location.host}/endpoint/presidenti/read.php`;
+        const stadioUrl = `${window.location.protocol}//${window.location.host}/endpoint/stadio/read.php`;
+        const selectPres = document.getElementById('id_pres_edit');
+        const selectVice = document.getElementById('id_vice_edit');
+        const selectStadio = document.getElementById('id_stadio_edit');
+
+        // Pulisci le opzioni esistenti (tranne la prima)
+        while (selectPres.options.length > 1) selectPres.remove(1);
+        while (selectVice.options.length > 1) selectVice.remove(1);
+        while (selectStadio.options.length > 1) selectStadio.remove(1);
+
+        // Carica i presidenti
+        fetch(presUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data.presidenti)) {
+                    data.presidenti.forEach(presidente => {
+                        // Aggiungi al select del presidente
+                        const optionP = document.createElement('option');
+                        optionP.value = presidente.id;
+                        optionP.textContent = presidente.nome + ' ' + presidente.cognome;
+                        selectPres.appendChild(optionP);
+
+                        // Aggiungi al select del vice presidente
+                        const optionV = document.createElement('option');
+                        optionV.value = presidente.id;
+                        optionV.textContent = presidente.nome + ' ' + presidente.cognome;
+                        selectVice.appendChild(optionV);
+                    });
+                }
+            })
+            .catch(error => console.error('Errore nel caricamento dei presidenti:', error));
+
+        // Carica gli stadi
+        fetch(stadioUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data.stadio)) {
+                    data.stadio.forEach(stadio => {
+                        const option = document.createElement('option');
+                        option.value = stadio.id;
+                        option.textContent = stadio.nome_stadio;
+                        selectStadio.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => console.error('Errore nel caricamento degli stadi:', error));
+    }
+
+    function closeFormModifica() {
+        document.getElementById('card-all').classList.remove('hidden');
+        document.getElementById('pagination').classList.remove('hidden');
+        document.getElementById('edit-form').classList.add('hidden');
+    }
+
+    function updateSquadra() {
+        const id = document.getElementById('id-edit').value;
+        const nome_squadra = document.getElementById('nome_squadra_edit').value;
+        const id_pres = document.getElementById('id_pres_edit').value;
+        const id_vice = document.getElementById('id_vice_edit').value === "NULL" ? null : document.getElementById('id_vice_edit').value;
+        const id_stadio = document.getElementById('id_stadio_edit').value;
+        const valore_fvm = document.getElementById('valore_fvm_edit').value;
+        const vendita = document.getElementById('vendita_edit').checked ? 1 : 0;
+
+        // Validazione
+        if (id_pres === id_vice && id_vice !== "NULL" && id_vice !== null) {
+            alert("Il presidente e il vice non possono essere la stessa persona.");
+            return false;
+        }
+
+        if (isNaN(valore_fvm) || valore_fvm <= 0) {
+            alert("Il valore fvm deve essere un numero positivo.");
+            return false;
+        }
+
+        const data = {
+            nome_squadra: nome_squadra,
+            id_pres: id_pres,
+            id_vice: id_vice,
+            id_stadio: id_stadio,
+            valore_fvm: valore_fvm,
+            vendita: vendita
+        };
+
+        fetch(`${window.location.protocol}//${window.location.host}/endpoint/squadra/update.php?id=${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(result => {
+                alert("Squadra aggiornata con successo!");
+                window.location.reload(); // Ricarica la pagina per mostrare le modifiche
+            })
+            .catch(error => {
+                console.error('Errore:', (error.message || error));
+                alert('Si è verificato un errore durante l\'aggiornamento: ' + (error.message || error));
+            });
     }
 </script>
 </body>

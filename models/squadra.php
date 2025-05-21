@@ -149,6 +149,9 @@ class squadra
                                 s.costo_iscrizione,
                                 s.valore_fvm,
                                 s.credito,
+                                s.id_pres,
+                                s.id_vice,
+                                s.id_stadio,
                                 
                                 pres.nome AS nome_pres,
                                 pres.cognome AS cognome_pres,
