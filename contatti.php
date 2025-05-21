@@ -220,21 +220,23 @@
             </div>
 
 
-            <footer class="main-footer">
-                <div class="swiper-container footer-swiper">
-                    <div class="swiper-wrapper" id="footerList">
-                        <!-- Gli elementi division-ball verranno inseriti qui tramite JavaScript -->
-                    </div>
-                    <!-- Aggiunti i pulsanti di navigazione -->
-                    <div class="swiper-button-prev footer-nav-prev">
-                        <img src="public/chevron/chevronL.svg" alt="Indietro">
-                    </div>
-                    <div class="swiper-button-next footer-nav-next">
-                        <img src="public/chevron/chevronR.svg" alt="Avanti">
-                    </div>
-                </div>
-            </footer>
+
         </div>
+
+        <footer class="main-footer">
+            <div class="swiper-container footer-swiper">
+                <div class="swiper-wrapper" id="footerList">
+                    <!-- Gli elementi division-ball verranno inseriti qui tramite JavaScript -->
+                </div>
+                <!-- Aggiunti i pulsanti di navigazione -->
+                <div class="swiper-button-prev footer-nav-prev">
+                    <img src="public/chevron/chevronL.svg" alt="Indietro">
+                </div>
+                <div class="swiper-button-next footer-nav-next">
+                    <img src="public/chevron/chevronR.svg" alt="Avanti">
+                </div>
+            </div>
+        </footer>
     </div>
 </div>
 </body>
