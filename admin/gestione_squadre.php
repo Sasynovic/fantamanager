@@ -344,96 +344,93 @@ $nomeSezione = "squadra";
             .catch(error => console.error('Errore nel caricamento della squadra:', error));
     }
 
-    function apriFormModifica(dati) {
+    async function apriFormModifica(dati) {
+        // Nascondi il form finché tutto non è pronto
+        document.getElementById('edit-form').classList.add('hidden');
+        document.getElementById('card-all').classList.add('hidden');
+        document.getElementById('pagination').classList.add('hidden');
 
-        // Popola i campi del form di modifica
+        // Popola i campi base
         document.getElementById('id-edit').value = dati.id || '';
         document.getElementById('nome_squadra_edit').value = dati.nome_squadra || '';
         document.getElementById('valore_fvm_edit').value = dati.valore_fvm || '';
         document.getElementById('vendita_edit').checked = dati.vendita === "1" || dati.vendita === 1 || dati.vendita === true;
 
-        // Carica i dati per i menu a discesa
-        loadSelectOptions();
+        // Attendi il caricamento dei dati delle select
+        await loadSelectOptions();
 
-        // Imposta i valori attuali dopo il caricamento delle opzioni
-        setTimeout(() => {
-            // Popola i select di presidenti, vice e stadio
-            if (dati.dirigenza && dati.dirigenza.id_pres) {
-                document.getElementById('id_pres_edit').value = dati.dirigenza.id_pres;
-                console.log(dati.dirigenza.id_pres);
-            }
+        // Imposta i valori nei select
+        if (dati.dirigenza && dati.dirigenza.id_pres) {
+            document.getElementById('id_pres_edit').value = String(dati.dirigenza.id_pres);
+            console.log('Presidente:', dati.dirigenza.id_pres);
+        }
 
-            if (dati.dirigenza && dati.dirigenza.id_vice) {
-                document.getElementById('id_vice_edit').value = dati.dirigenza.id_vice;
-                console.log(dati.dirigenza.id_vice);
-            } else {
-                document.getElementById('id_vice_edit').value = "NULL";
-            }
+        if (dati.dirigenza && dati.dirigenza.id_vice) {
+            document.getElementById('id_vice_edit').value = String(dati.dirigenza.id_vice);
+            console.log('Vice:', dati.dirigenza.id_vice);
+        } else {
+            document.getElementById('id_vice_edit').value = "NULL";
+        }
 
-            if (dati.stadio && dati.stadio.id_stadio) {
-                document.getElementById('id_stadio_edit').value = dati.stadio.id_stadio;
-                console.log(dati.stadio.id_stadio);
-            }
+        if (dati.stadio && dati.stadio.id_stadio) {
+            document.getElementById('id_stadio_edit').value = String(dati.stadio.id_stadio);
+            console.log('Stadio:', dati.stadio.id_stadio);
+        }
 
-            // Mostra il form di modifica e nascondi gli altri elementi
-            document.getElementById('card-all').classList.add('hidden');
-            document.getElementById('pagination').classList.add('hidden');
-            document.getElementById('edit-form').classList.remove('hidden');
-        },200 );
-
-
+        // Mostra il form quando tutto è stato popolato
+        document.getElementById('edit-form').classList.remove('hidden');
     }
 
     function loadSelectOptions() {
-        // Carica i presidenti per i select del form di modifica
         const presUrl = `${window.location.protocol}//${window.location.host}/endpoint/presidenti/read.php`;
         const stadioUrl = `${window.location.protocol}//${window.location.host}/endpoint/stadio/read.php`;
+
         const selectPres = document.getElementById('id_pres_edit');
         const selectVice = document.getElementById('id_vice_edit');
         const selectStadio = document.getElementById('id_stadio_edit');
 
-        // Pulisci le opzioni esistenti (tranne la prima)
+        // Pulisce le opzioni esistenti (tranne la prima)
         while (selectPres.options.length > 1) selectPres.remove(1);
         while (selectVice.options.length > 1) selectVice.remove(1);
         while (selectStadio.options.length > 1) selectStadio.remove(1);
 
-        // Carica i presidenti
-        fetch(presUrl)
-            .then(response => response.json())
-            .then(data => {
-                if (Array.isArray(data.presidenti)) {
-                    data.presidenti.forEach(presidente => {
-                        // Aggiungi al select del presidente
-                        const optionP = document.createElement('option');
-                        optionP.value = presidente.id;
-                        optionP.textContent = presidente.nome + ' ' + presidente.cognome;
-                        selectPres.appendChild(optionP);
+        // Restituisce una Promise che aspetta entrambi i fetch
+        return Promise.all([
+            fetch(presUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (Array.isArray(data.presidenti)) {
+                        data.presidenti.forEach(presidente => {
+                            const optionP = document.createElement('option');
+                            optionP.value = presidente.id;
+                            optionP.textContent = presidente.nome + ' ' + presidente.cognome;
+                            selectPres.appendChild(optionP);
 
-                        // Aggiungi al select del vice presidente
-                        const optionV = document.createElement('option');
-                        optionV.value = presidente.id;
-                        optionV.textContent = presidente.nome + ' ' + presidente.cognome;
-                        selectVice.appendChild(optionV);
-                    });
-                }
-            })
-            .catch(error => console.error('Errore nel caricamento dei presidenti:', error));
+                            const optionV = document.createElement('option');
+                            optionV.value = presidente.id;
+                            optionV.textContent = presidente.nome + ' ' + presidente.cognome;
+                            selectVice.appendChild(optionV);
+                        });
+                    }
+                })
+                .catch(error => console.error('Errore nel caricamento dei presidenti:', error)),
 
-        // Carica gli stadi
-        fetch(stadioUrl)
-            .then(response => response.json())
-            .then(data => {
-                if (Array.isArray(data.stadio)) {
-                    data.stadio.forEach(stadio => {
-                        const option = document.createElement('option');
-                        option.value = stadio.id;
-                        option.textContent = stadio.nome_stadio;
-                        selectStadio.appendChild(option);
-                    });
-                }
-            })
-            .catch(error => console.error('Errore nel caricamento degli stadi:', error));
+            fetch(stadioUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (Array.isArray(data.stadio)) {
+                        data.stadio.forEach(stadio => {
+                            const option = document.createElement('option');
+                            option.value = stadio.id;
+                            option.textContent = stadio.nome_stadio;
+                            selectStadio.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => console.error('Errore nel caricamento degli stadi:', error))
+        ]);
     }
+
 
     function closeFormModifica() {
         document.getElementById('card-all').classList.remove('hidden');
