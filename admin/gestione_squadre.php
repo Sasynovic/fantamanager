@@ -345,10 +345,7 @@ $nomeSezione = "squadra";
     }
 
     function apriFormModifica(dati) {
-        // Mostra il form di modifica e nascondi gli altri elementi
-        document.getElementById('card-all').classList.add('hidden');
-        document.getElementById('pagination').classList.add('hidden');
-        document.getElementById('edit-form').classList.remove('hidden');
+
         // Popola i campi del form di modifica
         document.getElementById('id-edit').value = dati.id || '';
         document.getElementById('nome_squadra_edit').value = dati.nome_squadra || '';
@@ -363,18 +360,26 @@ $nomeSezione = "squadra";
             // Popola i select di presidenti, vice e stadio
             if (dati.dirigenza && dati.dirigenza.id_pres) {
                 document.getElementById('id_pres_edit').value = dati.dirigenza.id_pres;
+                console.log(dati.dirigenza.id_pres);
             }
 
             if (dati.dirigenza && dati.dirigenza.id_vice) {
                 document.getElementById('id_vice_edit').value = dati.dirigenza.id_vice;
+                console.log(dati.dirigenza.id_vice);
             } else {
                 document.getElementById('id_vice_edit').value = "NULL";
             }
 
             if (dati.stadio && dati.stadio.id_stadio) {
                 document.getElementById('id_stadio_edit').value = dati.stadio.id_stadio;
+                console.log(dati.stadio.id_stadio);
             }
-        }, ); // Piccolo ritardo per permettere il caricamento dei dati
+
+            // Mostra il form di modifica e nascondi gli altri elementi
+            document.getElementById('card-all').classList.add('hidden');
+            document.getElementById('pagination').classList.add('hidden');
+            document.getElementById('edit-form').classList.remove('hidden');
+        },100 );
 
 
     }
