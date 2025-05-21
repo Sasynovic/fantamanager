@@ -670,6 +670,18 @@ tr:last-child td {
         width: 45px;
         height: 45px;
     }
+
+    .main-header{
+        height: 8%;
+    }
+
+    .main-body{
+        height: 84%;
+    }
+
+    .main-footer{
+        height: 8%;
+    }
 }
 @media (max-width: 992px) {
     .competizioni-table {

@@ -37,6 +37,12 @@
             color: var(--oro);
         }
 
+        .main-body-content{
+            height: 100%;
+            justify-content: flex-start;
+            margin-top: 20px;
+        }
+
         @media (max-width: 992px) {
             .main-body-content{
                 width: auto;
@@ -91,9 +97,10 @@
                 <h1 id="hamburger-menu">≡</h1>
             </div>
         </header>
+        <h3  style="text-align: center; padding: 10px; background-color: var(--accento)" >   Clicca sul nome della squadra per maggiori dettagli</h3>
+
 
         <div class="main-body">
-            <h3  style="text-align: center; padding: 10px; background-color: var(--accento)" >   Clicca sul nome della squadra per maggiori dettagli</h3>
             <div class="main-body-content" id="main-body-content">
 
                 <div class="filter-section">

@@ -30,6 +30,9 @@
             margin-top: 20px;
             margin-bottom: 20px;
         }
+        .main-body-content{
+            justify-content: flex-start;
+        }
     </style>
 
 </head>
