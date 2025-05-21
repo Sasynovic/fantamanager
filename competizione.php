@@ -14,6 +14,11 @@
 </head>
 <style>
 
+    .main-body{
+        margin-bottom: 20px;
+        height: 77%;
+    }
+
     .main-body-content{
         height: 100%;
         overflow-y: scroll;
@@ -67,7 +72,7 @@
 
     .news-item h3 {
         margin-top: 0;
-        color: #2e6be6;
+        color: var(--accento);
     }
 
 
@@ -168,9 +173,10 @@
                 <h1 id="hamburger-menu">≡</h1>
             </div>
         </header>
+        <h3  style="text-align: center; padding: 10px; background-color: var(--accento)" >   Clicca sul nome della squadra per maggiori dettagli</h3>
+
 
         <div class="main-body">
-            <h3  style="text-align: center; padding: 10px; background-color: var(--accento)" >   Clicca sul nome della squadra per maggiori dettagli</h3>
             <div class="main-body-content" id="main-body-content">
                 <div class="container">
 
@@ -183,92 +189,92 @@
                         <script>
                             fetch('/endpoint/partecipazione/read.php?id_competizione=' + <?php echo $id_competizione; ?>)
                                 .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error('Errore nella risposta del server');
-                                    }
+                                    if (!response.ok) throw new Error('Errore nella risposta del server');
                                     return response.json();
                                 })
                                 .then(data => {
-
-                                    // Verifica che data.squadre esista e sia un array
                                     if (!data.squadre || !Array.isArray(data.squadre)) {
                                         console.error('Dati non validi:', data);
                                         throw new Error('Formato dati non valido');
                                     }
 
-                                    // Ordina le squadre per posizione in classifica
-                                    const squadreOrdinate = [...data.squadre].sort((a, b) => {
-                                        // Prima per punti totali (decrescente)
-                                        if (b.punti !== a.punti) {
-                                            return b.punti - a.punti;
-                                        }
-                                        if (b.punti_totali !== a.punti_totali) {
-                                            return b.punti_totali - a.punti_totali;
-                                        }
+                                    const squadre = data.squadre;
+                                    const gironiPresenti = squadre.some(s => s.girone !== null && s.girone !== '');
 
-                                        // Poi per differenza reti (decrescente)
-                                        if (b.differenza_reti !== a.differenza_reti) {
-                                            return b.differenza_reti - a.differenza_reti;
-                                        }
+                                    let gruppi = {};
 
-                                        // Infine per gol fatti (decrescente)
-                                        return b.gol_fatti - a.gol_fatti;
-                                    });
+                                    if (gironiPresenti) {
+                                        // Raggruppa le squadre per girone
+                                        squadre.forEach(s => {
+                                            const girone = s.girone || 'Senza Girone';
+                                            if (!gruppi[girone]) gruppi[girone] = [];
+                                            gruppi[girone].push(s);
+                                        });
+                                    } else {
+                                        // Se non ci sono gironi, metti tutte le squadre in un unico gruppo
+                                        gruppi[''] = squadre;
+                                    }
 
-                                    // Genera la tabella HTML
-                                    const classificaContainer = document.getElementById('classifica');
-                                    let classificaHTML = `
-                                            <table class="classifica-table">
-                                                <thead>
-                                                    <tr>
-                                                        <th></th>
-                                                        <th>Squadra</th>
-                                                        <th>Pn</th>
-                                                        <th>G</th>
-                                                        <th>V</th>
-                                                        <th>N</th>
-                                                        <th>P</th>
-                                                        <th>Gf</th>
-                                                        <th>Gs</th>
+                                    const container = document.getElementById('classifica');
+                                    container.innerHTML = "";
 
-                                                        <th>Pt</th>
-                                                        <th>Pt tot</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>`;
+                                    for (const girone in gruppi) {
+                                        const squadreOrdinate = gruppi[girone].sort((a, b) => {
+                                            if (b.punti !== a.punti) return b.punti - a.punti;
+                                            if (b.punti_totali !== a.punti_totali) return b.punti_totali - a.punti_totali;
+                                            if (b.differenza_reti !== a.differenza_reti) return b.differenza_reti - a.differenza_reti;
+                                            return b.gol_fatti - a.gol_fatti;
+                                        });
 
-                                    squadreOrdinate.forEach((squadra, index) => {
-                                        classificaHTML += `
-                                                <tr>
-                                                    <td>${index + 1}</td>
-                                                    <td>
-                                                      <a href="squadra.php?id=${squadra.id}">
-                                                        ${squadra.nome_squadra || 'N/D'}
-                                                      </a>
-                                                    </td>
-                                                    <td>${squadra.penalizzazione || 0}</td>
-                                                    <td>${squadra.giocate || 0}</td>
-                                                    <td>${squadra.vittorie || 0}</td>
-                                                    <td>${squadra.pareggi || 0}</td>
-                                                    <td>${squadra.sconfitte || 0}</td>
-                                                    <td>${squadra.gol_fatti || 0}</td>
-                                                    <td>${squadra.gol_subiti || 0}</td>
+                                        let classificaHTML = `
+                <h2 style="text-align:center; margin-top: 30px;">${girone}</h2>
+                <table class="classifica-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Squadra</th>
+                            <th>Pn</th>
+                            <th>G</th>
+                            <th>V</th>
+                            <th>N</th>
+                            <th>P</th>
+                            <th>Gf</th>
+                            <th>Gs</th>
+                            <th>Pt</th>
+                            <th>Tot</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
 
-                                                    <td>${squadra.punti || 0}</td>
-                                                    <td>${squadra.punti_totali || 0}</td>
-                                                </tr>`;
-                                    });
+                                        squadreOrdinate.forEach((s, index) => {
+                                            classificaHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><a href="squadra.php?id=${s.id}">${s.nome_squadra || 'N/D'}</a></td>
+                        <td>${s.penalizzazione || 0}</td>
+                        <td>${s.giocate || 0}</td>
+                        <td>${s.vittorie || 0}</td>
+                        <td>${s.pareggi || 0}</td>
+                        <td>${s.sconfitte || 0}</td>
+                        <td>${s.gol_fatti || 0}</td>
+                        <td>${s.gol_subiti || 0}</td>
+                        <td>${s.punti || 0}</td>
+                        <td>${s.punti_totali || 0}</td>
+                    </tr>`;
+                                        });
 
-                                    classificaHTML += `</tbody></table>`;
-                                    classificaContainer.innerHTML = classificaHTML;
+                                        classificaHTML += `</tbody></table>`;
+                                        container.innerHTML += classificaHTML;
+                                    }
                                 })
                                 .catch(error => {
                                     console.error('Errore:', error);
                                     document.getElementById('classifica').innerHTML = `
-                <div class="error-message">
-                    Errore nel caricamento della classifica: ${error.message}
-                </div>`;
+            <div class="error-message">
+                Errore nel caricamento della classifica: ${error.message}
+            </div>`;
                                 });
+
                         </script>
                     </div>
 

@@ -65,7 +65,8 @@ if ($num > 0) {
         "gol_subiti" => $Gs ?? 0,
         "differenza_reti" => $Dr ?? 0,
         "punti" => $Pt ?? 0,
-        "punti_totali" => $PtTotali ?? 0
+        "punti_totali" => $PtTotali ?? 0,
+        "girone" => $girone ?? null
     );
 
     // Continua con il resto dei risultati
@@ -86,7 +87,8 @@ if ($num > 0) {
             "gol_subiti" => $Gs ?? 0,
             "differenza_reti" => $Dr ?? 0,
             "punti" => $Pt ?? 0,
-            "punti_totali" => $PtTotali ?? 0
+            "punti_totali" => $PtTotali ?? 0,
+            "girone" => $girone ?? null
         );
     }
 

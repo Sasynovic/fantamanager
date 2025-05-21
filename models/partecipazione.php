@@ -33,6 +33,7 @@ class partecipazione
                             p.Dr AS Dr,
                             p.Pt AS Pt,
                             p.PtTotali AS PtTotali,
+                            p.girone AS girone,
                                 
                             
                             c.nome_competizione AS nomeCompetizione,
