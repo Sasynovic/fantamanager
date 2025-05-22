@@ -7,6 +7,8 @@
     <link rel="icon" href="public/background/logo.png" type="image/png">
 
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
     <script src="js/showmenu.js" defer></script>
@@ -29,12 +31,6 @@
             width: auto ;
             margin: 0;
         }
-        .giocatori-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
-            padding: 10px;
-        }
 
         .inviaTrattativa {
             background-color: var(--blu-scuro);
@@ -55,16 +51,6 @@
         .inviaTrattativa:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
-        }
-
-        .success {
-            color: green;
-            font-weight: bold;
-        }
-
-        .error {
-            color: white;
-            font-weight: bold;
         }
 
 
@@ -134,9 +120,23 @@
             border: 1px solid #ddd;
             border-radius: 8px;
             padding: 10px;
-
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
+        .editor{
+            height: 100%;
+            width: 100%;
+            background: white;
+            color: black;
+        }
+
+        .ql-editor > p{
+            color: black;
+        }
 
 
         .team-header {
@@ -214,33 +214,6 @@
             cursor: pointer;
             font-size: 16px;
         }
-        @media (max-width: 1024px) {
-            .player-select-container {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .team-container {
-                width: 100%;
-            }
-            .select-container{
-                display: flex;
-                flex-direction: column;
-            }
-
-            .select-container > select {
-                width: auto ;
-                margin-bottom: 15px;
-            }
-
-        }
-
-        .credito-container {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
 
         .riscatto-box{
             width: 100%;
@@ -279,8 +252,6 @@
         }
 
 
-
-
         .risultato-trattativa {
             margin-top: 20px;
             padding: 15px;
@@ -294,12 +265,14 @@
             background-color: #3c763d;
             border-color: #d6e9c6;
             color: #3c763d;
+            font-weight: bold;
         }
 
         .error {
             background-color: #a94442;
             border-color: #ebccd1;
             color: white;
+            font-weight: bold;
         }
 
         .finestra-credito{
@@ -313,6 +286,26 @@
         }
         .main-body-content{
             margin-top: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .player-select-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .team-container {
+                width: 100%;
+            }
+            .select-container{
+                display: flex;
+                flex-direction: column;
+            }
+
+            .select-container > select {
+                width: auto ;
+                margin-bottom: 15px;
+            }
+
         }
     </style>
 </head>
@@ -452,6 +445,10 @@
                                 <span id="totaleCreditoTeam2">0</span>
                             </div>
                         </div>
+                        <div class="editor">
+                            <div id="editor-container"></div>
+                            <input type="hidden" id="contenuto" name="contenuto">
+                        </div>
                     </div>
 
                     <div class="calcola-container">
@@ -465,7 +462,19 @@
     </div>
 </div>
 
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 <script>
+    const quill = new Quill('#editor-container', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                ['clean'],
+            ]
+        },
+        placeholder: 'Scrivi ulteriori dettagli qui...'
+    });
     /// DOM Elements
     const selects = {
         divisione: document.getElementById('selectDivisione'),
@@ -1076,9 +1085,11 @@
                     const trattativaData = {
                         id_competizione: idCompetizione,
                         id_squadra1: idSquadra1,
-                        id_squadra2: idSquadra2
+                        id_squadra2: idSquadra2,
+                        descrizione : quill.root.innerHTML
                     };
 
+                    console.log('Dati trattativa:', trattativaData);
 
                     // Invio alla trattativa principale
                     const responseTrattativa = await fetch('endpoint/trattative/create.php', {

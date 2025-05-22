@@ -50,7 +50,7 @@ class trattative
         return $row['total'];
     }
 
-    public function create(int $id_competizione,int  $id_squadra1, int  $id_squadra2){
+    public function create(int $id_competizione,int  $id_squadra1, int  $id_squadra2, string $descrizione ){
         if ($id_competizione<= 0) {
             throw new InvalidArgumentException("Il id_competizione non può essere vuoto");
         }
@@ -59,20 +59,22 @@ class trattative
         }
         if ($id_squadra2<= 0) {
             throw new InvalidArgumentException("Il id_squadra2 non può essere vuoto");
+        }if (empty($descrizione)) {
+            $descrizione = null;
         }
 
+
         $query = "INSERT INTO " . $this->table_name . " 
-        (id_competizione,id_squadra1,id_squadra2)
+        (id_competizione,id_squadra1,id_squadra2,descrizione)
         VALUES 
-        (:id_competizione,:id_squadra1,:id_squadra2)";
+        (:id_competizione,:id_squadra1,:id_squadra2,:descrizione)";
 
         $stmt = $this->conn->prepare($query);
 
         $stmt -> bindParam(':id_competizione', $id_competizione, PDO::PARAM_INT);
         $stmt -> bindParam(':id_squadra1', $id_squadra1, PDO::PARAM_INT);
         $stmt -> bindParam(':id_squadra2', $id_squadra2, PDO::PARAM_INT);
-
-
+        $stmt -> bindParam(':descrizione', $descrizione, PDO::PARAM_STR);
 
         try {
             $stmt->execute();
@@ -146,8 +148,6 @@ class trattative
         if (!is_array($data)) {
             throw new InvalidArgumentException("I dati per l'aggiornamento devono essere un array");
         }
-
-
 
         // Costruzione della query dinamica
         $fields = [];

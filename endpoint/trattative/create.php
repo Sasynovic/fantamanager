@@ -4,28 +4,25 @@ require_once '../../config/database.php';
 require_once '../../models/trattative.php';
 use component\database;
 
+// Mostra errori per debug temporaneo (puoi disattivarli in produzione)
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Gestione CORS
-// Definisci gli origini consentiti
 $allowed_origins = [
     'https://barrettasalvatore.it',
     'https://fantamanagerpro.eu'
 ];
 
-// Verifica se l'origine della richiesta è nella lista degli origini consentiti
-$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 if (in_array($origin, $allowed_origins)) {
     header("Access-Control-Allow-Origin: $origin");
 } else {
-    // Se l'origine non è consentita, imposta un'origine predefinita o non impostare l'header
     header("Access-Control-Allow-Origin: https://tuodominio.com");
-    // Alternativamente, puoi restituire un errore 403 Forbidden
-    // http_response_code(403);
-    // echo json_encode(["message" => "Origine non autorizzata", "success" => false]);
-    // exit;
 }
 
-// Gli altri header CORS rimangono invariati
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
@@ -37,49 +34,57 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Verifica tipo contenuto
-if ($_SERVER["CONTENT_TYPE"] !== "application/json") {
+$contentType = $_SERVER["CONTENT_TYPE"] ?? '';
+if (stripos($contentType, 'application/json') === false) {
     http_response_code(415);
     echo json_encode(["message" => "Tipo di contenuto non supportato", "success" => false]);
     exit;
 }
 
-// Leggi l'input JSON
-$data = json_decode(file_get_contents("php://input"));
+// Leggi e decodifica l'input JSON
+$rawInput = file_get_contents("php://input");
 
-// Validazione input
-if (empty($data)) {
+if (!$rawInput) {
     http_response_code(400);
-    echo json_encode(["message" => "Input non valido", "success" => false]);
+    echo json_encode(["message" => "Corpo della richiesta vuoto", "success" => false]);
     exit;
 }
 
-try {
-    // Verifica campi obbligatori
-    $requiredFields = ['id_competizione', 'id_squadra1', 'id_squadra2'];
-    foreach ($requiredFields as $field) {
-        if (!isset($data->$field) || empty($data->$field)) {
-            http_response_code(400);
-            echo json_encode(["message" => "Il campo $field è obbligatorio", "success" => false]);
-            exit;
-        }
+$data = json_decode($rawInput);
+
+if (json_last_error() !== JSON_ERROR_NONE || !is_object($data)) {
+    error_log("Errore decodifica JSON: " . json_last_error_msg());
+    http_response_code(400);
+    echo json_encode(["message" => "JSON non valido: " . json_last_error_msg(), "success" => false]);
+    exit;
+}
+
+// Validazione campi richiesti
+$requiredFields = ['id_competizione', 'id_squadra1', 'id_squadra2'];
+foreach ($requiredFields as $field) {
+    if (empty($data->$field)) {
+        http_response_code(400);
+        echo json_encode(["message" => "Il campo $field è obbligatorio", "success" => false]);
+        exit;
     }
+}
 
-    // Conversione e sanitizzazione input
-    $id_competizione = (int) $data->id_competizione;
-    $id_squadra1 = (int) $data->id_squadra1;
-    $id_squadra2 = (int) $data->id_squadra2;
+// Sanitizzazione input
+$id_competizione = (int) $data->id_competizione;
+$id_squadra1 = (int) $data->id_squadra1;
+$id_squadra2 = (int) $data->id_squadra2;
+$descrizione = isset($data->descrizione) ? trim($data->descrizione) : '';
+$descrizione = htmlspecialchars(strip_tags($descrizione), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
-    // Connessione al database
+// Esecuzione
+try {
     $database = new Database();
     $db = $database->getConnection();
-
-    // Creazione oggetto Operazioni
     $trattative = new trattative($db);
 
-    // Chiamata al metodo create e recupero dell'ID
-    $id_trattativa = $trattative->create($id_competizione, $id_squadra1, $id_squadra2);
+    $id_trattativa = $trattative->create($id_competizione, $id_squadra1, $id_squadra2, $descrizione);
 
-    if ($id_trattativa) {
+    if ($id_trattativa && is_numeric($id_trattativa)) {
         http_response_code(201);
         echo json_encode([
             "message" => "Trattativa creata con successo",
@@ -105,14 +110,14 @@ try {
     error_log("Errore DB: " . $e->getMessage());
     http_response_code(500);
     echo json_encode([
-        "message" => "Errore del database: " . $e->getMessage(),
+        "message" => "Errore del database",
         "success" => false
     ]);
 } catch (Exception $e) {
     error_log("Errore generico: " . $e->getMessage());
     http_response_code(500);
     echo json_encode([
-        "message" => "Errore generico: " . $e->getMessage(),
+        "message" => "Errore generico",
         "success" => false
     ]);
 }
