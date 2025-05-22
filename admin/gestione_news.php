@@ -304,6 +304,10 @@ $nomeSezione = "news";
                 return true; // Procedi con la creazione
             },
             afterLoad: function(items) {
+            },
+            afterCreate: function(response) {
+                // Qui puoi gestire la risposta dopo la creazione
+                window.location.reload(); // Ricarica la pagina per mostrare le modifiche
             }
         });
 
