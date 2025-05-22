@@ -363,6 +363,7 @@ $nomeSezione = "trattative"
     function apriFormModifica(dati) {
         document.getElementById('id-edit').value = dati.id || '';
         document.getElementById('ufficializzata').checked = dati.ufficializzata === "1" || dati.ufficializzata === 1 || dati.ufficializzata === true;
+        quill.root.innerHTML = dati.descrizione || '';
         document.getElementById('card-all').classList.add('hidden');
         document.getElementById('pagination').classList.add('hidden');
         document.getElementById('edit-form').classList.remove('hidden');
