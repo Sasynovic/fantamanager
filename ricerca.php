@@ -27,8 +27,7 @@
         }
         .main-body-content{
             height: 100%;
-            margin-top: 20px;
-            margin-bottom: 20px;
+            overflow-y: scroll;
         }
         .main-body-content{
             justify-content: flex-start;
