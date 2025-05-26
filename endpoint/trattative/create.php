@@ -4,23 +4,22 @@ require_once '../../config/database.php';
 require_once '../../models/trattative.php';
 use component\database;
 
-// Mostra errori per debug temporaneo (puoi disattivarli in produzione)
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-// Gestione CORS
+// Definisci gli origini consentiti
 $allowed_origins = [
     'https://barrettasalvatore.it',
     'https://fantamanagerpro.eu'
 ];
 
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+// Verifica se l'origine della richiesta è nella lista degli origini consentiti
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 
 if (in_array($origin, $allowed_origins)) {
     header("Access-Control-Allow-Origin: $origin");
 } else {
-    header("Access-Control-Allow-Origin: https://tuodominio.com");
+    // Se l'origine non è consentita, restituire un errore 403 Forbidden
+    http_response_code(403);
+    echo json_encode(["message" => "Origine non autorizzata", "success" => false]);
+    exit;
 }
 
 header("Access-Control-Allow-Methods: POST");

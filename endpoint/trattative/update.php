@@ -11,12 +11,10 @@ $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 if (in_array($origin, $allowed_origins)) {
     header("Access-Control-Allow-Origin: $origin");
 } else {
-    // Se l'origine non è consentita, imposta un'origine predefinita o non impostare l'header
-    header("Access-Control-Allow-Origin: https://tuodominio.com");
-    // Alternativamente, puoi restituire un errore 403 Forbidden
-    // http_response_code(403);
-    // echo json_encode(["message" => "Origine non autorizzata", "success" => false]);
-    // exit;
+    // Se l'origine non è consentita, restituire un errore 403 Forbidden
+    http_response_code(403);
+    echo json_encode(["message" => "Origine non autorizzata", "success" => false]);
+    exit;
 }
 
 // Gli altri header CORS rimangono invariati
