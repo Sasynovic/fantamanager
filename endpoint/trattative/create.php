@@ -11,7 +11,7 @@ $allowed_origins = [
 ];
 
 // Verifica se l'origine della richiesta è nella lista degli origini consentiti
-$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 if (in_array($origin, $allowed_origins)) {
     header("Access-Control-Allow-Origin: $origin");
