@@ -1,5 +1,4 @@
 <?php
-// Definisci gli origini consentiti
 $allowed_origins = [
     'https://barrettasalvatore.it',
     'https://fantamanagerpro.eu'
@@ -16,9 +15,8 @@ if (in_array($origin, $allowed_origins)) {
     echo json_encode(["message" => "Origine non autorizzata", "success" => false]);
     exit;
 }
-
 // Gli altri header CORS rimangono invariati
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Methods: DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 require_once __DIR__ . '/../../config/database.php';
@@ -30,7 +28,7 @@ try {
     $db = $database->getConnection();
     $presidenti = new presidenti($db);
 
-    $id = isset($_GET['id']) ? $_GET['id'] : die(json_encode([
+    $id = $_GET['id'] ?? die(json_encode([
         "message" => "ID presidenti mancante",
         "status" => "error"
     ]));

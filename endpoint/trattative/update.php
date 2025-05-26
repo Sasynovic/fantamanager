@@ -16,7 +16,6 @@ if (in_array($origin, $allowed_origins)) {
     echo json_encode(["message" => "Origine non autorizzata", "success" => false]);
     exit;
 }
-
 // Gli altri header CORS rimangono invariati
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");

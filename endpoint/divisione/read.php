@@ -1,25 +1,8 @@
 <?php
 use component\database;
-// Definisci gli origini consentiti
-$allowed_origins = [
-    'https://barrettasalvatore.it',
-    'https://fantamanagerpro.eu'
-];
-
-// Verifica se l'origine della richiesta è nella lista degli origini consentiti
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-
-if (in_array($origin, $allowed_origins)) {
-    header("Access-Control-Allow-Origin: $origin");
-} else {
-    // Se l'origine non è consentita, restituire un errore 403 Forbidden
-    http_response_code(403);
-    echo json_encode(["message" => "Origine non autorizzata", "success" => false]);
-    exit;
-}
-
+header("Access-Control-Allow-Origin: *");
 // Gli altri header CORS rimangono invariati
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Methods: GET");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 require_once '../../config/database.php';
 require_once '../../models/divisione.php';
@@ -34,7 +17,7 @@ $limit = isset($_GET['limit']) ? max(1, intval($_GET['limit'])) : 100;
 $offset = ($page - 1) * $limit;
 
 // Parametro di ricerca
-$id = isset($_GET['id']) ? $_GET['id'] : '';
+$id = $_GET['id'] ?? '';
 
 // Conta il totale dei record
 $total_records = $divisione->count($id);

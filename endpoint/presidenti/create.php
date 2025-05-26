@@ -5,7 +5,6 @@ require_once '../../models/presidenti.php';
 use component\database;
 
 // Gestione CORS
-// Definisci gli origini consentiti
 $allowed_origins = [
     'https://barrettasalvatore.it',
     'https://fantamanagerpro.eu'
@@ -22,7 +21,6 @@ if (in_array($origin, $allowed_origins)) {
     echo json_encode(["message" => "Origine non autorizzata", "success" => false]);
     exit;
 }
-
 // Gli altri header CORS rimangono invariati
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");

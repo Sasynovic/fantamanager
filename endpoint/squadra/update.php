@@ -1,5 +1,4 @@
 <?php
-// Definisci gli origini consentiti
 $allowed_origins = [
     'https://barrettasalvatore.it',
     'https://fantamanagerpro.eu'

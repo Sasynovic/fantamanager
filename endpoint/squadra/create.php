@@ -5,7 +5,6 @@ require_once '../../models/squadra.php';
 use component\database;
 
 // Gestione CORS
-// Definisci gli origini consentiti
 $allowed_origins = [
     'https://barrettasalvatore.it',
     'https://fantamanagerpro.eu'
