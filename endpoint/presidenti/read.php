@@ -22,12 +22,13 @@ if($limit != null) {
 
 // Parametro di ricerca
 $search = $_GET['search'] ?? null;
+$id = $_GET['id'] ?? null;
 
 // Conta il totale dei record
-$total_records = $presidenti->count($search);
+$total_records = $presidenti->count($id,$search);
 
 // Recupera i record paginati
-$stmt = $presidenti->read($limit, $offset, $search);
+$stmt = $presidenti->read($limit, $offset, $id,$search);
 $num = $stmt->rowCount();
 
 if ($num > 0) {
