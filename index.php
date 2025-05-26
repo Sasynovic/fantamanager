@@ -25,6 +25,11 @@
         transform: translateX(-50%); /* Centra orizzontalmente */
         white-space: nowrap; /* Evita che il testo vada a capo */
     }
+
+    .division-item > .division-link > .division-name{
+        font-size: 1.2rem;
+        bottom: -70px;
+    }
 </style>
 
 <body>
