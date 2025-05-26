@@ -178,7 +178,6 @@ $nomeSezione = "competizione";
                 // Personalizzazione del rendering di ciascun presidente
                 return `
                 <div class="card-meta">
-                    <span>ID: ${item.id}</span>
                     <span>Nome: ${item.nome_competizione}</span>
                     <span>Anno: ${item.anno}</span>
                 </div>
