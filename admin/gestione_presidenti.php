@@ -44,11 +44,11 @@ $nomeSezione = "presidenti";
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 8px;">
                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
             </svg>
-            Nuova <?php echo $nomeSezione?>
+            Nuovo presidente
         </button>
     </div>
 
-    <div class="card-all">
+    <div class="card-all" id="card-all">
         <div class="filter-section">
 
             <div class="form-group">
@@ -74,22 +74,44 @@ $nomeSezione = "presidenti";
 
     <div class="card hidden" id="add-form">
         <div class="card-header">
-            <h2 class="card-title">Aggiungi nuova <?php echo $nomeSezione?></h2>
+            <h2 class="card-title">Aggiungi presidente</h2>
         </div>
 
         <div class="form-group">
             <label for="nome">Nome</label>
-            <input type="text" id="nome" name="nome" placeholder="Inserisci il nome del <?php echo $nomeSezione?>">
+            <input type="text" id="nome" name="nome" placeholder="Nome">
         </div>
 
         <div class="form-group">
             <label for="cognome">Cognome</label>
-            <input type="text" id="cognome" name="cognome" placeholder="Inserisci il cognome del <?php echo $nomeSezione?>">
+            <input type="text" id="cognome" name="cognome" placeholder="Cognome">
         </div>
 
         <div class="btn-group">
-            <button id="submit" class="btn btn-primary">📰Pubblica</button>
+            <button id="submit" class="btn btn-primary">Inserisci presidente</button>
             <button id="cancel-form" class="btn btn-outline">Annulla</button>
+        </div>
+    </div>
+
+    <div class="card hidden" id="edit-form">
+        <div class="card-header">
+            <h2 class="card-title">Modifica presidente</h2>
+        </div>
+
+        <div class="form-group">
+            <input type="hidden" id="id-edit" name="id-edit">
+            <label for="nome_edit">Nome</label>
+            <input type="text" id="nome_edit" name="nome_edit" placeholder="Nome">
+        </div>
+
+        <div class="form-group">
+            <label for="cognome_edit">Cognome</label>
+            <input type="text" id="cognome_edit" name="cognome_edit" placeholder="Cognome">
+        </div>
+
+        <div class="btn-group">
+            <button id="submit-edit" class="btn btn-primary" onclick="updatePresidenti()">Modifica presidente</button>
+            <button id="cancel-edit-form" class="btn btn-outline" onclick="closeFormModifica()">Annulla</button>
         </div>
     </div>
 
@@ -130,7 +152,7 @@ $nomeSezione = "presidenti";
                     <h4>${item.nome}  ${item.cognome}</h4>
                 </div>
                 <div class="card-actions">
-                    <button class="btn btn-warning edit-btn" onclick="crudManager.editItem(${item.id})">
+                    <button class="btn btn-warning edit-btn" onclick="editItem(${item.id})">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 6px;">
                             <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
                         </svg>
@@ -172,9 +194,78 @@ $nomeSezione = "presidenti";
         crudManager.loadData();
     });
 
-    // Funzione globale per editare un elemento (necessaria per i pulsanti di modifica)
     function editItem(id) {
-        crudManager.editItem(id);
+        const urlSingle = `${window.location.protocol}//${window.location.host}/endpoint/presidenti/read.php?id=${id}`;
+        console.log((urlSingle));
+        fetch(urlSingle)
+            .then(response => response.json())
+            .then(data => {
+                // Accedi alla squadra dai dati ricevuti
+                const presidente = data.presidenti[0]; // Assumendo che i dati siano restituiti in un array 'presidente'
+                if (presidente) {
+                    apriFormModifica(presidente);
+                } else {
+                    console.error('Nessuna presidente trovata con questo ID');
+                }
+            })
+            .catch(error => console.error('Errore nel caricamento della presidente:', error));
+    }
+
+    function apriFormModifica(dati) {
+        // Nascondi il form finché tutto non è pronto
+        document.getElementById('edit-form').classList.add('hidden');
+        document.getElementById('card-all').classList.add('hidden');
+        document.getElementById('pagination').classList.add('hidden');
+
+        // Popola i campi base
+        document.getElementById('id-edit').value = dati.id || '';
+        document.getElementById('nome_edit').value = dati.nome || '';
+        document.getElementById('cognome_edit').value = dati.cognome || '';
+
+        console.log(`Popolamento del form di modifica con ID: ${dati.id}, Nome: ${dati.nome}, Cognome: ${dati.cognome}`);
+
+        // Mostra il form quando tutto è stato popolato
+        document.getElementById('edit-form').classList.remove('hidden');
+    }
+
+
+    function closeFormModifica() {
+        document.getElementById('card-all').classList.remove('hidden');
+        document.getElementById('pagination').classList.remove('hidden');
+        document.getElementById('edit-form').classList.add('hidden');
+    }
+
+    function updatePresidenti() {
+        const id = document.getElementById('id-edit').value;
+        const nome = document.getElementById('nome_edit').value;
+        const cognome = document.getElementById('cognome_edit').value;
+
+        const data = {
+           nome : nome,
+           cognome : cognome
+        };
+
+        fetch(`${window.location.protocol}//${window.location.host}/endpoint/presidenti/update.php?id=${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(result => {
+                alert("Presidente aggiornato con successo!");
+                window.location.reload(); // Ricarica la pagina per mostrare le modifiche
+            })
+            .catch(error => {
+                console.error('Errore:', (error.message || error));
+                alert('Si è verificato un errore durante l\'aggiornamento: ' + (error.message || error));
+            });
     }
 </script>
 </body>
