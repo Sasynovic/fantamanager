@@ -12,16 +12,28 @@ class presidenti
         $this->conn = $db;
     }
 
-    public function count($search = null)
+    public function count($id= null,$search = null)
     {
         $query = "SELECT COUNT(*) as total FROM " . $this->table_name . " WHERE 1=1";
 
+        if ($id !== null) {
+            // Assicurati che l'ID sia un numero valido
+            if (!is_numeric($id) || $id <= 0) {
+                throw new InvalidArgumentException("L'ID del presidente non è valido");
+            }else{
+            $query .= " AND id = :id";
+            }
+        }
         if ($search) {
             $query .= " AND (nome LIKE :search OR cognome LIKE :search)";
         }
 
         $stmt = $this->conn->prepare($query);
 
+        // Se l'ID è stato fornito, bindalo come parametro
+        if ($id !== null) {
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        }
         if ($search) {
             $search_term = "%$search%";
             $stmt->bindParam(':search', $search_term, PDO::PARAM_STR);
@@ -60,7 +72,7 @@ class presidenti
 
     }
 
-    public function read($limit = null, $offset = null, $search = null)
+    public function read($limit = null, $offset = null, $id= null,$search = null)
     {
         $query = "SELECT
                 p.id,
@@ -68,6 +80,16 @@ class presidenti
                 p.cognome
               FROM " . $this->table_name . " p
               WHERE 1=1";
+
+        // Se l'ID è stato fornito, aggiungi la condizione alla query
+        if ($id !== null) {
+            // Assicurati che l'ID sia un numero valido
+            if (!is_numeric($id) || $id <= 0) {
+                throw new InvalidArgumentException("L'ID del presidente non è valido");
+            }else{
+                $query .= " AND p.id = :id";
+            }
+        }
 
         if ($search) {
             $query .= " AND (p.nome LIKE :search OR p.cognome LIKE :search)";
@@ -88,6 +110,14 @@ class presidenti
             $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
             $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
         }
+        // Se l'ID è stato fornito, bindalo come parametro
+        if ($id !== null) {
+            // Assicurati che l'ID sia un numero valido
+            if (!is_numeric($id) || $id <= 0) {
+                throw new InvalidArgumentException("L'ID del presidente non è valido");
+            }
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        }
 
         if ($search) {
             $search_term = "%$search%";
@@ -97,6 +127,60 @@ class presidenti
         $stmt->execute();
 
         return $stmt;
+    }
+
+    public function update($id, $data): bool
+    {
+        // Validazione dell'ID
+        if (!is_numeric($id) || $id <= 0) {
+            throw new InvalidArgumentException("L'ID della trattativa non è valido");
+        }
+
+        // Verifica che $data sia un array
+        if (!is_array($data)) {
+            throw new InvalidArgumentException("I dati per l'aggiornamento devono essere un array");
+        }
+
+        // Costruzione della query dinamica
+        $fields = [];
+        $params = [':id' => $id];
+
+        // Lista dei campi aggiornabili
+        $allowedFields = [
+            'nome' => PDO::PARAM_STR,
+            'cognome' => PDO::PARAM_STR,
+        ];
+
+        foreach ($allowedFields as $field => $type) {
+            if (isset($data[$field])) {
+                $fields[] = "$field = :$field";
+                $params[":$field"] = $data[$field];
+            }
+        }
+
+        if (empty($fields)) {
+            return false;
+        }
+
+        $query = "UPDATE " . $this->table_name . " 
+              SET " . implode(', ', $fields) . " 
+              WHERE id = :id";
+
+        $stmt = $this->conn->prepare($query);
+
+        // Bind dei parametri
+        foreach ($params as $key => $value) {
+            $type = $allowedFields[str_replace(':', '', $key)] ?? PDO::PARAM_STR;
+            $stmt->bindValue($key, $value, $type);
+        }
+
+        try {
+            $stmt->execute();
+            return ($stmt->rowCount() > 0);
+        } catch (PDOException $e) {
+            error_log("Errore durante l'aggiornamento della trattativa: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function delete($id)
