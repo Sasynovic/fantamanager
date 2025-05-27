@@ -39,6 +39,7 @@ class partecipazione
                             c.nome_competizione AS nomeCompetizione,
                             d.nome_divisione AS nomeDivisione,
                             
+                            s.id AS id_squadra,
                             s.nome_squadra AS nome_squadra,
                             s.id_pres AS id_pres,
                             s.id_vice AS id_vice,

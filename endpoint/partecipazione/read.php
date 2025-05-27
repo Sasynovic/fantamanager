@@ -5,6 +5,8 @@ header("Access-Control-Allow-Origin: *");
 // Gli altri header CORS rimangono invariati
 header("Access-Control-Allow-Methods: GET");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Content-Type: application/json; charset=UTF-8");
+
 require_once '../../config/database.php';
 require_once '../../models/partecipazione.php';
 
@@ -31,7 +33,7 @@ if ($num > 0) {
 
     // Inserisci la prima squadra
     $partecipazioni_arr["squadre"][] = array(
-        "id" => $id,
+        "id_squadra" => $id_squadra,
         "nome_squadra" => $nome_squadra,
         "credito" => $credito,
         "presidente" => $nome_pres . ' ' . $cognome_pres,
@@ -54,7 +56,7 @@ if ($num > 0) {
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         extract($row);
         $partecipazioni_arr["squadre"][] = array(
-            "id" => $id,
+            "id_squadra" => $id_squadra,
             "nome_squadra" => $nome_squadra,
             "presidente" => $nome_pres . ' ' . $cognome_pres,
             "vicepresidente" => $nome_vice . ' ' . $cognome_vice,
