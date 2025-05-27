@@ -250,7 +250,7 @@
                                             classificaHTML += `
                     <tr>
                         <td>${index + 1}</td>
-                        <td><a href="squadra.php?id=${s.id}">${s.nome_squadra || 'N/D'}</a></td>
+                        <td><a href="squadra.php?id=${s.id_squadra}">${s.nome_squadra || 'N/D'}</a></td>
                         <td>${s.penalizzazione || 0}</td>
                         <td>${s.giocate || 0}</td>
                         <td>${s.vittorie || 0}</td>

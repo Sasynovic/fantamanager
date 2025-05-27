@@ -597,8 +597,8 @@
             .then(data => {
                 const squadre = data.squadre;
                 squadre.sort((a, b) => a.nome_squadra.localeCompare(b.nome_squadra));
-                populateSelect(selects.squadra1, squadre, 'id', 'nome_squadra');
-                populateSelect(selects.squadra2, squadre, 'id', 'nome_squadra');
+                populateSelect(selects.squadra1, squadre, 'id_squadra', 'nome_squadra');
+                populateSelect(selects.squadra2, squadre, 'id_squadra', 'nome_squadra');
             });
     });
 
