@@ -4,7 +4,7 @@ const content = document.querySelector('.main-content');
 
 // Funzione per aggiornare l'icona in base alla larghezza
 function updateHamburger() {
-    if (window.innerWidth < 1024) {
+    if (window.innerWidth < 1200) {
         hamburgerMenu.innerHTML = '≡';
         hamburgerMenu.style.display = 'block';
     } else {
