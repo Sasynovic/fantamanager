@@ -219,7 +219,7 @@
                     </td>
                 `;
             const button = tr.querySelector('.buy-btn');
-            button.addEventListener('click', () => acquistaSquadra(squadra.nome_squadra));
+            button.addEventListener('click', () => acquistaSquadra(squadra.nome_squadra, squadra.prezzo, squadra.rate));
             tbody.appendChild(tr);
 
             // Carica le competizioni per questa squadra
@@ -301,7 +301,7 @@
     }
 
     // Funzione per gestire l'acquisto di una squadra
-    function acquistaSquadra(nomeSquadra) {
+    function acquistaSquadra(nomeSquadra,prezzo, rate) {
         const conferma1 = confirm(`Sei sicuro di voler acquistare ${nomeSquadra}?`);
         if (!conferma1) return;
 
@@ -310,14 +310,15 @@
 
         const nome = prompt("Inserisci il tuo nome:");
         const cognome = prompt("Inserisci il tuo cognome:");
+        const email = prompt("Inserisci il tuo indirizzo email leghe fantagazzetta :");
 
-        if (!nome || !cognome) {
+        if (!nome || !cognome || !email) {
             alert("Tutti i campi sono obbligatori. Operazione annullata.");
             return;
         }
 
-        const numeroWhatsApp = "3371447208";
-        const messaggio = `Richiesta acquisto squadra: ${nomeSquadra}%0ANome: ${nome}%0ACognome: ${cognome}`;
+        const numeroWhatsApp = "+393371447208";
+        const messaggio = `Richiesta acquisto squadra: ${nomeSquadra} - ${rate} Stelle - ${prezzo}€%0ANome: ${nome}%0ACognome: ${cognome}%0AEmail: ${email}`;
         const url = `https://wa.me/${numeroWhatsApp}?text=${messaggio}`;
 
         window.open(url);

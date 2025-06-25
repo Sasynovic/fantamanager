@@ -1444,8 +1444,6 @@
                 (Crediti: ${(creditiTeam2.credito1 + creditiTeam2.credito2 + creditiTeam2.credito3).toFixed(2)},
                  Riscatti: ${creditiTeam2.riscatti.toFixed(2)})
             </p>
-            <p>Range accettabile: da ${minimoAccettabile.toFixed(2)} a ${massimoAccettabile.toFixed(2)}</p>
-            <p>La differenza è nel range del 25%</p>
         `;
         } else {
             risultatoEl.className = 'risultato-trattativa error';
@@ -1461,8 +1459,6 @@
                 (Crediti: ${(creditiTeam2.credito1 + creditiTeam2.credito2 + creditiTeam2.credito3).toFixed(2)},
                  Riscatti: ${creditiTeam2.riscatti.toFixed(2)})
             </p>
-            <p>Range accettabile: da ${minimoAccettabile.toFixed(2)} a ${massimoAccettabile.toFixed(2)}</p>
-            <p>La differenza è FUORI dal range del 25%</p>
         `;
         }
 

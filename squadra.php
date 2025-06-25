@@ -880,11 +880,11 @@
             return;
         }
 
-        const numeroWhatsApp = "3371447208";
+        const numeroWhatsApp = "+393371447208";
 
-        const messaggio = `Ciao, sono ${nomeSquadra} e interessato ai seguenti calciatori del settore giovanile:\n\n` +
-            `1. Nome: ${getNome1}, Offerta: ${getOfferta1} FVM\n` +
-            `2. Nome: ${getNome2}, Offerta: ${getOfferta2} FVM\n` +
+        const messaggio = `Ciao, sono ${nomeSquadra} e interessato ai seguenti calciatori del settore giovanile:%0A` +
+            `1. Nome: ${getNome1}, Offerta: ${getOfferta1} FVM%0A` +
+            `2. Nome: ${getNome2}, Offerta: ${getOfferta2} FVM%0A` +
             `3. Nome: ${getNome3}, Offerta: ${getOfferta3} FVM`;
         const url = `https://wa.me/${numeroWhatsApp}?text=${messaggio}`;
 
@@ -919,11 +919,9 @@
             return;
         }
 
-        const numeroWhatsApp = "3371447208";
+        const numeroWhatsApp = "+393371447208";
 
-        const messaggio = `Ciao, sono ${nomeSquadra} e vorrei richiedere un ampliamento dello stadio:\n\n` +
-            `Livello desiderato: ${livelloStadio}\n` +
-            `Attendo conferma dei costi e dell'operazione.`;
+        const messaggio = `Ciao, sono ${nomeSquadra} e vorrei richiedere un ampliamento dello stadio:%0A` + `Livello desiderato: ${livelloStadio}%0A`+ `Attendo conferma dei costi e dell'operazione.`;
 
         const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(messaggio)}`;
 
