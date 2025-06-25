@@ -182,7 +182,7 @@ $nomeSezione = "trattative"
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-        crudManager = new CRUDManager('<?php echo $nomeSezione?>', 'https://barrettasalvatore.it', {
+        crudManager = new CRUDManager('<?php echo $nomeSezione?>', urlConnections, {
             cardList: document.getElementById('card-list'),
             filterLimit: document.getElementById('filter-card'),
             searchInput: document.getElementById('search-card'),

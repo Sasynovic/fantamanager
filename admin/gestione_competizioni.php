@@ -160,7 +160,7 @@ $nomeSezione = "competizione";
 
     document.addEventListener('DOMContentLoaded', function() {
         // Inizializza il gestore CRUD per i "presidenti"
-        crudManager = new CRUDManager('<?php echo $nomeSezione?>', 'https://barrettasalvatore.it', {
+        crudManager = new CRUDManager('<?php echo $nomeSezione?>', urlConnections, {
             // Override degli elementi DOM, personalizzando i nomi degli elementi
             cardList: document.getElementById('card-list'),
             filterLimit: document.getElementById('filter-card'),

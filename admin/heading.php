@@ -108,6 +108,8 @@
 </html>
 
 <script>
+    const urlConnections = 'https://barrettasalvatore.it';
+
     let timeout = 120000; // 600.00 ms = 1 minuto
     let timer;
 

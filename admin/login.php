@@ -119,7 +119,7 @@
             return;
         }
 
-        fetch('https://barrettasalvatore.it/endpoint/admin/login.php', {
+        fetch(urlConnections+'/endpoint/admin/login.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
