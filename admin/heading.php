@@ -95,6 +95,7 @@
             <div class="dropdown-content">
                 <a href="gestione_squadre.php">Gestione Squadre</a>
                 <a href="gestione_presidenti.php">Gestione Presidenti</a>
+                <a href="setFVM.php">Gestione FVM</a>
             </div>
         </div>
 
@@ -108,8 +109,6 @@
 </html>
 
 <script>
-    const urlConnections = 'https://barrettasalvatore.it';
-
     let timeout = 120000; // 600.00 ms = 1 minuto
     let timer;
 

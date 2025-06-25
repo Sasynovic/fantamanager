@@ -21,7 +21,7 @@ class associazioni
         $query = "
             SELECT  
                 a.id,
-                a.id_squadra,
+                a.id_squadra AS id_squadra,
                 a.id_calciatore,
                 a.costo_calciatore,
                 a.n_movimenti,
@@ -39,7 +39,7 @@ class associazioni
         if ($id_squadra_filter !== null) {
             $query .= " WHERE a.id_squadra = :id_squadra";
         }
-        $query .= " ORDER BY ruolo_calciatore DESC, nome_calciatore ASC";
+        $query .= " ORDER BY a.id_squadra, c.ruolo, c.nome";
 
         $stmt = $this->conn->prepare($query);
 

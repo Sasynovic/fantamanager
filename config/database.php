@@ -6,9 +6,9 @@ class database
 {
 
     private $host= 'localhost';
-    private $db_name = '-';
-    private $db_user = '-' ;
-    private $user_password = '-';
+    private $db_name = 'ybarretj_db';
+    private $db_user = 'ybarretj_dbu' ;
+    private $user_password = '5Ynkcg$S.98G';
 
     private $conn = null;
 

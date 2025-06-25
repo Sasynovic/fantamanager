@@ -2,6 +2,10 @@
 
 use component\database;
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 header("Access-Control-Allow-Origin: *");
 // Gli altri header CORS rimangono invariati
 header("Access-Control-Allow-Methods: GET");
@@ -29,6 +33,7 @@ if ($num > 0) {
         extract($row);
         $associazioni_item = array(
             "id" => $id,
+            "id_squadra" => $id_squadra,
             "nome_squadra" => $nome_squadra,
             "nome_calciatore" => $nome_calciatore,
             "ruolo_calciatore" => $ruolo_calciatore,

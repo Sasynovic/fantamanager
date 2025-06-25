@@ -182,7 +182,7 @@ $nomeSezione = "trattative"
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-        crudManager = new CRUDManager('<?php echo $nomeSezione?>', urlConnections, {
+        crudManager = new CRUDManager('<?php echo $nomeSezione?>', `${window.location.protocol}//${window.location.host}`, {
             cardList: document.getElementById('card-list'),
             filterLimit: document.getElementById('filter-card'),
             searchInput: document.getElementById('search-card'),

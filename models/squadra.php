@@ -237,8 +237,6 @@ class squadra
             throw new InvalidArgumentException("I dati per l'aggiornamento devono essere un array");
         }
 
-
-
         // Costruzione della query dinamica
         $fields = [];
         $params = [':id' => $id];
@@ -252,6 +250,7 @@ class squadra
             'rate' => PDO::PARAM_INT,
             'costo_iscrizione' => PDO::PARAM_INT,
             'valore_fvm' => PDO::PARAM_INT,
+            'fvm_old' => PDO::PARAM_INT,
             'credito' => PDO::PARAM_INT
         ];
 

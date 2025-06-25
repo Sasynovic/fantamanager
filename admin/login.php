@@ -119,7 +119,7 @@
             return;
         }
 
-        fetch(urlConnections+'/endpoint/admin/login.php', {
+        fetch(`${window.location.protocol}//${window.location.host}//endpoint/admin/login.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
