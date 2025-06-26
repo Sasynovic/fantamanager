@@ -31,7 +31,7 @@ try {
 
     // Ottieni l'ID dalla URL
     $id = $_GET['id'] ?? die(json_encode([
-        "message" => "ID trattativa mancante",
+        "message" => "ID squadra mancante",
         "status" => "error"
     ]));
 
@@ -60,7 +60,7 @@ try {
         http_response_code(404);
         echo json_encode([
             "success" => false,
-            "message" => "Nessuna squadra trovata con questo ID o nessun cambiamento applicato.",
+            "message" => "Nessun cambiamento applicato.",
             "status" => "error"
         ]);
     }

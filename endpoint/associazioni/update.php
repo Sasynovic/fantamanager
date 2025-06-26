@@ -30,7 +30,7 @@ try {
 
     // Ottieni l'ID dalla URL
     $id = $_GET['id'] ?? die(json_encode([
-        "message" => "ID trattativa mancante",
+        "message" => "ID associazione mancante",
         "status" => "error"
     ]));
 

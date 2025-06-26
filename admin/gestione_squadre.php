@@ -249,7 +249,7 @@ $nomeSezione = "squadra";
 
     document.addEventListener('DOMContentLoaded', function() {
         // Inizializza il gestore CRUD per le "squadre"
-        crudManager = new CRUDManager('<?php echo $nomeSezione?>', urlConnections, {
+        crudManager = new CRUDManager('<?php echo $nomeSezione?>', `${window.location.protocol}//${window.location.host}`, {
             // Override degli elementi DOM, personalizzando i nomi degli elementi
             cardList: document.getElementById('card-list'),
             filterLimit: document.getElementById('filter-card'),
