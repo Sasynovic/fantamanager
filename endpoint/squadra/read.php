@@ -54,6 +54,7 @@ if ($num > 0) {
             "vendita" => $row['vendita'],
             "prezzo" => $row['costo_iscrizione'],
             "valore_fvm" => $row['valore_fvm'],
+            "fvm_old" => $row['fvm_old'],
 
             "dirigenza" => [
                 "id_pres" => $row['id_pres'],

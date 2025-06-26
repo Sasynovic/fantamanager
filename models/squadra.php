@@ -148,6 +148,7 @@ class squadra
                                 s.rate,
                                 s.costo_iscrizione,
                                 s.valore_fvm,
+                                s.fvm_old,
                                 s.credito,
                                 s.id_pres,
                                 s.id_vice,
