@@ -95,9 +95,8 @@ $nomeSezione = "FVM";
             <strong>Istruzioni:</strong> Questa pagina ti permette di gestire i valori FVM delle squadre. Puoi salvare i valori attuali come "vecchi" o aggiornare le squadre con i valori calcolati dalle associazioni.
             <br><br>
             <strong>Passo 1</strong> – Aggiorna gli FVM dei singoli calciatori. Devi inserire il file e cliccare su Avvia aggiornamento<br>
-            <strong>Passo 2</strong> – Modifica, se necessario, le associazioni squadra<br>
-            <strong>Passo 3</strong> – Salva come vecchi valori quelli attuali, con il primo bottone<br>
-            <strong>Passo 4</strong> – Procedi al calcolo del nuovo FVM con il secondo bottone<br>
+            <strong>Passo 2</strong> – Salva come vecchi valori quelli attuali, con il primo bottone<br>
+            <strong>Passo 3</strong> – Procedi al calcolo del nuovo FVM con il secondo bottone<br>
 
             <br>Le squadre con diminuzione FVM >= 15% verranno mostrate in tabella<br>
         </p>
