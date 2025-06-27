@@ -1,20 +1,6 @@
 <?php
 // Definisci gli origini consentiti
-$allowed_origins = [
-    'https://barrettasalvatore.it',
-    'https://fantamanagerpro.eu'
-];
-
-// Verifica se l'origine della richiesta è nella lista degli origini consentiti
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if (in_array($origin, $allowed_origins)) {
-    header("Access-Control-Allow-Origin: $origin");
-} else {
-    // Se l'origine non è consentita, restituire un errore 403 Forbidden
-    http_response_code(403);
-    echo json_encode(["message" => "Origine non autorizzata", "success" => false]);
-    exit;
-}
+header("Access-Control-Allow-Origin: *");
 // Gli altri header CORS rimangono invariati
 header("Access-Control-Allow-Methods: PUT");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
