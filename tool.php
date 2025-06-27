@@ -307,6 +307,39 @@
             }
 
         }
+
+
+        .notes {
+            justify-content: space-evenly;
+            background: linear-gradient(135deg, var(--accento), var(--blu-scurissimo));
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+            width: 50%;
+            text-align: center;
+        }
+
+        .notes h3 {
+            margin-top: 0;
+            border-bottom: 2px solid #f1f1f1;
+            padding-bottom: 10px;
+        }
+
+        .market-calendar {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .market-calendar li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .market-calendar li:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 
@@ -357,6 +390,17 @@
 
         <div class="main-body">
             <div class="main-body-content" id="main-body-content">
+
+
+                <div class="notes">
+                    <h3>Leggenda Mercati:</h3>
+                    <ul class="market-calendar">
+                        <li><span class="market-b">Mercato B</span> -> Settembre</li>
+                        <li><span class="market-c">Mercato C</span> -> Ottobre</li>
+                        <li><span class="market-d">Mercato D</span> -> Novembre</li>
+                        <li><span class="market-e">Mercato E</span> -> Gennaio</li>
+                    </ul>
+                </div>
 
                 <div class="tool-container">
 
@@ -954,14 +998,14 @@
 
                 if (tipoTrasferimento) { // Solo se c'è un tipo selezionato
                     tipologieScambio.forEach(tipo => {
-                        if (tipo.id_metodo === tipoTrasferimento) {
+                        // if (tipo.id_metodo === tipoTrasferimento) {
                             if (dataCredito !== null && tipo.id_finestra_mercato && tipo.id_finestra_mercato.toString() === dataCredito) {
                                 valore = tipo.id_tipologia;
                             }
                             else if (dataPrestito !== null && tipo.id_finestra_mercato && tipo.id_finestra_mercato.toString() === dataPrestito) {
                                 valore = tipo.id_tipologia;
                             }
-                        }
+                        // }
                     });
                 } else {
                     valore = 0; // Nessun tipo selezionato

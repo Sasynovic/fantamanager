@@ -115,7 +115,7 @@ class trattative
             $query .= " AND t.ufficializzata = :ufficializzata";
         }
 
-        $query .= " ORDER BY t.id ASC";
+        $query .= " ORDER BY t.data_creazione ASC";
         $query .= " LIMIT :limit OFFSET :offset";
 
         $stmt = $this->conn->prepare($query);

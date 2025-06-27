@@ -94,10 +94,12 @@ class operazioni
                 s2.nome_squadra AS nome_squadra2,
                 
                 a.id_calciatore,
+                a.costo_calciatore,
                 a.n_movimenti,
                 a.scambiato,
                 
                 c.nome AS nome_calciatore,
+                c.fvm AS fvm_calciatore,
                 
                 m.nome AS nome_metodo_scambio,
                 

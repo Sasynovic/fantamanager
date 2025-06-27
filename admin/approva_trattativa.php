@@ -90,13 +90,160 @@ $nomeSezione = "trattative"
 <div class="app-container">
     <div class="header">
         <h1>Gestione <?php echo $nomeSezione?></h1>
-        <button id="toggle-add-form" class="btn btn-primary" style="display: none">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 8px;">
-                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-            </svg>
-            Nuova <?php echo $nomeSezione?>
+        <button id="download-csv" class="btn btn-primary">
+            Download <?php echo $nomeSezione?>
         </button>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        document.getElementById('download-csv').addEventListener('click', function() {
+            // Recupera i dati delle operazioni e dei crediti in parallelo
+            Promise.all([
+                fetch('https://barrettasalvatore.it/endpoint/operazioni/read.php').then(r => r.json()),
+                fetch('https://barrettasalvatore.it/endpoint/credito/read.php').then(r => r.json())
+            ])
+                .then(([operazioniData, creditoData]) => {
+                    // 1. Foglio TRATTATIVE
+                    const trattativeUniche = [...new Set(operazioniData.operazioni.map(op => op.trattativa.id))]
+                        .map(id => {
+                            const op = operazioniData.operazioni.find(o => o.trattativa.id === id);
+                            return {
+                                "ID Trattativa": id,
+                                "Squadra 1": op.trattativa.nome_squadra_1,
+                                "Squadra 2": op.trattativa.nome_squadra_2,
+                                "Data": op.trattativa.data_creazione,
+                                "Stato": op.trattativa.ufficializzata ? "Ufficiale" : "In attesa",
+                                "Descrizione": op.trattativa.descrizione,
+                            };
+                        });
+
+                    // 2. Foglio OPERAZIONI
+                    const operazioniUniche = [...new Set(operazioniData.operazioni.map(op => op.id_operazione))]
+                        .map(id => {
+                            const op = operazioniData.operazioni.find(o => o.id_operazione === id);
+                            return {
+                                "ID Operazione": id,
+                                "ID Trattativa": op.trattativa.id,
+                                "Calciatore": op.calciatore.nome,
+                                "Cartellino": op.calciatore.cartellino,
+                                "FVM": op.calciatore.fvm,
+                                "Squadra cedente": op.trattativa.nome_squadra_1,
+                                "Squadra acquirente": op.trattativa.nome_squadra_2,
+                                "Modalità": op.scambio.metodo,
+                                "Finestra": op.finestra_mercato.nome ? op.finestra_mercato.nome : "",
+                                "Riscatto": op.scambio.valore_riscatto ? `${op.scambio.valore_riscatto}` : ""
+                            };
+                        });
+
+                    // 3. Foglio CREDITI (dall'endpoint dedicato)
+                    const creditiUnici = [];
+                    const chiaviUsate = new Set();
+
+                    creditoData.credito.forEach(cr => {
+                        const chiave = `${cr.fm_nome}_${cr.nome_squadra}_${cr.credito}_${cr.id_trattativa}`;
+
+                        if (!chiaviUsate.has(chiave)) {
+                            creditiUnici.push({
+                                "Finestra": cr.fm_nome,
+                                "Squadra": cr.nome_squadra,
+                                "Importo": cr.credito,
+                                "ID Trattativa": cr.id_trattativa
+                            });
+                            chiaviUsate.add(chiave);
+                        }
+                    });
+
+                    // Creazione file Excel
+                    const wb = XLSX.utils.book_new();
+
+                    XLSX.utils.book_append_sheet(wb,
+                        XLSX.utils.json_to_sheet(trattativeUniche),
+                        "Trattative");
+
+                    XLSX.utils.book_append_sheet(wb,
+                        XLSX.utils.json_to_sheet(operazioniUniche),
+                        "Operazioni");
+
+                    XLSX.utils.book_append_sheet(wb,
+                        XLSX.utils.json_to_sheet(creditiUnici),
+                        "Crediti");
+
+                    XLSX.writeFile(wb, `Operazioni_${new Date().toISOString().slice(0,10)}.xlsx`);
+                })
+                .catch(error => {
+                    console.error("Errore durante l'esportazione:", error);
+                    alert("Si è verificato un errore durante l'esportazione. Controlla la console per i dettagli.");
+                });
+        });
+
+        function generateSummary(trattativaId, operazioniData, creditoData) {
+            // Trova la trattativa
+            const trattativa = operazioniData.operazioni.find(op => op.trattativa.id == trattativaId)?.trattativa;
+            if (!trattativa) return "Trattativa non trovata";
+
+            // Filtra operazioni e crediti per la trattativa
+            const operazioni = operazioniData.operazioni.filter(op => op.trattativa.id == trattativaId);
+            const crediti = creditoData.credito.filter(cr => cr.id_trattativa == trattativaId);
+
+            // Costruisci il messaggio
+            let message = `📋 *Riepilogo Trattativa ${trattativaId}*\n`;
+            message += `📅 ${trattativa.data_creazione}\n`;
+            message += `⚽ ${trattativa.nome_squadra_1} ↔ ${trattativa.nome_squadra_2}\n`;
+            message += `📌 Stato: ${trattativa.ufficializzata ? "Ufficiale" : "In attesa"}\n\n`;
+            message += `*Descrizione:*\n${trattativa.descrizione}\n\n`;
+
+            message += `*Operazioni:*\n`;
+            operazioni.forEach(op => {
+                message += `Squadra cedente: ${op.trattativa.nome_squadra_1}, Squadra acquirente: ${op.trattativa.nome_squadra_2}\n`;
+
+                message += `- ${op.calciatore.nome} (${op.scambio.metodo})`;
+                if(op.finestra_mercato.nome) {
+                    message += ` - Finestra: ${op.finestra_mercato.nome}`;
+                }
+                if (op.scambio.valore_riscatto) {
+                    message += ` - Riscatto: ${op.scambio.valore_riscatto}`;
+                }
+                message += ` - Cartellino: ${op.calciatore.cartellino}` ;
+                message += ` - FVM: ${op.calciatore.fvm}\n`;
+                message += `\n`;
+            });
+
+            message += `\n*Crediti:*\n`;
+            crediti.forEach(cr => {
+                message += `- ${cr.nome_squadra} - ${cr.fm_nome}:  ${cr.credito}\n`;
+            });
+
+            return message;
+        }
+
+        // Nuovo pulsante per WhatsApp
+        function whtsappButton(trattativaId){
+            if (!trattativaId) return;
+            // Recupera i dati
+            Promise.all([
+                fetch('https://barrettasalvatore.it/endpoint/operazioni/read.php').then(r => r.json()),
+                fetch('https://barrettasalvatore.it/endpoint/credito/read.php').then(r => r.json())
+            ])
+                .then(([operazioniData, creditoData]) => {
+                    const message = generateSummary(trattativaId, operazioniData, creditoData);
+                    const phoneNumber = "+393371447208"; // Sostituisci con il tuo numero
+
+                    // Codifica il messaggio per URL
+                    const encodedMessage = encodeURIComponent(message);
+
+                    // Apre WhatsApp con il messaggio precompilato
+                    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+                    console.log("Messaggio inviato:", message);
+                    console.log("Url WhatsApp:", `https://wa.me/${phoneNumber}?text=${encodedMessage}`);
+                })
+                .catch(error => {
+                    console.error("Errore:", error);
+                    alert("Errore durante il recupero dei dati");
+                });
+        }
+    </script>
 
     <div class="card-all" id="card-all">
         <div class="filter-section">
@@ -149,6 +296,7 @@ $nomeSezione = "trattative"
         <div class="btn-group">
             <button id="submit-edit" class="btn btn-primary" onclick="updateNews()">📰Modifica</button>
             <button id="cancel-edit-form" class="btn btn-outline" onclick="closeFormModifica()">Annulla</button>
+            <button id="btn btn-primary" class="btn btn-success" onclick="whtsappButton(document.getElementById('id-edit').value)">📱 WhatsApp</button>
         </div>
     </div>
 
@@ -467,7 +615,7 @@ $nomeSezione = "trattative"
                                         const { trattativa, calciatore, scambio } = op;
 
                                         // Controllo valori riscatto
-                                        if (scambio.valore_riscatto > 0 && scambio.id_tipologia === 12) {
+                                        if (scambio.valore_riscatto > 0 && scambio.id_tipologia === 13) {
                                             const valore = parseFloat(scambio.valore_riscatto) || 0;
                                             if (trattativa.id_squadra_c === idSquadra1) {
                                                 creditoSquadra2 += valore;
@@ -617,43 +765,50 @@ $nomeSezione = "trattative"
                                         ];
 
                                         return Promise.all(promises)
+
+                                            // 3.4 Prepara le promesse per aggiornare i crediti delle squadre
                                             .then(([creditoAttuale1, creditoAttuale2]) => {
 
                                                 // Calcola i nuovi valori dei crediti
                                                 const nuovoCreditoSquadra1 = creditoAttuale1 - creditoSquadra1;
                                                 const nuovoCreditoSquadra2 = creditoAttuale2 - creditoSquadra2;
 
-                                                // 3.4 Prepara le promesse per aggiornare i crediti delle squadre
-                                                const creditPromises = [
-                                                    // Aggiorna il credito della squadra 1
-                                                    fetch(`../endpoint/squadra/update.php?id=${idSquadra1}`, {
-                                                        method: 'PUT',
-                                                        headers: { 'Content-Type': 'application/json' },
-                                                        body: JSON.stringify({
-                                                            credito: nuovoCreditoSquadra1
-                                                        })
-                                                    }).then(response => {
-                                                        if (!response.ok) {
-                                                            throw new Error(`Errore nell'aggiornamento del credito della squadra ${idSquadra1}`);
-                                                        }
-                                                        return response.json();
-                                                    }),
+                                                let creditPromises = [];
 
-                                                    // Aggiorna il credito della squadra 2
-                                                    fetch(`../endpoint/squadra/update.php?id=${idSquadra2}`, {
-                                                        method: 'PUT',
-                                                        headers: { 'Content-Type': 'application/json' },
-                                                        body: JSON.stringify({
-                                                            credito: nuovoCreditoSquadra2
-                                                        })
-                                                    }).then(response => {
-                                                        if (!response.ok) {
-                                                            throw new Error(`Errore nell'aggiornamento del credito della squadra ${idSquadra2}`);
-                                                        }
-                                                        return response.json();
-                                                    })
-                                                ];
+                                                if( nuovoCreditoSquadra1 === creditoAttuale1 && nuovoCreditoSquadra2 === creditoAttuale2) {
+                                                    creditPromises = [Promise.resolve()];
+                                                    return creditPromises;
+                                                }else{
+                                                    creditPromises = [
+                                                        // Aggiorna il credito della squadra 1
+                                                        fetch(`../endpoint/squadra/update.php?id=${idSquadra1}`, {
+                                                            method: 'PUT',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({
+                                                                credito: nuovoCreditoSquadra1
+                                                            })
+                                                        }).then(response => {
+                                                            if (!response.ok) {
+                                                                throw new Error(`Errore nell'aggiornamento del credito della squadra ${idSquadra1}` + `: ${response.statusText}`);
+                                                            }
+                                                            return response.json();
+                                                        }),
 
+                                                        // Aggiorna il credito della squadra 2
+                                                        fetch(`../endpoint/squadra/update.php?id=${idSquadra2}`, {
+                                                            method: 'PUT',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({
+                                                                credito: nuovoCreditoSquadra2
+                                                            })
+                                                        }).then(response => {
+                                                            if (!response.ok) {
+                                                                throw new Error(`Errore nell'aggiornamento del credito della squadra ${idSquadra2}` + `: ${response.statusText}`);
+                                                            }
+                                                            return response.json();
+                                                        })
+                                                    ];
+                                                }
                                                 // 3.5 Aggiorna le associazioni
                                                 const updatePromises = ArrayOperazioni.map(operazione => {
                                                     return fetch(`../endpoint/associazioni/update.php?id=${operazione.id_associazione}`, {
@@ -676,9 +831,11 @@ $nomeSezione = "trattative"
                                                 return Promise.all(creditPromises)
                                                     .then(() => Promise.all(updatePromises));
                                             });
+
                                     });
                             });
                     });
+
             })
             .then(() => {
                 alert('Operazione completata con successo!');
