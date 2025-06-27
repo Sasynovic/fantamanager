@@ -1,7 +1,6 @@
 <?php
 // Definisci gli origini consentiti
 header("Access-Control-Allow-Origin: *");
-// Gli altri header CORS rimangono invariati
 header("Access-Control-Allow-Methods: PUT");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 

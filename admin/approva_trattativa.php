@@ -576,9 +576,9 @@ $nomeSezione = "trattative"
                     })
                     .then(() => {
                         if (ufficializzata !== 1) {
-                            alert('Operazione completata con successo!');
+                            alert('Modifica apportata con successo!');
                             window.location.reload();
-                            return Promise.resolve();
+                            // return Promise.resolve();
                         }
 
                         // 3. Se ufficializzata, processa operazioni e crediti
@@ -590,14 +590,14 @@ $nomeSezione = "trattative"
                         return fetch(`../endpoint/operazioni/read.php?id_trattativa=${id}`)
                             .then(response => {
                                 if (!response.ok) {
-                                    throw new Error(`Errore nel fetch operazioni: ${response.status}`);
+                                    throw new Error(`Errore nel fetch delle operazioni trattativa: ${response.status}`);
                                 }
                                 return response.json();
                             })
                             .then(data => {
                                 // Controllo struttura dati operazioni
                                 if (!data || !Array.isArray(data.operazioni)) {
-                                    console.warn('Nessuna operazione trovata o formato non valido');
+                                    console.warn('Nessuna operazione trattativa trovata o formato non valido');
                                     return [];
                                 }
                                 return data.operazioni;
@@ -634,7 +634,7 @@ $nomeSezione = "trattative"
                                             });
                                         }
                                     } catch (e) {
-                                        console.error('Errore nel processare operazione:', op, e);
+                                        console.error('Errore nel caricare operazione trattativa nell array:', op, e);
                                     }
                                 });
 
@@ -768,17 +768,21 @@ $nomeSezione = "trattative"
 
                                             // 3.4 Prepara le promesse per aggiornare i crediti delle squadre
                                             .then(([creditoAttuale1, creditoAttuale2]) => {
-
                                                 // Calcola i nuovi valori dei crediti
                                                 const nuovoCreditoSquadra1 = creditoAttuale1 - creditoSquadra1;
                                                 const nuovoCreditoSquadra2 = creditoAttuale2 - creditoSquadra2;
 
+                                                // Debug: mostra i valori per verificare
+                                                console.log('Crediti attuali:', creditoAttuale1, creditoAttuale2);
+                                                console.log('Nuovi crediti:', nuovoCreditoSquadra1, nuovoCreditoSquadra2);
+
                                                 let creditPromises = [];
 
-                                                if( nuovoCreditoSquadra1 === creditoAttuale1 && nuovoCreditoSquadra2 === creditoAttuale2) {
-                                                    creditPromises = [Promise.resolve()];
-                                                    return creditPromises;
-                                                }else{
+                                                if(nuovoCreditoSquadra1 === creditoAttuale1 && nuovoCreditoSquadra2 === creditoAttuale2) {
+                                                    console.log('Nessun aggiornamento necessario per i crediti');
+                                                    creditPromises = [Promise.resolve('Nessun aggiornamento necessario')];
+                                                } else {
+                                                    console.log('Preparazione aggiornamento crediti...');
                                                     creditPromises = [
                                                         // Aggiorna il credito della squadra 1
                                                         fetch(`../endpoint/squadra/update.php?id=${idSquadra1}`, {
@@ -789,7 +793,13 @@ $nomeSezione = "trattative"
                                                             })
                                                         }).then(response => {
                                                             if (!response.ok) {
-                                                                throw new Error(`Errore nell'aggiornamento del credito della squadra ${idSquadra1}` + `: ${response.statusText}`);
+                                                                const error = new Error(`Errore nell'aggiornamento del credito della squadra ${idSquadra1}`);
+                                                                error.details = {
+                                                                    status: response.status,
+                                                                    statusText: response.statusText,
+                                                                    url: response.url
+                                                                };
+                                                                throw error;
                                                             }
                                                             return response.json();
                                                         }),
@@ -803,14 +813,24 @@ $nomeSezione = "trattative"
                                                             })
                                                         }).then(response => {
                                                             if (!response.ok) {
-                                                                throw new Error(`Errore nell'aggiornamento del credito della squadra ${idSquadra2}` + `: ${response.statusText}`);
+                                                                const error = new Error(`Errore nell'aggiornamento del credito della squadra ${idSquadra2}`);
+                                                                error.details = {
+                                                                    status: response.status,
+                                                                    statusText: response.statusText,
+                                                                    url: response.url
+                                                                };
+                                                                throw error;
                                                             }
                                                             return response.json();
                                                         })
                                                     ];
                                                 }
+
                                                 // 3.5 Aggiorna le associazioni
+                                                console.log('Preparazione aggiornamento associazioni...');
                                                 const updatePromises = ArrayOperazioni.map(operazione => {
+                                                    console.log(`Aggiornamento associazione ${operazione.id_associazione}`);
+
                                                     return fetch(`../endpoint/associazioni/update.php?id=${operazione.id_associazione}`, {
                                                         method: 'PUT',
                                                         headers: { 'Content-Type': 'application/json' },
@@ -821,15 +841,35 @@ $nomeSezione = "trattative"
                                                         })
                                                     }).then(response => {
                                                         if (!response.ok) {
-                                                            throw new Error(`Errore nell'aggiornamento associazione ${operazione.id_associazione}`);
+                                                            const error = new Error(`Errore nell'aggiornamento associazione ${operazione.id_associazione}`);
+                                                            error.details = {
+                                                                status: response.status,
+                                                                statusText: response.statusText,
+                                                                url: response.url
+                                                            };
+                                                            throw error;
                                                         }
                                                         return response.json();
                                                     });
                                                 });
 
-                                                // Esegui tutte le promesse: prima aggiorna i crediti, poi le associazioni
+                                                // Esegui prima gli aggiornamenti dei crediti, poi le associazioni
                                                 return Promise.all(creditPromises)
-                                                    .then(() => Promise.all(updatePromises));
+                                                    .then(results => {
+                                                        console.log('Risultati aggiornamento crediti:', results);
+                                                        return Promise.all(updatePromises);
+                                                    })
+                                                    .then(results => {
+                                                        console.log('Risultati aggiornamento associazioni:', results);
+                                                        return { success: true, message: 'Tutte le operazioni completate' };
+                                                    });
+                                            })
+                                            .catch(error => {
+                                                console.error('Errore durante le operazioni:', {
+                                                    message: error.message,
+                                                    details: error.details || 'Nessun dettaglio aggiuntivo'
+                                                });
+                                                throw error; // Rilancia l'errore per gestirlo a livello superiore
                                             });
 
                                     });
@@ -839,6 +879,7 @@ $nomeSezione = "trattative"
             })
             .then(() => {
                 alert('Operazione completata con successo!');
+                whtsappButton(id);
                 window.location.reload();
             })
             .catch(error => {
