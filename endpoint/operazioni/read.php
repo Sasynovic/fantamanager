@@ -1,6 +1,7 @@
 <?php
 use component\database;
 header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
 
 // Gli altri header CORS rimangono invariati
 header("Access-Control-Allow-Methods: GET");
@@ -63,6 +64,8 @@ if ($num > 0) {
             "calciatore" => [
                 "id" => (int)$row['id_calciatore'],
                 "nome" => $row['nome_calciatore'],
+                "cartellino" => $row['costo_calciatore'],
+                "fvm" => (int)$row['fvm_calciatore'],
                 "n_movimenti" => (int)$row['n_movimenti'],
                 "scambiato" => (bool)$row['scambiato'],
             ],
