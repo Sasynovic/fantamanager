@@ -921,7 +921,7 @@
 
         const numeroWhatsApp = "+393371447208";
 
-        const messaggio = `Ciao, sono ${nomeSquadra} e vorrei richiedere un ampliamento dello stadio:%0A` + `Livello desiderato: ${livelloStadio}%0A`+ `Attendo conferma dei costi e dell'operazione.`;
+        const messaggio = `Ciao, sono ${nomeSquadra} e vorrei richiedere un ampliamento dello stadio: ` + `Livello desiderato: ${livelloStadio} . `+ `Attendo conferma dei costi e dell'operazione.`;
 
         const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(messaggio)}`;
 
