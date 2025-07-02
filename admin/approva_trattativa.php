@@ -101,8 +101,8 @@ $nomeSezione = "trattative"
         document.getElementById('download-csv').addEventListener('click', function() {
             // Recupera i dati delle operazioni e dei crediti in parallelo
             Promise.all([
-                fetch('https://barrettasalvatore.it/endpoint/operazioni/read.php').then(r => r.json()),
-                fetch('https://barrettasalvatore.it/endpoint/credito/read.php').then(r => r.json())
+                fetch('https://fantamanagerpro.eu/endpoint/operazioni/read.php').then(r => r.json()),
+                fetch('https://fantamanagerpro.eu/endpoint/credito/read.php').then(r => r.json())
             ])
                 .then(([operazioniData, creditoData]) => {
                     // 1. Foglio TRATTATIVE
@@ -221,28 +221,37 @@ $nomeSezione = "trattative"
         }
 
         // Nuovo pulsante per WhatsApp
-        function whtsappButton(trattativaId){
-            if (!trattativaId) return;
-            // Recupera i dati
-            Promise.all([
+        function whtsappButton(trattativaId) {
+            if (!trattativaId) {
+                console.error('ID trattativa mancante');
+                return Promise.reject('ID trattativa mancante');
+            }
+
+            return Promise.all([
                 fetch('https://fantamanagerpro.eu/endpoint/operazioni/read.php').then(r => r.json()),
                 fetch('https://fantamanagerpro.eu/endpoint/credito/read.php').then(r => r.json())
             ])
                 .then(([operazioniData, creditoData]) => {
+                    if (!operazioniData || !creditoData) {
+                        throw new Error('Dati non validi');
+                    }
+
                     const message = generateSummary(trattativaId, operazioniData, creditoData);
-                    const phoneNumber = "+393371447208"; // Sostituisci con il tuo numero
-
-                    // Codifica il messaggio per URL
+                    const phoneNumber = "+393371447208";
                     const encodedMessage = encodeURIComponent(message);
+                    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 
-                    // Apre WhatsApp con il messaggio precompilato
-                    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
-                    console.log("Messaggio inviato:", message);
-                    console.log("Url WhatsApp:", `https://wa.me/${phoneNumber}?text=${encodedMessage}`);
+                    // Apre in una nuova finestra
+                    const newWindow = window.open(whatsappUrl, '_blank');
+                    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                        throw new Error('Impossibile aprire WhatsApp. Potrebbe essere bloccato dai popup?');
+                    }
+
+                    return true;
                 })
                 .catch(error => {
-                    console.error("Errore:", error);
-                    alert("Errore durante il recupero dei dati");
+                    console.error("Errore in whtsappButton:", error);
+                    throw error;
                 });
         }
     </script>
@@ -882,8 +891,19 @@ $nomeSezione = "trattative"
             })
             .then(() => {
                 alert('Operazione completata con successo!');
-                whtsappButton(id);
-                window.location.reload();
+                try {
+                    if (typeof whtsappButton === 'function') {
+                        whtsappButton(id);
+                        // Ritarda il reload per dare tempo a WhatsApp di aprirsi
+                        setTimeout(() => window.location.reload(), 2000);
+                    } else {
+                        console.warn('whtsappButton non è una funzione');
+                        window.location.reload();
+                    }
+                } catch (e) {
+                    console.error('Errore in whtsappButton:', e);
+                    window.location.reload();
+                }
             })
             .catch(error => {
                 console.error('Errore durante l\'operazione:', error);
