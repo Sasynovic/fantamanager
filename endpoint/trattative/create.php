@@ -43,7 +43,7 @@ if (json_last_error() !== JSON_ERROR_NONE || !is_object($data)) {
 }
 
 // Validazione campi richiesti
-$requiredFields = ['id_competizione', 'id_squadra1', 'id_squadra2'];
+$requiredFields = ['id_competizione', 'id_squadra1', 'id_squadra2', 'id_presidente'];
 foreach ($requiredFields as $field) {
     if (empty($data->$field)) {
         http_response_code(400);
@@ -58,6 +58,7 @@ $id_squadra1 = (int) $data->id_squadra1;
 $id_squadra2 = (int) $data->id_squadra2;
 $descrizione = isset($data->descrizione) ? trim($data->descrizione) : '';
 $descrizione = htmlspecialchars(strip_tags($descrizione), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$id_presidente = isset($data->id_presidente) ? (int) $data->id_presidente : null;
 
 // Esecuzione
 try {
@@ -65,7 +66,7 @@ try {
     $db = $database->getConnection();
     $trattative = new trattative($db);
 
-    $id_trattativa = $trattative->create($id_competizione, $id_squadra1, $id_squadra2, $descrizione);
+    $id_trattativa = $trattative->create($id_competizione, $id_squadra1, $id_squadra2, $descrizione, $id_presidente);
 
     if ($id_trattativa && is_numeric($id_trattativa)) {
         http_response_code(201);

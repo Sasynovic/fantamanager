@@ -116,6 +116,7 @@ $nomeSezione = "trattative"
                                 "Data": op.trattativa.data_creazione,
                                 "Stato": op.trattativa.ufficializzata ? "Ufficiale" : "In attesa",
                                 "Descrizione": op.trattativa.descrizione,
+                                "Presidente richiedente": op.trattativa.nome_presidente
                             };
                         });
 
@@ -193,6 +194,7 @@ $nomeSezione = "trattative"
             message += `⚽ ${trattativa.nome_squadra_1} ↔ ${trattativa.nome_squadra_2}\n`;
             message += `📌 Stato: ${trattativa.ufficializzata ? "Ufficiale" : "In attesa"}\n\n`;
             message += `*Descrizione:*\n${trattativa.descrizione}\n\n`;
+            message += `*Presidente richiedente:*\n${trattativa.nome_presidente}\n\n`;
 
             message += `*Operazioni:*\n`;
             operazioni.forEach(op => {
@@ -223,8 +225,8 @@ $nomeSezione = "trattative"
             if (!trattativaId) return;
             // Recupera i dati
             Promise.all([
-                fetch('https://barrettasalvatore.it/endpoint/operazioni/read.php').then(r => r.json()),
-                fetch('https://barrettasalvatore.it/endpoint/credito/read.php').then(r => r.json())
+                fetch('https://fantamanagerpro.eu/endpoint/operazioni/read.php').then(r => r.json()),
+                fetch('https://fantamanagerpro.eu/endpoint/credito/read.php').then(r => r.json())
             ])
                 .then(([operazioniData, creditoData]) => {
                     const message = generateSummary(trattativaId, operazioniData, creditoData);
@@ -362,6 +364,7 @@ $nomeSezione = "trattative"
                         <span>Data: ${data}</span>
                         <div>Descrizione: ${item.descrizione || 'Nessuna descrizione'}</div>
                         <div>Stato: ${item.ufficializzata ? '<span style="color:green">Ufficializzata</span>' : '<span style="color:orange">In corso</span>'}</div>
+                        <div>Presidente: ${item.nome_presidente}</div>
                     </div>
 
                     <button class="btn btn-toggle" onclick="toggleVisibility('${uniqueId}')">Mostra/Nascondi Operazioni</button>

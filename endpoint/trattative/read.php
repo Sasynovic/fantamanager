@@ -52,7 +52,8 @@ if ($num > 0) {
             'nome_squadra1' => $row['nome_squadra1'],
             'nome_squadra2' => $row['nome_squadra2'],
             'ufficializzata' => $row['ufficializzata'],
-            'data_creazione' => $row['data_creazione']
+            'data_creazione' => $row['data_creazione'],
+            'nome_presidente' => $row['nome_presidente'] . ' ' . $row['cognome_presidente']
         ];
     }
 

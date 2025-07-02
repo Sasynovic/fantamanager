@@ -50,7 +50,7 @@ class trattative
         return $row['total'];
     }
 
-    public function create(int $id_competizione,int  $id_squadra1, int  $id_squadra2, string $descrizione ){
+    public function create(int $id_competizione,int  $id_squadra1, int  $id_squadra2, string $descrizione, int $id_presidente = null){
         if ($id_competizione<= 0) {
             throw new InvalidArgumentException("Il id_competizione non può essere vuoto");
         }
@@ -62,12 +62,15 @@ class trattative
         }if (empty($descrizione)) {
             $descrizione = null;
         }
+        if ($id_presidente !== null && $id_presidente <= 0) {
+            throw new InvalidArgumentException("Il id_presidente deve essere un numero positivo");
+        }
 
 
         $query = "INSERT INTO " . $this->table_name . " 
-        (id_competizione,id_squadra1,id_squadra2,descrizione)
+        (id_competizione,id_squadra1,id_squadra2,descrizione, id_presidente)
         VALUES 
-        (:id_competizione,:id_squadra1,:id_squadra2,:descrizione)";
+        (:id_competizione,:id_squadra1,:id_squadra2,:descrizione, :id_presidente)";
 
         $stmt = $this->conn->prepare($query);
 
@@ -75,6 +78,7 @@ class trattative
         $stmt -> bindParam(':id_squadra1', $id_squadra1, PDO::PARAM_INT);
         $stmt -> bindParam(':id_squadra2', $id_squadra2, PDO::PARAM_INT);
         $stmt -> bindParam(':descrizione', $descrizione, PDO::PARAM_STR);
+        $stmt -> bindParam(':id_presidente', $id_presidente, PDO::PARAM_INT);
 
         try {
             $stmt->execute();
@@ -98,11 +102,15 @@ class trattative
             t.data_creazione,
             
             s1.nome_squadra as nome_squadra1,
-            s2.nome_squadra as nome_squadra2
+            s2.nome_squadra as nome_squadra2,
+            
+            p.nome as nome_presidente,
+            p.cognome as cognome_presidente
          
               FROM " . $this->table_name . " t
               LEFT JOIN squadre s1 ON t.id_squadra1 = s1.id
               LEFT JOIN squadre s2 ON t.id_squadra2 = s2.id
+              LEFT JOIN presidenti p ON t.id_presidente = p.id
               WHERE 1=1";
         if( $id_squadra !== null) {
             $query .= " AND (t.id_squadra1 = :idSquadra OR t.id_squadra2 = :idSquadra)";

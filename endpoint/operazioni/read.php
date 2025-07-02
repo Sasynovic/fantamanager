@@ -60,6 +60,7 @@ if ($num > 0) {
                 "nome_squadra_2" => $row['nome_squadra2'],
                 "data_creazione" => $row['data_creazione'],
                 "ufficializzata" => (bool)$row['ufficializzata'],
+                "nome_presidente" => $row['nome_presidente'] . ' ' . $row['cognome_presidente']
             ],
             "calciatore" => [
                 "id" => (int)$row['id_calciatore'],

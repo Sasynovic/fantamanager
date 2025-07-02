@@ -88,6 +88,9 @@ class operazioni
                 t.ufficializzata AS ufficializzata,
                 t.data_creazione,
                 
+                p.nome AS nome_presidente,
+                p.cognome AS cognome_presidente,
+                
                 o.id_squadra_c AS id_squadra_c,
                 o.id_squadra_r AS id_squadra_r,
                 s1.nome_squadra AS nome_squadra1,
@@ -124,6 +127,8 @@ class operazioni
               LEFT JOIN finestra_mercato fs ON ts.id_finestra_mercato  = fs.id
               
               LEFT JOIN metodi_scambio m ON ts.id_metodo = m.id
+              
+              LEFT JOIN presidenti p ON t.id_presidente = p.id
              
               WHERE 1=1";
 

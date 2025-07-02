@@ -58,7 +58,7 @@ try {
             "success" => true,
             "message" => "Autenticazione riuscita",
             "presidente" => [
-                "id" => $presidente['id'],
+                "id_presidente" => $presidente['id'],
                 "nome" => $presidente['nome'],
                 "cognome" => $presidente['cognome']
             ],

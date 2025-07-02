@@ -560,7 +560,8 @@
     const datiPasskey = {
         idSquadra1: null,
         idSquadra2: null,
-        passkey: null
+        passkey: null,
+        id_presidente: null,
     };
 
     // Utils
@@ -1032,6 +1033,7 @@
                 datiPasskey.idSquadra1 = idSquadra1;
                 datiPasskey.idSquadra2 = idSquadra2;
                 datiPasskey.passkey = passkeyInput;
+                datiPasskey.id_presidente = data.presidente.id_presidente;
                 return true;
             } else {
                 risultatoEl.className += ' error';
@@ -1046,8 +1048,6 @@
             return false;
         }
     }
-
-
     // Gestione del pulsante "Finalizza Trattativa"
     document.getElementById('calcolaTrattativa').addEventListener('click', function() {
 
@@ -1115,7 +1115,6 @@
                 };
             });
         }
-
 // Utilizzo
         const giocatoriSquadra1 = raccogliGiocatori(containers.selected1);
         const giocatoriSquadra2 = raccogliGiocatori(containers.selected2);
@@ -1148,13 +1147,11 @@
         const risultatoEl = document.getElementById('risultatoTrattativa');
         risultatoEl.style.display = 'block';
 
-       if(datiPasskey.passkey) {
-            risultatoEl.className = 'risultato-trattativa success';
-            risultatoEl.textContent = 'Passkey verificata con successo! Puoi procedere con la trattativa.';
-        } else {
-            risultatoEl.className = 'risultato-trattativa error';
-            risultatoEl.textContent = 'Passkey non validata. Assicurati di verificare la passkey prima di procedere.';
-            return;
+        // 1. Validazione lato client
+        if (!idSquadra1 || !idSquadra2) {
+            risultatoEl.className += ' error';
+            risultatoEl.textContent = 'Seleziona entrambe le squadre per procedere.';
+            return false;
         }
 
         // Verifica che le squadre scambino almeno un giocatore
@@ -1204,19 +1201,23 @@
         const isValid = verificaTrattativa(datiTrattativa);
 
         if (isValid) {
-            // Rimuovi eventuali bottoni precedenti
-            const existingButton = document.querySelector('.buttonTrattativa');
-            if (existingButton) {
-                existingButton.remove();
-            }
-
-            // Crea il nuovo bottone
+          // Crea il nuovo bottone
             const inviaTrattativa = document.createElement('button');
-            inviaTrattativa.className = 'inviaTrattativa';
+            inviaTrattativa.className = 'buttonTrattativa';
             inviaTrattativa.textContent = 'Invia Trattativa';
 
             // Aggiungi l'event listener
             inviaTrattativa.addEventListener('click', async () => {
+
+                if(datiPasskey.passkey) {
+                    risultatoEl.className = 'risultato-trattativa success';
+                    risultatoEl.textContent = 'Passkey verificata con successo! Puoi procedere con la trattativa.';
+                } else {
+                    risultatoEl.className = 'risultato-trattativa error';
+                    risultatoEl.textContent = 'Passkey non validata. Assicurati di verificare la passkey prima di procedere.';
+                    return;
+                }
+
                 inviaTrattativa.disabled = true;
                 inviaTrattativa.textContent = 'Invio in corso...';
 
@@ -1226,7 +1227,8 @@
                         id_competizione: idCompetizione,
                         id_squadra1: idSquadra1,
                         id_squadra2: idSquadra2,
-                        descrizione : quill.root.innerHTML
+                        descrizione : quill.root.innerHTML,
+                        id_presidente: datiPasskey.id_presidente
                     };
 
                     console.log('Dati trattativa:', trattativaData);
