@@ -835,9 +835,9 @@ $nomeSezione = "trattative"
                                                         method: 'PUT',
                                                         headers: { 'Content-Type': 'application/json' },
                                                         body: JSON.stringify({
-                                                            id_squadra: operazione.id_squadra,
-                                                            scambiato: operazione.scambiato,
-                                                            n_movimenti: operazione.n_movimenti
+                                                            id_squadra: operazione.id_squadra
+                                                            // scambiato: operazione.scambiato,
+                                                            // n_movimenti: operazione.n_movimenti
                                                         })
                                                     }).then(response => {
                                                         if (!response.ok) {

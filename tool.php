@@ -32,7 +32,7 @@
             margin: 0;
         }
 
-        .inviaTrattativa {
+        .buttonTrattativa {
             background-color: var(--blu-scuro);
             color: white;
             padding: 10px 20px;
@@ -44,11 +44,11 @@
             transition: background-color 0.3s;
         }
 
-        .inviaTrattativa:hover {
+        .buttonTrattativa:hover {
             background-color: var(--blu-scurissimo);
         }
 
-        .inviaTrattativa:disabled {
+        .buttonTrattativa:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
         }
@@ -246,7 +246,7 @@
         }
 
         .calcola-container {
-            margin-top: 30px;
+            margin: 10px;
             text-align: center;
             padding: 20px;
         }
@@ -264,7 +264,7 @@
         .success {
             background-color: #3c763d;
             border-color: #d6e9c6;
-            color: #3c763d;
+            color: white;
             font-weight: bold;
         }
 
@@ -389,9 +389,8 @@
 
 
         <div class="main-body">
+
             <div class="main-body-content" id="main-body-content">
-
-
                 <div class="notes">
                     <h3>Leggenda Mercati:</h3>
                     <ul class="market-calendar">
@@ -495,8 +494,21 @@
                         </div>
                     </div>
 
-                    <div class="calcola-container">
-                        <button id="calcolaTrattativa" class="calcola-button">Calcola Trattativa</button>
+                    <div class="team-container">
+                        <div id="passkey">
+                            <div class="team-header">Inserisci la tua passkey per concludere la trattativa</div>
+                            <form id="passkeyForm" >
+                                <input type="password" id="passkeyInput" placeholder="Inserisci la tua passkey" maxlength="6" >
+                            </form>
+                            <div                                             style="
+                                                                    display: flex;
+                                                                    justify-content: space-evenly;
+                                                                    align-items: center;
+                                                                ">
+                                <button id="buttonPasskey" class="buttonTrattativa" style="background-color: var(--blu-scuro)" onclick="verificaPasskey()">Verifica passkey</button>
+                                <button id="calcolaTrattativa" class="buttonTrattativa" style="background-color: var(--accento)">Calcola Trattativa</button>
+                            </div>
+                            </div>
                         <div id="risultatoTrattativa" class="risultato-trattativa"></div>
                     </div>
                 </div>
@@ -544,6 +556,12 @@
     // Aggiungi queste variabili globali
     let maxCreditoTeam1 = 0;
     let maxCreditoTeam2 = 0;
+
+    const datiPasskey = {
+        idSquadra1: null,
+        idSquadra2: null,
+        passkey: null
+    };
 
     // Utils
     const fetchData = (url) => fetch(url).then(res => res.json());
@@ -952,15 +970,91 @@
     setupPlayerSelectHandler(selects.player1, 'squadra1', containers.selected1);
     setupPlayerSelectHandler(selects.player2, 'squadra2', containers.selected2);
 
+    async function verificaPasskey() {
+        const passkeyInput = document.getElementById('passkeyInput').value.trim();
+        const idSquadra1 = selects.squadra1.value;
+        const idSquadra2 = selects.squadra2.value;
+        const risultatoEl = document.getElementById('risultatoTrattativa');
+
+        // Mostra sempre il risultato
+        risultatoEl.style.display = 'block';
+        risultatoEl.className = 'risultato-trattativa';
+
+        // 1. Validazione lato client
+        if (!idSquadra1 || !idSquadra2) {
+            risultatoEl.className += ' error';
+            risultatoEl.textContent = 'Seleziona entrambe le squadre per procedere.';
+            return false;
+        }
+
+        if (!passkeyInput) {
+            risultatoEl.className += ' error';
+            risultatoEl.textContent = 'Inserisci la tua passkey per procedere.';
+            return false;
+        }
+
+        if (!/^\d+$/.test(passkeyInput)) {
+            risultatoEl.className += ' error';
+            risultatoEl.textContent = 'La passkey deve contenere solo numeri.';
+            return false;
+        }
+
+        if (passkeyInput.length !== 6) {
+            risultatoEl.className += ' error';
+            risultatoEl.textContent = 'La passkey deve essere di 6 cifre.';
+            return false;
+        }
+
+        // 2. Verifica lato server
+        try {
+            const response = await fetch('endpoint/squadra/readPasskey.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    idSquadra1: idSquadra1,
+                    idSquadra2: idSquadra2,
+                    passkey: passkeyInput
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Errore HTTP: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // 3. Gestione risultato
+            if (data.success) {
+                risultatoEl.className += ' success';
+                risultatoEl.textContent = 'Passkey verificata con successo! Puoi procedere con la trattativa. ' +
+                    data.presidente.nome + ' ' + data.presidente.cognome + ' (' + data.squadra.nome + ')';
+                // Salva i dati della passkey per l'invio finale
+                datiPasskey.idSquadra1 = idSquadra1;
+                datiPasskey.idSquadra2 = idSquadra2;
+                datiPasskey.passkey = passkeyInput;
+                return true;
+            } else {
+                risultatoEl.className += ' error';
+                risultatoEl.textContent = 'Passkey non valida.';
+                return false;
+            }
+
+        } catch (error) {
+            console.error('Errore verifica passkey:', error);
+            risultatoEl.className += ' error';
+            risultatoEl.textContent = 'Errore durante la verifica. Riprova più tardi.';
+            return false;
+        }
+    }
+
+
     // Gestione del pulsante "Finalizza Trattativa"
     document.getElementById('calcolaTrattativa').addEventListener('click', function() {
-
 
         // Ottieni i dati di base
         const idCompetizione = selects.competizione.value;
         const idSquadra1 = selects.squadra1.value;
         const idSquadra2 = selects.squadra2.value;
-
         // Ottieni i dati dei crediti
         const creditoTeam1Subito = document.getElementById('creditoTeam1_1').value || '0';
         const creditoTeam2Subito = document.getElementById('creditoTeam2_1').value || '0';
@@ -1054,10 +1148,12 @@
         const risultatoEl = document.getElementById('risultatoTrattativa');
         risultatoEl.style.display = 'block';
 
-        // Verifica se ci sono dati sufficienti per procedere
-        if (!idSquadra1 || !idSquadra2) {
+       if(datiPasskey.passkey) {
+            risultatoEl.className = 'risultato-trattativa success';
+            risultatoEl.textContent = 'Passkey verificata con successo! Puoi procedere con la trattativa.';
+        } else {
             risultatoEl.className = 'risultato-trattativa error';
-            risultatoEl.textContent = 'Seleziona entrambe le squadre per procedere.';
+            risultatoEl.textContent = 'Passkey non validata. Assicurati di verificare la passkey prima di procedere.';
             return;
         }
 
@@ -1109,7 +1205,7 @@
 
         if (isValid) {
             // Rimuovi eventuali bottoni precedenti
-            const existingButton = document.querySelector('.inviaTrattativa');
+            const existingButton = document.querySelector('.buttonTrattativa');
             if (existingButton) {
                 existingButton.remove();
             }
@@ -1286,7 +1382,7 @@
             const risultatoEl = document.getElementById('risultatoTrattativa');
             risultatoEl.appendChild(inviaTrattativa);
         }
-    });
+    })
 
     function verificaTrattativa(datiTrattativa) {
         // 1. Verifica che tutti i giocatori abbiano un tipo di trasferimento selezionato
