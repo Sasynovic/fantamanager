@@ -127,6 +127,7 @@ $nomeSezione = "trattative"
                             return {
                                 "ID Operazione": id,
                                 "ID Trattativa": op.trattativa.id,
+                                "ID Associazione": op.scambio.id_associazione,
                                 "Calciatore": op.calciatore.nome,
                                 "Cartellino": op.calciatore.cartellino,
                                 "FVM": op.calciatore.fvm,
