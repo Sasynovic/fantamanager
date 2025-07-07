@@ -47,7 +47,44 @@ $nomeSezione = "squadra";
             </svg>
             Nuovo <?php echo $nomeSezione?>
         </button>
+        <button id="download-csv" class="btn btn-primary"> Download rose</button>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        document.getElementById('download-csv').addEventListener('click', function() {
+            fetch('https://fantamanagerpro.eu/endpoint/associazioni/read.php')
+                .then(r => r.json())
+                .then(associazioni => {
+                    const datiAssociazioni = associazioni.associazioni.map(assoc => ({
+                        "ID Associazione": assoc.id,
+                        "ID Squadra": assoc.id_squadra,
+                        "Nome Squadra": assoc.nome_squadra,
+                        "Nome Calciatore": assoc.nome_calciatore,
+                        "Ruolo": assoc.ruolo_calciatore,
+                        "Costo": assoc.costo_calciatore,
+                        "Squadra di Appartenenza": assoc.nome_squadra_calciatore,
+                        "FVM": assoc.fvm,
+                        "Età": assoc.eta ?? "N/D",
+                        "Numero Movimenti": assoc.n_movimenti ?? "N/D",
+                        "Scambiato": assoc.scambiato === null ? "No" : "Sì"
+                    }));
+
+                    const wb = XLSX.utils.book_new();
+
+                    XLSX.utils.book_append_sheet(wb,
+                        XLSX.utils.json_to_sheet(datiAssociazioni),
+                        "Associazioni");
+
+                    XLSX.writeFile(wb, `Associazioni_${new Date().toISOString().slice(0,10)}.xlsx`);
+                })
+                .catch(error => {
+                    console.error("Errore durante l'esportazione:", error);
+                    alert("Errore durante l'esportazione. Controlla la console.");
+                });
+        });
+    </script>
 
     <div class="card-all" id="card-all">
         <div class="filter-section">
