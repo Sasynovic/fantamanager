@@ -15,9 +15,11 @@ $associazioni = new associazioni($db);
 
 // Filtro per ID squadra
 $id_squadra_filter = isset($_GET['id_squadra']) ? intval($_GET['id_squadra']) : null;
+// Filtro per fuori listone
+$fuori_listone_filter = isset($_GET['fuori_listone']) ? intval($_GET['fuori_listone']) : null;
 
 // Richiama read con o senza filtro
-$stmt = $associazioni->read($id_squadra_filter);
+$stmt = $associazioni->read($id_squadra_filter, $fuori_listone_filter);
 
 $num = $stmt->rowCount();
 
@@ -38,7 +40,8 @@ if ($num > 0) {
             "eta" => $eta,
             "fvm" => $fvm,
             "n_movimenti" => $n_movimenti,
-            "scambiato" => $scambiato
+            "scambiato" => $scambiato,
+            "fuori_listone" => $fuori_listone
         );
 
         $associazioni_arr["associazioni"][] = $associazioni_item;
