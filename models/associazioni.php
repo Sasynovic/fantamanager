@@ -16,7 +16,7 @@ class associazioni
         $this->conn = $db;
     }
 
-    public function read($id_squadra_filter = null)
+    public function read($id_squadra_filter = null, $fuori_listone_filter = null)
     {
         $query = "
             SELECT  
@@ -31,20 +31,36 @@ class associazioni
                 c.squadra AS nome_squadra_calciatore,
                  c.fvm,
                 c.eta,
-                c.ruolo AS ruolo_calciatore
+                c.ruolo AS ruolo_calciatore,
+                c.fuori_listone AS fuori_listone
             FROM  " . $this->table_name . " a
             LEFT JOIN squadre s ON a.id_squadra = s.id
             LEFT JOIN calciatori c ON a.id_calciatore = c.id";
 
+        $conditions = [];
+        $params = [];
+
         if ($id_squadra_filter !== null) {
-            $query .= " WHERE a.id_squadra = :id_squadra";
+            $conditions[] = "a.id_squadra = :id_squadra";
+            $params[':id_squadra'] = $id_squadra_filter;
         }
+
+        if ($fuori_listone_filter !== null) {
+            $conditions[] = "c.fuori_listone = :fuori_listone";
+            $params[':fuori_listone'] = $fuori_listone_filter;
+        }
+
+        if (count($conditions) > 0) {
+            $query .= " WHERE " . implode(" AND ", $conditions);
+        }
+
         $query .= " ORDER BY a.id_squadra, c.ruolo, c.nome";
 
         $stmt = $this->conn->prepare($query);
 
-        if ($id_squadra_filter !== null) {
-            $stmt->bindParam(":id_squadra", $id_squadra_filter, PDO::PARAM_INT);
+        // Bind dei parametri
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, is_int($val) ? PDO::PARAM_INT : PDO::PARAM_STR);
         }
 
         $stmt->execute();
