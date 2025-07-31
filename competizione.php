@@ -15,13 +15,16 @@
 <style>
 
     .main-body{
-        margin-bottom: 20px;
-        height: 77%;
+        height: 82%;
     }
 
     .main-body-content{
         height: 100%;
         overflow-y: scroll;
+    }
+
+    main-footer{
+        height: 10%;
     }
 
     .news-container {
@@ -42,7 +45,6 @@
         outline: none;
         font-size: 1rem;
     }
-
     .tablinks.active {
         background-color: var(--oro);
         color: var(--blu-scurissimo);
