@@ -54,7 +54,7 @@ $nomeSezione = "squadra";
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         document.getElementById('download-csv').addEventListener('click', function() {
-            fetch('https://fantamanagerpro.eu/endpoint/associazioni/read.php')
+            fetch('https://fantamanagerpro.eu/endpoint/associazioni/read.php?fuori_listone=0')
                 .then(r => r.json())
                 .then(associazioni => {
                     const datiAssociazioni = associazioni.associazioni.map(assoc => ({
