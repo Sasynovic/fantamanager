@@ -95,7 +95,7 @@
         }
 
         /* Stile per tutte le view */
-        .overview, .stadium-view, .albo-view, .sgs-view {
+        .overview, .stadium-view, .albo-view, .sgs-view, .prl-view {
             display: none;
             width: 100%;
             background-color: var(--blu);
@@ -107,7 +107,8 @@
         .overview.active,
         .stadium-view.active,
         .albo-view.active,
-        .sgs-view.active {
+        .sgs-view.active,
+        .prl-view.active {
             display: block;
             animation: fadeIn 0.3s ease;
         }
@@ -233,19 +234,12 @@
             font-weight: bold;
             color: white;
         }
-
-        .for-sale {
-            color: var(--rosso);
-            font-weight: bold;
-        }
-
         .modulo-content{
             width: 100%;
             display: flex;
             flex-direction: row;
             justify-content: center;
             align-items: center;
-
         }
 
         /* Responsive design */
@@ -254,9 +248,6 @@
                 display: grid;
                 grid-auto-columns: min-content;
             }
-
-
-
         }
     </style>
 </head>
@@ -290,6 +281,9 @@
                 </button>
                 <h1>
                     <?php
+                    $squadraNome = 'Squadra';
+
+
                     $urlParams = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
                     parse_str($urlParams, $params);
                     $id_squadra = $params['id'] ?? 0;
@@ -302,6 +296,7 @@
                     if ($data) {
                         $json = json_decode($data);
                         echo $json->squadra[0]->nome_squadra ?? 'Squadra non trovata';
+                        $squadraNome = $json->squadra[0]->nome_squadra ?? 'Squadra non trovata';
                     } else {
                         echo 'Squadra non trovata';
                     }
@@ -322,11 +317,24 @@
                         $json_albo = json_decode($albo);
                     }
 
-                    $associazioni = file_get_contents($baseUrl.'endpoint/associazioni/read.php?id_squadra='.$id_squadra, false, stream_context_create([
+                    $associazioni = file_get_contents($baseUrl.'endpoint/associazioni/read.php?id_squadra='.$id_squadra . '&fuori_listone=0', false, stream_context_create([
                         'http' => ['method' => 'GET', 'header' => 'Content-Type: application/json']
                     ]));
                     if($associazioni) {
                         $json_associazioni = json_decode($associazioni);
+                    }
+
+                    $prelazioni = file_get_contents($baseUrl.'endpoint/associazioni/read.php?id_squadra=' . $id_squadra . '&fuori_listone=1', false, stream_context_create([
+                        'http' => ['method' => 'GET', 'header' => 'Content-Type: application/json']
+                    ]));
+
+                    $calciatori_prelazione = [];
+
+                    if ($prelazioni) {
+                        $json_associazioni = json_decode($prelazioni, true);
+                        if (!empty($json_associazioni['associazioni'])) {
+                            $calciatori_prelazione = $json_associazioni['associazioni'];
+                        }
                     }
 
                     $trattative = file_get_contents($baseUrl.'endpoint/trattative/read.php?ufficializzata=1&id_squadra='.$id_squadra, false, stream_context_create([
@@ -351,16 +359,11 @@
                     if ($partecipazione) {
                         $json_partecipazione = json_decode($partecipazione);
                     }
-
-
-
                     ?>
                 </h1>
                 <h1 id="hamburger-menu">≡</h1>
-
             </div>
             <div class="header-content">
-
             </div>
         </header>
 
@@ -373,6 +376,7 @@
                 <div class="view-tab" data-view="stadium">Stadio</div>
                 <div class="view-tab" data-view="albo">Palmarès</div>
                 <div class="view-tab" data-view="sgs">Giovanili</div>
+                <div class="view-tab" data-view="prl">Prelazioni</div>
             </div>
 
             <!-- Vista Overview -->
@@ -595,8 +599,7 @@
                     }
                     ?>
                 </div>
-            </div>
-
+            </div
             <!-- Vista Rosa Giocatori -->
             <div class="grid-view" id="grid-view">
                 <div class="grid-player-card-P">
@@ -605,8 +608,6 @@
                 </div>
                 <!-- I giocatori verranno inseriti qui via JavaScript -->
             </div>
-
-
             <!-- Vista Stadio -->
             <div class="stadium-view" id="stadium-view">
                 <div class="overview-cards" id="upgradeCard" >
@@ -672,8 +673,6 @@
 
                 </div>
             </div>
-
-
             <!-- Vista Albo d'Oro -->
             <div class="albo-view" id="albo-view">
                 <div class="overview-card">
@@ -691,7 +690,6 @@
                     ?>
                 </div>
             </div>
-
             <!-- Vista Settore Giovanile -->
             <div class="sgs-view" id="sgs-view">
                 <div class="overview-cards" id="buyCard" >
@@ -735,9 +733,6 @@
                             </div>
                             <button id="inviaModuloSgs" onclick="sendSgs('<?php echo addslashes($json->squadra[0]->nome_squadra); ?>')">Invia</button>
                         </div>
-
-
-
                         <script>
                             // Gestione dei tab - VERSIONE DEFINITIVA
                             document.addEventListener('DOMContentLoaded', function() {
@@ -753,7 +748,7 @@
                                         this.classList.add('active');
 
                                         // Nascondi tutte le view
-                                        document.querySelectorAll('.overview, .grid-view, .stadium-view, .albo-view, .sgs-view')
+                                        document.querySelectorAll('.overview, .grid-view, .stadium-view, .albo-view, .sgs-view, .prl-view')
                                             .forEach(v => v.classList.remove('active'));
 
                                         // Mostra la view corretta
@@ -766,13 +761,12 @@
                                 });
 
                                 // Caricamento dei giocatori
-                                fetch('endpoint/associazioni/read.php?id_squadra=<?php echo $id_squadra; ?>')
+                                fetch('endpoint/associazioni/read.php?id_squadra=<?php echo $id_squadra; ?>&fuori_listone=0')
                                     .then(response => response.json())
                                     .then(data => {
                                         const players = data.associazioni;
                                         const gridView = document.getElementById('grid-view');
 
-                                        // Ordina i giocatori per ruolo (P, D, C, A)
                                         const sortedPlayers = players.sort((a, b) => {
                                             const order = { 'P': 0, 'D': 1, 'C': 2, 'A': 3 };
                                             return order[a.ruolo_calciatore] - order[b.ruolo_calciatore];
@@ -782,20 +776,21 @@
                                             const card = document.createElement('div');
                                             card.className = `grid-player-card-${player.ruolo_calciatore}`;
                                             card.innerHTML = `
-                                    <div class="player-role-badge role-${player.ruolo_calciatore}">${player.ruolo_calciatore}</div>
-                                    <div class="player-main-info">
-                                        <div class="player-name">${player.nome_calciatore}</div>
-                                        <div class="player-team">${player.nome_squadra_calciatore || 'N/A'}</div>
-                                        <div class="player-stats">
-                                            <span>Costo: <span class="stat-value">${player.costo_calciatore} FVM</span></span>
-                                            <span>FVM: <span class="stat-value">${player.fvm} FVM</span></span>
-                                        </div>
-                                    </div>
-                                `;
+                <div class="player-role-badge role-${player.ruolo_calciatore}">${player.ruolo_calciatore}</div>
+                <div class="player-main-info">
+                    <div class="player-name">${player.nome_calciatore}</div>
+                    <div class="player-team">${player.nome_squadra_calciatore || 'N/A'}</div>
+                    <div class="player-stats">
+                        <span>Costo: <span class="stat-value">${player.costo_calciatore} FVM</span></span>
+                        <span>FVM: <span class="stat-value">${player.fvm} FVM</span></span>
+                    </div>
+                </div>
+            `;
                                             gridView.appendChild(card);
                                         });
                                     })
                                     .catch(error => console.error('Errore nel recupero dei dati:', error));
+
                             });
                         </script>
                     </div>
@@ -825,8 +820,105 @@
                     ?>
                 </div>
             </div>
-        </div>
+            <!-- Vista Prelazioni -->
+            <div class="prl-view" id="prl-view">
+                <div class="overview-cards">
+                    <div class="overview-card">
+                        <h3>Prelazioni</h3>
+                        <div class="overview-item">
+                            <span class="overview-label">Nota 1:</span>
+                            <span class="overview-value">Il valore di prelazione equivale al valore massimo tra FVM e Costo di acquisto del calciatore</span>
+                        </div>
+                        <div class="overview-item" style="margin-top: 15px;">
+                            <span class="overview-label">Nota 2:</span>
+                            <span class="overview-value" style="color: #ff4444; font-weight: bold;">
+                    Prelazioni possibili fino al 1 Agosto 2026
+                    <div id="countdown-prelazioni" style="display: inline-block; margin-left: 10px;"></div>
+                </span>
+                        </div>
+                    </div>
 
+                    <?php if (count($calciatori_prelazione) > 0): ?>
+                        <?php foreach ($calciatori_prelazione as $calciatore):
+                            $valore_prelazione = max((int)$calciatore['fvm'], (int)$calciatore['costo_calciatore']);
+                            ?>
+                            <div class="overview-card grid-player-card-<?php echo $calciatore['ruolo_calciatore']; ?>">
+                                <div class="player-role-badge role-<?php echo $calciatore['ruolo_calciatore']; ?>">
+                                    <?php echo $calciatore['ruolo_calciatore']; ?>
+                                </div>
+                                <div class="player-main-info">
+                                    <div class="player-name"><?php echo htmlspecialchars($calciatore['nome_calciatore']); ?></div>
+                                    <div class="player-team"><?php echo htmlspecialchars($calciatore['nome_squadra_calciatore']); ?></div>
+                                    <div class="player-stats">
+                                        <span>Prelazione: <span class="stat-value"><?php echo $valore_prelazione; ?> FVM</span></span>
+                                    </div>
+                                    <button class="prelazione-btn"
+                                            onclick="inviaRichiestaPrelazione(
+                                                '<?php echo $squadraNome; ?>',
+                                                    '<?php echo addslashes($calciatore['nome_calciatore']); ?>',
+                                                    '<?php echo $calciatore['ruolo_calciatore']; ?>',
+                                                    '<?php echo addslashes($calciatore['nome_squadra_calciatore']); ?>',
+                                            <?php echo $valore_prelazione; ?>,
+                                                    '+393371447208' // Sostituisci con il numero effettivo
+                                                    )"
+                                            style="margin-top: 10px;">
+                                        Richiedi Prelazione
+                                    </button>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="overview-card">
+                            <div class="no-movements">
+                                <p>Nessun calciatore disponibile per la prelazione</p>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <script>
+                // Countdown per le prelazioni
+                function updateCountdown() {
+                    const endDate = new Date('August 1, 2026 23:59:59').getTime();
+                    const now = new Date().getTime();
+                    const distance = endDate - now;
+
+                    // Calcoli per giorni, ore, minuti, secondi
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    // Visualizzazione
+                    document.getElementById("countdown-prelazioni").innerHTML =
+                        `<span style="color: #ff0000; font-weight: bold;">
+            [${days}g ${hours}h ${minutes}m ${seconds}s]
+        </span>`;
+
+                    // Se la data è passata
+                    if (distance < 0) {
+                        document.getElementById("countdown-prelazioni").innerHTML =
+                            `<span style="color: #ff0000; font-weight: bold;">TERMINE SCADUTO</span>`;
+                    }
+                }
+
+                // Aggiorna il countdown ogni secondo
+                setInterval(updateCountdown, 1000);
+                updateCountdown(); // Esegui immediatamente
+                function inviaRichiestaPrelazione(nomeSquad, nomeCalciatore, ruolo, squadra, valorePrelazione, numeroWhatsApp) {
+                    // Crea il messaggio
+                    const testo = `Richiesta prelazione squadra ${nomeSquad}:\nCalciatore: ${nomeCalciatore}\nRuolo: ${ruolo}\nSquadra: ${squadra}\nValore prelazione: ${valorePrelazione} FVM.`;
+                    const testoEnc = encodeURIComponent(testo);
+
+                    // Crea il link WhatsApp
+                    const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${testoEnc}`;
+
+                    // Apri in una nuova finestra
+                    window.open(urlWhatsApp, '_blank');
+                }
+            </script>
+        </div>
 
 
         <footer class="main-footer">
@@ -933,5 +1025,4 @@
 
         window.open(url);
     }
-
 </script>
