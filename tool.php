@@ -734,7 +734,7 @@
     });
 
     const loadPlayers = (id, squadraKey, teamNameContainer, playerSelect) => {
-        fetchData(`endpoint/associazioni/read.php?id_squadra=${id}&fuori_listone=0`)
+        fetchData(`endpoint/associazioni/read.php?id_squadra=${id}&prelazione=0`)
             .then(data => {
                 const lista = data.associazioni || [];
                 giocatori[squadraKey] = lista;

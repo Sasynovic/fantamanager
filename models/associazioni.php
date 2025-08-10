@@ -16,7 +16,7 @@ class associazioni
         $this->conn = $db;
     }
 
-    public function read($id_squadra_filter = null, $fuori_listone_filter = null)
+    public function read($id_squadra_filter = null, $fuori_listone_filter = null, $prelazione_filter = null)
     {
         $query = "
             SELECT  
@@ -26,10 +26,13 @@ class associazioni
                 a.costo_calciatore,
                 a.n_movimenti,
                 a.scambiato,
+                a.prelazione,
+                
                 s.nome_squadra AS nome_squadra,
+                
                 c.nome AS nome_calciatore,
                 c.squadra AS nome_squadra_calciatore,
-                 c.fvm,
+               c.fvm,
                 c.eta,
                 c.ruolo AS ruolo_calciatore,
                 c.fuori_listone AS fuori_listone
@@ -48,6 +51,11 @@ class associazioni
         if ($fuori_listone_filter !== null) {
             $conditions[] = "c.fuori_listone = :fuori_listone";
             $params[':fuori_listone'] = $fuori_listone_filter;
+        }
+
+        if ($prelazione_filter !== null) {
+            $conditions[] = "a.prelazione = :prelazione";
+            $params[':prelazione'] = $prelazione_filter;
         }
 
         if (count($conditions) > 0) {

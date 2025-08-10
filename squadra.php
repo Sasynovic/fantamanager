@@ -317,14 +317,14 @@
                         $json_albo = json_decode($albo);
                     }
 
-                    $associazioni = file_get_contents($baseUrl.'endpoint/associazioni/read.php?id_squadra='.$id_squadra . '&fuori_listone=0', false, stream_context_create([
+                    $associazioni = file_get_contents($baseUrl.'endpoint/associazioni/read.php?id_squadra='.$id_squadra . '&prelazione=0', false, stream_context_create([
                         'http' => ['method' => 'GET', 'header' => 'Content-Type: application/json']
                     ]));
                     if($associazioni) {
                         $json_associazioni = json_decode($associazioni);
                     }
 
-                    $prelazioni = file_get_contents($baseUrl.'endpoint/associazioni/read.php?id_squadra=' . $id_squadra . '&fuori_listone=1', false, stream_context_create([
+                    $prelazioni = file_get_contents($baseUrl.'endpoint/associazioni/read.php?id_squadra=' . $id_squadra . '&prelazione=1', false, stream_context_create([
                         'http' => ['method' => 'GET', 'header' => 'Content-Type: application/json']
                     ]));
 
@@ -761,7 +761,7 @@
                                 });
 
                                 // Caricamento dei giocatori
-                                fetch('endpoint/associazioni/read.php?id_squadra=<?php echo $id_squadra; ?>&fuori_listone=0')
+                                fetch('endpoint/associazioni/read.php?id_squadra=<?php echo $id_squadra; ?>&prelazione=0')
                                     .then(response => response.json())
                                     .then(data => {
                                         const players = data.associazioni;
