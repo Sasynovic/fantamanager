@@ -95,7 +95,8 @@ class associazioni
         $allowedFields = [
             'id_squadra' => PDO::PARAM_INT,
             'scambiato' => PDO::PARAM_INT,
-            'n_movimenti' => PDO::PARAM_INT
+            'n_movimenti' => PDO::PARAM_INT,
+            'prelazione' => PDO::PARAM_INT
         ];
 
         foreach ($allowedFields as $field => $type) {
