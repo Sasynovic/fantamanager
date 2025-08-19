@@ -776,16 +776,16 @@
                                             const card = document.createElement('div');
                                             card.className = `grid-player-card-${player.ruolo_calciatore}`;
                                             card.innerHTML = `
-                <div class="player-role-badge role-${player.ruolo_calciatore}">${player.ruolo_calciatore}</div>
-                <div class="player-main-info">
-                    <div class="player-name">${player.nome_calciatore}</div>
-                    <div class="player-team">${player.nome_squadra_calciatore || 'N/A'}</div>
-                    <div class="player-stats">
-                        <span>Costo: <span class="stat-value">${player.costo_calciatore} FVM</span></span>
-                        <span>FVM: <span class="stat-value">${player.fvm} FVM</span></span>
-                    </div>
-                </div>
-            `;
+                                            <div class="player-role-badge role-${player.ruolo_calciatore}">${player.ruolo_calciatore}</div>
+                                            <div class="player-main-info">
+                                                <div class="player-name">${player.nome_calciatore}</div>
+                                                <div class="player-team">${player.nome_squadra_calciatore || 'N/A'}</div>
+                                                <div class="player-stats">
+                                                    <span>Costo: <span class="stat-value">${player.costo_calciatore} FVM</span></span>
+                                                    <span>FVM: <span class="stat-value">${player.fvm} FVM</span></span>
+                                                </div>
+                                            </div>
+                                        `;
                                             gridView.appendChild(card);
                                         });
                                     })
@@ -832,9 +832,9 @@
                         <div class="overview-item" style="margin-top: 15px;">
                             <span class="overview-label">Nota 2:</span>
                             <span class="overview-value" style="color: #ff4444; font-weight: bold;">
-                    Prelazioni possibili fino al 1 Agosto 2026
-                    <div id="countdown-prelazioni" style="display: inline-block; margin-left: 10px;"></div>
-                </span>
+                                Prelazioni possibili fino al 1 Agosto 2026
+                                <div id="countdown-prelazioni" style="display: inline-block; margin-left: 10px;"></div>
+                            </span>
                         </div>
                     </div>
 
@@ -854,13 +854,12 @@
                                     </div>
                                     <button class="prelazione-btn"
                                             onclick="inviaRichiestaPrelazione(
+                                                    '<?php echo $calciatore['id']; ?>',
                                                 '<?php echo $squadraNome; ?>',
                                                     '<?php echo addslashes($calciatore['nome_calciatore']); ?>',
                                                     '<?php echo $calciatore['ruolo_calciatore']; ?>',
                                                     '<?php echo addslashes($calciatore['nome_squadra_calciatore']); ?>',
-                                            <?php echo $valore_prelazione; ?>,
-                                                    '+393371447208' // Sostituisci con il numero effettivo
-                                                    )"
+                                            <?php echo $valore_prelazione; ?>"
                                             style="margin-top: 10px;">
                                         Richiedi Prelazione
                                     </button>
@@ -893,8 +892,8 @@
                     // Visualizzazione
                     document.getElementById("countdown-prelazioni").innerHTML =
                         `<span style="color: #ff0000; font-weight: bold;">
-            [${days}g ${hours}h ${minutes}m ${seconds}s]
-        </span>`;
+                            [${days}g ${hours}h ${minutes}m ${seconds}s]
+                         </span>`;
 
                     // Se la data è passata
                     if (distance < 0) {
@@ -906,16 +905,33 @@
                 // Aggiorna il countdown ogni secondo
                 setInterval(updateCountdown, 1000);
                 updateCountdown(); // Esegui immediatamente
-                function inviaRichiestaPrelazione(nomeSquad, nomeCalciatore, ruolo, squadra, valorePrelazione, numeroWhatsApp) {
+
+                function inviaRichiestaPrelazione(idAssociazione, nomeSquad, nomeCalciatore, ruolo, squadra, valorePrelazione) {
+
+                    fetch()
+
                     // Crea il messaggio
-                    const testo = `Richiesta prelazione squadra ${nomeSquad}:\nCalciatore: ${nomeCalciatore}\nRuolo: ${ruolo}\nSquadra: ${squadra}\nValore prelazione: ${valorePrelazione} FVM.`;
-                    const testoEnc = encodeURIComponent(testo);
+                    const action = `Richiesta prelazione squadra ${nomeSquad}`;
+                    const description = `Richiesta prelazione squadra ${nomeSquad}:\n
+                        Calciatore: ${nomeCalciatore}\n
+                        Ruolo: ${ruolo}\n
+                        Squadra: ${squadra}\n
+                        Valore prelazione: ${valorePrelazione} FVM.`;
 
-                    // Crea il link WhatsApp
-                    const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${testoEnc}`;
-
-                    // Apri in una nuova finestra
-                    window.open(urlWhatsApp, '_blank');
+                    fetch('sendMail.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ action: action, description: description })
+                    })
+                        .then(response => response.text())
+                        .then(data => {
+                            document.getElementById('status').innerHTML = data;
+                        })
+                        .catch(err => {
+                            document.getElementById('status').innerHTML = '❌ Errore: ' + err;
+                        });
                 }
             </script>
         </div>
