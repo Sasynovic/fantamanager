@@ -22,6 +22,11 @@ try {
     // Leggi i dati JSON dal body della richiesta
     $data = json_decode(file_get_contents("php://input"), true);
 
+    $id = $data['id'] ?? die(json_encode([
+        "message" => "ID associazione mancante",
+        "status" => "error"
+    ]));
+
     if (empty($data)) {
         http_response_code(400);
         die(json_encode([

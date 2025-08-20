@@ -854,12 +854,16 @@
                                     </div>
                                     <button class="prelazione-btn"
                                             onclick="inviaRichiestaPrelazione(
+                                                '<?php echo $id_squadra; ?>',
                                                     '<?php echo $calciatore['id']; ?>',
+                                                '<?php echo $calciatore['fuori_listone']?>',
                                                 '<?php echo $squadraNome; ?>',
                                                     '<?php echo addslashes($calciatore['nome_calciatore']); ?>',
                                                     '<?php echo $calciatore['ruolo_calciatore']; ?>',
                                                     '<?php echo addslashes($calciatore['nome_squadra_calciatore']); ?>',
-                                            <?php echo $valore_prelazione; ?>"
+                                            '<?php echo $calciatore['costo_calciatore']; ?>',
+                                            <?php echo $valore_prelazione; ?>
+                                            )"
                                             style="margin-top: 10px;">
                                         Richiedi Prelazione
                                     </button>
@@ -901,38 +905,85 @@
                             `<span style="color: #ff0000; font-weight: bold;">TERMINE SCADUTO</span>`;
                     }
                 }
-
                 // Aggiorna il countdown ogni secondo
                 setInterval(updateCountdown, 1000);
                 updateCountdown(); // Esegui immediatamente
 
-                function inviaRichiestaPrelazione(idAssociazione, nomeSquad, nomeCalciatore, ruolo, squadra, valorePrelazione) {
+                function inviaRichiestaPrelazione(idSquadra, idAssociazione, fuoriListone, nomeSquad, nomeCalciatore, ruolo, squadra, valorePrelazione, costoCalciatore) {
+                    if (fuoriListone == 0) {
+                        const passkeyInput = prompt('Inserisci la passkey per confermare la richiesta di prelazione:');
+                        if (!passkeyInput) {
+                            alert('⚠️ Operazione annullata: nessuna passkey inserita');
+                            return;
+                        }
 
-                    fetch()
-
-                    // Crea il messaggio
-                    const action = `Richiesta prelazione squadra ${nomeSquad}`;
-                    const description = `Richiesta prelazione squadra ${nomeSquad}:\n
-                        Calciatore: ${nomeCalciatore}\n
-                        Ruolo: ${ruolo}\n
-                        Squadra: ${squadra}\n
-                        Valore prelazione: ${valorePrelazione} FVM.`;
-
-                    fetch('sendMail.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ action: action, description: description })
-                    })
-                        .then(response => response.text())
-                        .then(data => {
-                            document.getElementById('status').innerHTML = data;
+                        // 🔑 Verifica passkey
+                        fetch('endpoint/squadra/readPasskey.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                idSquadra1: idSquadra,
+                                idSquadra2: idSquadra,
+                                passkey: passkeyInput
+                            })
                         })
-                        .catch(err => {
-                            document.getElementById('status').innerHTML = '❌ Errore: ' + err;
-                        });
+                            .then(response => response.json())
+                            .then(passkeyData => {
+                                if (passkeyData.success) {
+                                    // ✅ Passkey corretta, procedo con la prelazione
+                                    return fetch(`../endpoint/associazioni/update.php?id=${idAssociazione}`, {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            id: idAssociazione,
+                                            prelazione: 0
+                                        })
+                                    });
+                                } else {
+                                    throw new Error("❌ Passkey non valida!");
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    const action = `Richiesta prelazione squadra ${nomeSquad}`;
+                                    const description = `
+                                    <p>Richiesta prelazione squadra <strong>${nomeSquad}</strong> (ID: <strong>${idSquadra}</strong>)</p>
+                                    <ul>
+                                        <li><b>Calciatore:</b> ${nomeCalciatore}</li>
+                                        <li><b>Ruolo:</b> ${ruolo}</li>
+                                        <li><b>Squadra:</b> ${squadra}</li>
+                                        <li><b>Costo calciatore:</b> ${costoCalciatore} FVM</li>
+                                        <li><b>Valore prelazione:</b> ${valorePrelazione} FVM</li>
+                                    </ul>
+                                `;
+
+                                    alert('✅ Richiesta di prelazione inviata con successo!');
+
+                                    return fetch('sendMail.php', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ action: action, description: description })
+                                    });
+                                } else {
+                                    throw new Error("❌ Errore nell'invio della richiesta di prelazione: " + data.message);
+                                }
+                            })
+                            .then(response => response.text())
+                            .then(data => {
+                                // 🔄 Aggiorna la schermata dopo 2 secondi
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            })
+                            .catch(err => {
+                                alert(err.message || ('❌ Errore: ' + err));
+                            });
+                    } else {
+                        alert('⚠️ Il calciatore è fuori listone, non è possibile richiedere la prelazione');
+                    }
                 }
+
             </script>
         </div>
 
@@ -958,7 +1009,6 @@
 </html>
 
 <script>
-    // Funzione per gestire l'acquisto di una squadra
     function openSgs() {
         const modulo = document.getElementById('moduloSgs');
         const buyCard = document.getElementById('buyCard');
