@@ -21,6 +21,8 @@ try {
         "status" => "error"
     ]));
 
+    $data['timestamp'] = date('Y-m-d H:i:s'); // Formato MySQL compatibile
+
     if (empty($data)) {
         http_response_code(400);
         die(json_encode([
