@@ -348,7 +348,7 @@ $nomeSezione = "FVM";
 
     // ===== FETCH 1: RECUPERA DATI DALLE ASSOCIAZIONI =====
     // Questo fetch calcola l'FVM totale per squadra sommando i valori dalle associazioni
-    fetch(`${window.location.protocol}//${window.location.host}/endpoint/associazioni/read.php?fuori_listone=0`)
+    fetch(`${window.location.protocol}//${window.location.host}/endpoint/associazioni/read.php?fuori_listone=0&prelazione=0`)
         .then(response => response.json())
         .then(data => {
             const fvmPerSquadra = {};
