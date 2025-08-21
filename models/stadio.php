@@ -43,14 +43,14 @@ class stadio
 
         // Lista dei campi aggiornabili
         $allowedFields = [
-            'fa' => PDO::PARAM_STR,
-            'id_pres' => PDO::PARAM_INT,
-            'id_vice' => PDO::PARAM_INT,
-            'vendita' => PDO::PARAM_BOOL,
-            'rate' => PDO::PARAM_INT,
-            'costo_iscrizione' => PDO::PARAM_INT,
-            'valore_fvm' => PDO::PARAM_INT,
-            'credito' => PDO::PARAM_INT
+            'livello_stadio' => PDO::PARAM_INT,
+            'costo_manutenzione' => PDO::PARAM_INT,
+            'bonus_casa_n' => PDO::PARAM_INT,
+            'bonus_casa_u' => PDO::PARAM_INT,
+            'sold_out' => PDO::PARAM_INT,
+            'abbonati' => PDO::PARAM_INT,
+            'costo_costruzione' => PDO::PARAM_INT,
+            'timestamp' => PDO::PARAM_STR
         ];
 
         foreach ($allowedFields as $field => $type) {
@@ -83,5 +83,4 @@ class stadio
             error_log("Errore durante l'aggiornamento della trattativa: " . $e->getMessage());
             return false;
         }
-    }
-}
+    }}

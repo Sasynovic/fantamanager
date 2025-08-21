@@ -281,9 +281,6 @@
                 </button>
                 <h1>
                     <?php
-                    $squadraNome = 'Squadra';
-
-
                     $urlParams = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
                     parse_str($urlParams, $params);
                     $id_squadra = $params['id'] ?? 0;
@@ -611,30 +608,25 @@
             <!-- Vista Stadio -->
             <div class="stadium-view" id="stadium-view">
                 <!-- Modulo ampliamento -->
-
                 <div class="overview-cards" id="moduloStadium" style="display: flex">
                     <div class="overview-card">
-                        <div class="modulo-header" style="display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: space-between; padding-bottom: 8px;">
-                            <h3>Modulo Ampliamento Stadio</h3>
+                        <div class="modulo-header" style="display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: center; padding-bottom: 8px;">
+                            <h3>Modulo Ampliamento Stadio - <span class="overview-value"><?php echo $json->squadra[0]->stadio->nome_stadio ?? 'N/A'; ?></span>
+                            </h3>
                         </div>
                         <div class="modulo-content">
                             <div class="modulo-input">
                                 <label for="livelloStadio">Seleziona livello:</label>
                                 <input type="number" id="livelloStadio" min="<?php echo (1 + intval($json->squadra[0]->stadio->livello_stadio))?>" max="10" placeholder="Inserisci livello (1-10)" onchange="updateNewStadiumDetails()">
                             </div>
-                            <button class="view-tab" style="margin: 5px; background-color: var(--accento)" id="inviaModuloStadium" onclick="sendStadiumUpgrade('<?php echo addslashes($json->squadra[0]->nome_squadra); ?>')">Invia richiesta</button>
+                            <button class="view-tab" style="margin: 5px; background-color: var(--accento)" id="inviaModuloStadium" onclick="sendStadiumUpgrade(<?php echo $id_squadra ?>, <?php echo  $finanze->totale_crediti_bilancio ?>, '<?php echo $squadraNome?>')">Invia richiesta</button>
                         </div>
                     </div>
                 </div>
-
                 <!-- Valori attuali -->
                 <div class="overview-cards">
                     <div class="overview-card">
                         <h3>Valori Attuali</h3>
-                        <div class="overview-item">
-                            <span class="overview-label">Nome:</span>
-                            <span class="overview-value"><?php echo $json->squadra[0]->stadio->nome_stadio ?? 'N/A'; ?></span>
-                        </div>
                         <div class="overview-item">
                             <span class="overview-label">Livello:</span>
                             <span class="overview-value"><?php echo $json->squadra[0]->stadio->livello_stadio ?? 'N/A'; ?></span>
@@ -700,18 +692,17 @@
 
             <script>
                 const stadiumData = {
-                    1: {manutenzione:0, costruzione:0, bonusN:0, bonusU:0, soldOut:1, abbonati:'3%'},
-                    2: {manutenzione:64, costruzione:82, bonusN:1, bonusU:1, soldOut:5, abbonati:'6%'},
-                    3: {manutenzione:76, costruzione:97, bonusN:1.5, bonusU:1, soldOut:11, abbonati:'9%'},
-                    4: {manutenzione:106, costruzione:132, bonusN:2, bonusU:1, soldOut:19, abbonati:'13%'},
-                    5: {manutenzione:138, costruzione:166, bonusN:2.5, bonusU:1, soldOut:29, abbonati:'17%'},
-                    6: {manutenzione:168, costruzione:203, bonusN:3, bonusU:1.5, soldOut:41, abbonati:'21%'},
-                    7: {manutenzione:208, costruzione:241, bonusN:3.5, bonusU:1.5, soldOut:55, abbonati:'26%'},
-                    8: {manutenzione:246, costruzione:279, bonusN:4, bonusU:2, soldOut:71, abbonati:'31%'},
-                    9: {manutenzione:286, costruzione:317, bonusN:4.5, bonusU:2, soldOut:89, abbonati:'36%'},
-                    10:{manutenzione:359, costruzione:371, bonusN:5, bonusU:3, soldOut:109, abbonati:'45%'}
+                    1: {manutenzione:0, costruzione:0, bonusN:0, bonusU:0, soldOut:1, abbonati:'3'},
+                    2: {manutenzione:64, costruzione:82, bonusN:1, bonusU:1, soldOut:5, abbonati:'6'},
+                    3: {manutenzione:76, costruzione:97, bonusN:1.5, bonusU:1, soldOut:11, abbonati:'9'},
+                    4: {manutenzione:106, costruzione:132, bonusN:2, bonusU:1, soldOut:19, abbonati:'13'},
+                    5: {manutenzione:138, costruzione:166, bonusN:2.5, bonusU:1, soldOut:29, abbonati:'17'},
+                    6: {manutenzione:168, costruzione:203, bonusN:3, bonusU:1.5, soldOut:41, abbonati:'21'},
+                    7: {manutenzione:208, costruzione:241, bonusN:3.5, bonusU:1.5, soldOut:55, abbonati:'26'},
+                    8: {manutenzione:246, costruzione:279, bonusN:4, bonusU:2, soldOut:71, abbonati:'31'},
+                    9: {manutenzione:286, costruzione:317, bonusN:4.5, bonusU:2, soldOut:89, abbonati:'36'},
+                    10:{manutenzione:359, costruzione:371, bonusN:5, bonusU:3, soldOut:109, abbonati:'45'}
                 };
-
                 function updateNewStadiumDetails() {
                     const livello = document.getElementById('livelloStadio').value;
                     const dati = stadiumData[livello];
@@ -721,8 +712,106 @@
                     document.getElementById('newBonusNazionale').innerText = dati.bonusN + ' Pt';
                     document.getElementById('newBonusUEFA').innerText = dati.bonusU + ' Pt';
                     document.getElementById('newSoldOut').innerText = dati.soldOut + ' FVM';
-                    document.getElementById('newAbbonati').innerText = dati.abbonati;
+                    document.getElementById('newAbbonati').innerText = dati.abbonati + '%';
                 }
+
+                function sendStadiumUpgrade(idSquadra, totaleCreditiBilancio, nomeSquadra) {
+                    console.log(nomeSquadra);
+                    const passkeyInput = prompt('Inserisci la passkey per confermare la richiesta di prelazione:');
+                    if (!passkeyInput) {
+                        alert('⚠️ Operazione annullata: nessuna passkey inserita');
+                        return;
+                    }
+                    fetch('endpoint/squadra/readPasskey.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            idSquadra1: idSquadra,
+                            idSquadra2: idSquadra,
+                            passkey: passkeyInput
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(passkeyData => {
+                            if (!passkeyData.success) {
+                                throw new Error("❌ Passkey non valida!");
+                            }
+                            const livelloStadioAttuale = <?php echo $json->squadra[0]->stadio->livello_stadio ?? 0; ?>;
+                            const livelloStadioDesiderato = parseInt(document.getElementById('livelloStadio').value, 10);
+
+                            if (!livelloStadioDesiderato || livelloStadioDesiderato < 1 || livelloStadioDesiderato > 10) {
+                                alert('⚠️ Livello stadio non valido. Inserisci un valore tra 1 e 10.');
+                                return;
+                            }
+
+                            let costoTotale = 0;
+                            for (let i = 1; i <= livelloStadioAttuale; i++) {
+                                costoTotale += stadiumData[i].manutenzione;
+                            }
+                            for (let i = livelloStadioAttuale + 1; i <= livelloStadioDesiderato; i++) {
+                                costoTotale += stadiumData[i].costruzione;
+                            }
+
+                            if (costoTotale > totaleCreditiBilancio) {
+                                alert('⚠️ Fondi insufficienti per l\'ampliamento dello stadio.');
+                                return;
+                            }
+
+                            const nuovoValoreFinanza = totaleCreditiBilancio - costoTotale;
+
+                            if (!confirm(`Il costo per aumentare lo stadio è di ${costoTotale} FVM. Il nuovo valore di finanza sarà ${nuovoValoreFinanza} FVM. Procedere?`)) {
+                                return;
+                            }
+
+                            // Aggiorna finanze
+                            return fetch(`endpoint/finanze_squadra/update.php?id=${idSquadra}`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    id: idSquadra,
+                                    totale_crediti_bilancio: nuovoValoreFinanza
+                                })
+                            })
+                                .then(() => {
+                                    // Aggiorna stadio
+                                    return fetch(`endpoint/stadio/update.php?id=${idSquadra}`, {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            livello_stadio: livelloStadioDesiderato,
+                                            costo_manutenzione: stadiumData[livelloStadioDesiderato].manutenzione,
+                                            bonus_casa_n: stadiumData[livelloStadioDesiderato].bonusN,
+                                            bonus_casa_u: stadiumData[livelloStadioDesiderato].bonusU,
+                                            sold_out: stadiumData[livelloStadioDesiderato].soldOut,
+                                            abbonati: stadiumData[livelloStadioDesiderato].abbonati,
+                                            costo_costruzione: stadiumData[livelloStadioDesiderato].costruzione,
+                                        })
+                                    });
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert('✅ Richiesta di ampliamento stadio inviata con successo!');
+                                        const action = 'Ampliamento stadio '+ nomeSquadra;
+                                        const description = `Richiesta di ampliamento stadio per ${nomeSquadra} da livello ${livelloStadioAttuale} a ${livelloStadioDesiderato}. Costo totale: ${costoTotale} FVM. Nuovo valore finanza: ${nuovoValoreFinanza} FVM.`;
+                                        fetch('sendMail.php', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ action: action, description: description })
+                                        });
+                                        location.reload();
+                                    } else {
+                                        throw new Error("❌ Errore nell'invio della richiesta di ampliamento stadio.");
+                                    }
+                                });
+                        })
+                        .catch(error => {
+                            console.error('Errore:', error);
+                            alert('⚠️ ' + error.message);
+                        });
+                }
+
+
             </script>
             <!-- Vista Albo d'Oro -->
             <div class="albo-view" id="albo-view">
@@ -927,7 +1016,7 @@
                     <?php endif; ?>
                 </div>
             </div>
-
+            <!--script prelazioni-->
             <script>
                 // Countdown per le prelazioni
                 function updateCountdown() {
@@ -964,7 +1053,6 @@
                             alert('⚠️ Operazione annullata: nessuna passkey inserita');
                             return;
                         }
-
                         // 🔑 Verifica passkey
                         fetch('endpoint/squadra/readPasskey.php', {
                             method: 'POST',
@@ -980,15 +1068,11 @@
                                 if (!passkeyData.success) {
                                     throw new Error("❌ Passkey non valida!");
                                 }
-
                                 if (valorePrelazione > finanzeSquadra) {
-                                    console.log(valorePrelazione);
-                                    console.log(finanzeSquadra);
                                     throw new Error("❌ Non hai abbastanza crediti per richiedere questa prelazione!");
                                 }
 
                                 const val = finanzeSquadra - valorePrelazione;
-                                console.log(val);
                                 // Aggiorna le finanze
                                 return fetch(`../endpoint/finanze_squadra/update.php?id=${idSquadra}`, {
                                     method: 'PUT',
@@ -1117,30 +1201,6 @@
         if (!conferma1) return;
 
         const conferma2 = confirm("Questa operazione è irreversibile! Sei sicuro?");
-        if (!conferma2) return;
-
-        window.open(url);
-    }
-
-
-    function sendStadiumUpgrade(nomeSquadra) {
-        const livelloStadio = document.getElementById('livelloStadio').value;
-
-        if (!livelloStadio || livelloStadio < 1 || livelloStadio > 10) {
-            alert("Inserisci un livello valido tra 1 e 10");
-            return;
-        }
-
-        const numeroWhatsApp = "+393371447208";
-
-        const messaggio = `Ciao, sono ${nomeSquadra} e vorrei richiedere un ampliamento dello stadio: ` + `Livello desiderato: ${livelloStadio} . `+ `Attendo conferma dei costi e dell'operazione.`;
-
-        const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(messaggio)}`;
-
-        const conferma1 = confirm(`Sei sicuro di voler richiedere l'ampliamento dello stadio al livello ${livelloStadio}?`);
-        if (!conferma1) return;
-
-        const conferma2 = confirm("Questa operazione comporterà dei costi! Sei sicuro di voler procedere?");
         if (!conferma2) return;
 
         window.open(url);
