@@ -216,7 +216,7 @@
         }
 
         .overview-card h3 {
-            margin-top: 0;
+            margin-bottom: 5px;
             color: var(--oro);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 8px;
@@ -418,66 +418,75 @@
                             <span class="overview-label">Campionato</span>
                             <span class="overview-value"><?php echo $json_partecipazione->nome_competizione; ?></span>
                         </div>
+                        <div class="overview-item">
+                            <span class="overview-label">Punteggio ranking</span>
+                            <span class="overview-value"><?php echo $json_finanze->finanze_squadra[0]->punteggio_ranking ?></span>
+                        </div>
                     </div>
 
                     <div class="overview-card">
                         <h3>Finanze</h3>
-                        <div class="overview-item">
-                            <span class="overview-label">Credito restante prossima stagione:</span>
-                            <span class="overview-value"><?php echo $json->squadra[0]->finanze->credito ?? '0'; ?> FVM</span>
-                        </div>
-                        <div class="overview-item">
-                            <span class="overview-label">Punteggio ranking:</span>
-                            <span class="overview-value"><?php echo $json_finanze->finanze_squadra->punteggio_ranking ?? '0'; ?></span>
-                        </div>
-                        <?php
-                        if(!empty($json_finanze->finanze_squadra)) {
-                            foreach ($json_finanze->finanze_squadra as $finanze) {
-                                echo '<div class="overview-item">';
-                                echo '<span class="overview-label">Guadagno crediti stadio campionato:</span>';
-                                echo '<span class="overview-value">' . $finanze->guadagno_crediti_stadio_league .'</span>';
-                                echo '</div>';
-                                echo '<div class="overview-item">';
-                                echo '<span class="overview-label">Guadagno crediti stadio coppa:</span>';
-                                echo '<span class="overview-value">' . $finanze->guadagno_crediti_stadio_cup .'</span>';
-                                echo '</div>';
-                                echo '<div class="overview-item">';
-                                echo '<span class="overview-label">Premi campionato:</span>';
-                                echo '<span class="overview-value">' . $finanze->premi_league .'</span>';
-                                echo '</div>';
-                                echo '<div class="overview-item">';
-                                echo '<span class="overview-label">Premi coppa:</span>';
-                                echo '<span class="overview-value">' . $finanze->premi_cup .'</span>';
-                                echo '</div>';
-                                echo '<div class="overview-item">';
-                                echo '<span class="overview-label">Guadagno crediti stadio campionato:</span>';
-                                echo '<span class="overview-value">' . $finanze->prequalifiche_uefa_stadio .'</span>';
-                                echo '</div>';
-                                echo '<div class="overview-item">';
-                                echo '<span class="overview-label">Prequalifiche uefa premio:</span>';
-                                echo '<span class="overview-value">' . $finanze->prequalifiche_uefa_premio .'</span>';
-                                echo '</div>';
-                                echo '<div class="overview-item">';
-                                echo '<span class="overview-label">Competizione uefa stadio:</span>';
-                                echo '<span class="overview-value">' . $finanze->competizioni_uefa_stadio .'</span>';
-                                echo '</div>';
-                                echo '<div class="overview-item">';
-                                echo '<span class="overview-label">Competizione uefa premio:</span>';
-                                echo '<span class="overview-value">' . $finanze->competizioni_uefa_premio .'</span>';
-                                echo '</div>';
-                                echo '<div class="overview-item">';
-                                echo '<span class="overview-label">Crediti residui cassa:</span>';
-                                echo '<span class="overview-value">' . $finanze->crediti_residui_cassa .'</span>';
-                                echo '</div>';
-                                echo '<div class="overview-item">';
-                                echo '<h3 class="overview-label">Totale crediti bilancio:</h3>';
-                                echo '<span class="overview-value">' . $finanze->totale_crediti_bilancio .'</span>';
-                                echo '</div>';
-                            }
-                        } else {
-                            echo '<p>Nessun finanza registrata</p>';
-                        }
-                        ?>
+
+                        <?php if(!empty($json_finanze->finanze_squadra)) {
+                            $finanze = $json_finanze->finanze_squadra[0]; // prendi la prima voce
+                            ?>
+                            <!-- Crediti attuali -->
+                            <div class="overview-item">
+                                <span class="overview-label">Indebitamento massimo residuo consentito:</span>
+                                <span class="overview-value"><?php echo $json->squadra[0]->finanze->credito ?? '0'; ?> FVM</span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="overview-label">Totale crediti a bilancio:</span>
+                                <span class="overview-value"><?php echo $finanze->totale_crediti_bilancio; ?></span>
+                            </div>
+
+                            <!-- Tutto il resto -->
+                            <h3 class="overview-label">Finanze prossima stagione</h3>
+
+                            <div class="overview-item">
+                                <span class="overview-label">Crediti residui cassa:</span>
+                                <span class="overview-value"><?php echo $finanze->crediti_residui_cassa; ?></span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="overview-label">Guadagno crediti stadio campionato:</span>
+                                <span class="overview-value"><?php echo $finanze->guadagno_crediti_stadio_league; ?></span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="overview-label">Guadagno crediti stadio coppa:</span>
+                                <span class="overview-value"><?php echo $finanze->guadagno_crediti_stadio_cup; ?></span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="overview-label">Premi campionato:</span>
+                                <span class="overview-value"><?php echo $finanze->premi_league; ?></span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="overview-label">Premi coppa:</span>
+                                <span class="overview-value"><?php echo $finanze->premi_cup; ?></span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="overview-label">Prequalifiche UEFA stadio:</span>
+                                <span class="overview-value"><?php echo $finanze->prequalifiche_uefa_stadio; ?></span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="overview-label">Prequalifiche UEFA premio:</span>
+                                <span class="overview-value"><?php echo $finanze->prequalifiche_uefa_premio; ?></span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="overview-label">Competizione UEFA stadio:</span>
+                                <span class="overview-value"><?php echo $finanze->competizioni_uefa_stadio; ?></span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="overview-label">Competizione UEFA premio:</span>
+                                <span class="overview-value"><?php echo $finanze->competizioni_uefa_premio; ?></span>
+                            </div>
+                            <div class="overview-item">
+                                <span class="overview-label">Totale crediti prossima stagione:</span>
+                                <span class="overview-value"><?php echo $finanze->crediti_residui_cassa + $finanze->guadagno_crediti_stadio_league + $finanze->guadagno_crediti_stadio_cup + $finanze->competizioni_uefa_premio +$finanze->competizioni_uefa_stadio +$finanze->prequalifiche_uefa_premio + $finanze->prequalifiche_uefa_stadio + $finanze->premi_cup + $finanze->premi_league; ?></span>
+                            </div>
+
+                        <?php } else { ?>
+                            <p>Nessuna finanza registrata</p>
+                        <?php } ?>
                     </div>
 
                     <div class="overview-card">
@@ -693,21 +702,30 @@
                 const stadiumData = {
                     1: {manutenzione:0, costruzione:0, bonusN:0, bonusU:0, soldOut:1, abbonati:'3'},
                     2: {manutenzione:64, costruzione:82, bonusN:1, bonusU:1, soldOut:5, abbonati:'6'},
-                    3: {manutenzione:76, costruzione:97, bonusN:1.5, bonusU:1, soldOut:11, abbonati:'9'},
-                    4: {manutenzione:106, costruzione:132, bonusN:2, bonusU:1, soldOut:19, abbonati:'13'},
-                    5: {manutenzione:138, costruzione:166, bonusN:2.5, bonusU:1, soldOut:29, abbonati:'17'},
-                    6: {manutenzione:168, costruzione:203, bonusN:3, bonusU:1.5, soldOut:41, abbonati:'21'},
-                    7: {manutenzione:208, costruzione:241, bonusN:3.5, bonusU:1.5, soldOut:55, abbonati:'26'},
-                    8: {manutenzione:246, costruzione:279, bonusN:4, bonusU:2, soldOut:71, abbonati:'31'},
-                    9: {manutenzione:286, costruzione:317, bonusN:4.5, bonusU:2, soldOut:89, abbonati:'36'},
-                    10:{manutenzione:359, costruzione:371, bonusN:5, bonusU:3, soldOut:109, abbonati:'45'}
+                    3: {manutenzione:140, costruzione:97, bonusN:1.5, bonusU:1, soldOut:11, abbonati:'9'},
+                    4: {manutenzione:246, costruzione:132, bonusN:2, bonusU:1, soldOut:19, abbonati:'13'},
+                    5: {manutenzione:384, costruzione:166, bonusN:2.5, bonusU:1, soldOut:29, abbonati:'17'},
+                    6: {manutenzione:552, costruzione:203, bonusN:3, bonusU:1.5, soldOut:41, abbonati:'21'},
+                    7: {manutenzione:760, costruzione:241, bonusN:3.5, bonusU:1.5, soldOut:55, abbonati:'26'},
+                    8: {manutenzione:1006, costruzione:279, bonusN:4, bonusU:2, soldOut:71, abbonati:'31'},
+                    9: {manutenzione:1292, costruzione:317, bonusN:4.5, bonusU:2, soldOut:89, abbonati:'36'},
+                    10:{manutenzione:1651, costruzione:371, bonusN:5, bonusU:3, soldOut:109, abbonati:'45'}
                 };
                 function updateNewStadiumDetails() {
-                    const livello = document.getElementById('livelloStadio').value;
-                    const dati = stadiumData[livello];
-                    document.getElementById('newLevel').innerText = livello;
+                    const livelloStadioAttuale = <?php echo $json->squadra[0]->stadio->livello_stadio ?? 0; ?>;
+                    const livelloNew = document.getElementById('livelloStadio').value;
+
+                    const dati = stadiumData[livelloNew];
+
+                    let costoCostruzione = 0;
+
+                    for (let i = livelloStadioAttuale + 1; i <= livelloNew; i++) {
+                        costoCostruzione += stadiumData[i].costruzione;
+                    }
+
+                    document.getElementById('newLevel').innerText = livelloNew;
                     document.getElementById('newMaintenance').innerText = dati.manutenzione + ' FVM';
-                    document.getElementById('newConstruction').innerText = dati.costruzione + ' FVM';
+                    document.getElementById('newConstruction').innerText = costoCostruzione + ' FVM';
                     document.getElementById('newBonusNazionale').innerText = dati.bonusN + ' Pt';
                     document.getElementById('newBonusUEFA').innerText = dati.bonusU + ' Pt';
                     document.getElementById('newSoldOut').innerText = dati.soldOut + ' FVM';
@@ -743,10 +761,8 @@
                                 return;
                             }
 
-                            let costoTotale = 0;
-                            for (let i = 1; i <= livelloStadioAttuale; i++) {
-                                costoTotale += stadiumData[i].manutenzione;
-                            }
+                            let costoTotale = stadiumData[livelloStadioAttuale].manutenzione;
+
                             for (let i = livelloStadioAttuale + 1; i <= livelloStadioDesiderato; i++) {
                                 costoTotale += stadiumData[i].costruzione;
                             }
