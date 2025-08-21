@@ -25,7 +25,9 @@ if ($num > 0) {
             "livello_stadio" => $livello_stadio,
             "costo_manutenzione" => $costo_manutenzione,
             "bonus_casa_m" => $bonus_casa_n,
-            "bonus_casa_u" => $bonus_casa_u
+            "bonus_casa_u" => $bonus_casa_u,
+            "sold_out" => $sold_out,
+            "abbonati" => $abbonati
         );
         $stadio_arr["stadio"][] = $stadio_item;
     }

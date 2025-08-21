@@ -163,8 +163,11 @@ class squadra
                                 st.nome_stadio,
                                 st.livello_stadio,
                                 st.costo_manutenzione,
+                                st.costo_costruzione,
                                 st.bonus_casa_n,
-                                st.bonus_casa_u
+                                st.bonus_casa_u,
+                                st.sold_out,
+                                st.abbonati
                             
                             FROM " . $this->table_name . " s
                             LEFT JOIN presidenti pres ON s.id_pres = pres.id
