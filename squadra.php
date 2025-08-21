@@ -610,41 +610,27 @@
             </div>
             <!-- Vista Stadio -->
             <div class="stadium-view" id="stadium-view">
-                <div class="overview-cards" id="upgradeCard" >
-                    <div class="overview-card" style="
-                                                display: flex;
-                                                justify-content: space-between;
-                                                align-items: center;
-                                            ">
-                        <h3>Ampliamento stadio</h3>
-                        <button onclick="openStadiumUpgrade()">Amplia</button>
-                    </div>
-                </div>
-                <div class="overview-cards" id="moduloStadium" style="display: none">
+                <!-- Modulo ampliamento -->
+
+                <div class="overview-cards" id="moduloStadium" style="display: flex">
                     <div class="overview-card">
-                        <div class="modulo-header" style="
-                                            display: flex;
-                                            flex-direction: row;
-                                            width: 100%;
-                                            align-items: center;
-                                            justify-content: space-between;
-                                            padding-bottom: 8px;
-                                        ">
+                        <div class="modulo-header" style="display: flex; flex-direction: row; width: 100%; align-items: center; justify-content: space-between; padding-bottom: 8px;">
                             <h3>Modulo Ampliamento Stadio</h3>
-                            <button onclick="closeStadiumUpgrade()">X</button>
                         </div>
                         <div class="modulo-content">
                             <div class="modulo-input">
-                                <label for="livelloStadio"></label>
-                                <input type="number" id="livelloStadio" min="1" max="10" placeholder="Inserisci livello (1-10)">
+                                <label for="livelloStadio">Seleziona livello:</label>
+                                <input type="number" id="livelloStadio" min="<?php echo (1 + intval($json->squadra[0]->stadio->livello_stadio))?>" max="10" placeholder="Inserisci livello (1-10)" onchange="updateNewStadiumDetails()">
                             </div>
-                            <button id="inviaModuloStadium" onclick="sendStadiumUpgrade('<?php echo addslashes($json->squadra[0]->nome_squadra); ?>')">Invia richiesta</button>
+                            <button class="view-tab" style="margin: 5px; background-color: var(--accento)" id="inviaModuloStadium" onclick="sendStadiumUpgrade('<?php echo addslashes($json->squadra[0]->nome_squadra); ?>')">Invia richiesta</button>
                         </div>
                     </div>
                 </div>
+
+                <!-- Valori attuali -->
                 <div class="overview-cards">
                     <div class="overview-card">
-                        <h3>Dettagli Stadio</h3>
+                        <h3>Valori Attuali</h3>
                         <div class="overview-item">
                             <span class="overview-label">Nome:</span>
                             <span class="overview-value"><?php echo $json->squadra[0]->stadio->nome_stadio ?? 'N/A'; ?></span>
@@ -657,22 +643,87 @@
                             <span class="overview-label">Manutenzione:</span>
                             <span class="overview-value"><?php echo $json->squadra[0]->stadio->costo_manutenzione ?? 'N/A'; ?> FVM</span>
                         </div>
-                    </div>
-
-                    <div class="overview-card">
-                        <h3>Bonus Partite</h3>
                         <div class="overview-item">
-                            <span class="overview-label">Nazionale:</span>
+                            <span class="overview-label">Costo Costruzione:</span>
+                            <span class="overview-value"><?php echo $json->squadra[0]->stadio->costo_costruzione ?? 'N/A'; ?> FVM</span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="overview-label">Bonus Casa Nazionale:</span>
                             <span class="overview-value"><?php echo $json->squadra[0]->stadio->bonus_casa_nazionale ?? 'N/A'; ?> Pt</span>
                         </div>
                         <div class="overview-item">
-                            <span class="overview-label">UEFA:</span>
+                            <span class="overview-label">Bonus Casa UEFA:</span>
                             <span class="overview-value"><?php echo $json->squadra[0]->stadio->bonus_casa_uefa ?? 'N/A'; ?> Pt</span>
                         </div>
+                        <div class="overview-item">
+                            <span class="overview-label">Incasso Sold Out:</span>
+                            <span class="overview-value"><?php echo $json->squadra[0]->stadio->sold_out ?? 'N/A'; ?> FVM</span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="overview-label">Abbonati:</span>
+                            <span class="overview-value"><?php echo $json->squadra[0]->stadio->abbonati ?? 'N/A'; ?>%</span>
+                        </div>
                     </div>
-
+                    <div class="overview-card">
+                        <h3>Valori Nuovi</h3>
+                        <div class="overview-item">
+                            <span class="overview-label">Livello:</span>
+                            <span class="overview-value" id="newLevel">-</span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="overview-label">Manutenzione:</span>
+                            <span class="overview-value" id="newMaintenance">-</span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="overview-label">Costo Costruzione:</span>
+                            <span class="overview-value" id="newConstruction">-</span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="overview-label">Bonus Casa Nazionale:</span>
+                            <span class="overview-value" id="newBonusNazionale">-</span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="overview-label">Bonus Casa UEFA:</span>
+                            <span class="overview-value" id="newBonusUEFA">-</span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="overview-label">Incasso Sold Out:</span>
+                            <span class="overview-value" id="newSoldOut">-</span>
+                        </div>
+                        <div class="overview-item">
+                            <span class="overview-label">Abbonati:</span>
+                            <span class="overview-value" id="newAbbonati">-</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <script>
+                const stadiumData = {
+                    1: {manutenzione:0, costruzione:0, bonusN:0, bonusU:0, soldOut:1, abbonati:'3%'},
+                    2: {manutenzione:64, costruzione:82, bonusN:1, bonusU:1, soldOut:5, abbonati:'6%'},
+                    3: {manutenzione:76, costruzione:97, bonusN:1.5, bonusU:1, soldOut:11, abbonati:'9%'},
+                    4: {manutenzione:106, costruzione:132, bonusN:2, bonusU:1, soldOut:19, abbonati:'13%'},
+                    5: {manutenzione:138, costruzione:166, bonusN:2.5, bonusU:1, soldOut:29, abbonati:'17%'},
+                    6: {manutenzione:168, costruzione:203, bonusN:3, bonusU:1.5, soldOut:41, abbonati:'21%'},
+                    7: {manutenzione:208, costruzione:241, bonusN:3.5, bonusU:1.5, soldOut:55, abbonati:'26%'},
+                    8: {manutenzione:246, costruzione:279, bonusN:4, bonusU:2, soldOut:71, abbonati:'31%'},
+                    9: {manutenzione:286, costruzione:317, bonusN:4.5, bonusU:2, soldOut:89, abbonati:'36%'},
+                    10:{manutenzione:359, costruzione:371, bonusN:5, bonusU:3, soldOut:109, abbonati:'45%'}
+                };
+
+                function updateNewStadiumDetails() {
+                    const livello = document.getElementById('livelloStadio').value;
+                    const dati = stadiumData[livello];
+                    document.getElementById('newLevel').innerText = livello;
+                    document.getElementById('newMaintenance').innerText = dati.manutenzione + ' FVM';
+                    document.getElementById('newConstruction').innerText = dati.costruzione + ' FVM';
+                    document.getElementById('newBonusNazionale').innerText = dati.bonusN + ' Pt';
+                    document.getElementById('newBonusUEFA').innerText = dati.bonusU + ' Pt';
+                    document.getElementById('newSoldOut').innerText = dati.soldOut + ' FVM';
+                    document.getElementById('newAbbonati').innerText = dati.abbonati;
+                }
+            </script>
             <!-- Vista Albo d'Oro -->
             <div class="albo-view" id="albo-view">
                 <div class="overview-card">
@@ -851,23 +902,20 @@
                                     <div class="player-stats">
                                         <span>Prelazione: <span class="stat-value"><?php echo $valore_prelazione; ?> FVM</span></span>
                                     </div>
-                                    <button class="prelazione-btn"
-                                            onclick="inviaRichiestaPrelazione(
-                                                <?php echo $id_squadra; ?>,
-                                                    <?php echo $calciatore['id']; ?>,
-                                                <?php echo $calciatore['fuori_listone']?>,
-                                                '<?php echo $squadraNome; ?>',
-                                                    '<?php echo addslashes($calciatore['nome_calciatore']); ?>',
-                                                    '<?php echo $calciatore['ruolo_calciatore']; ?>',
-                                                    '<?php echo addslashes($calciatore['nome_squadra_calciatore']); ?>',
-                                            <?php echo intval($valore_prelazione); ?>,
-                                            <?php echo intval($finanze->totale_crediti_bilancio);?>,
-                                            <?php echo intval($calciatore->costo_calciatore); ?>
-                                            )"
-                                            style="margin-top: 10px;">
-                                        Richiedi Prelazione
-                                    </button>
                                 </div>
+                                <button class="view-tab" style="margin: 5px; background-color: var(--accento)"
+                                        onclick="inviaRichiestaPrelazione(
+                                        <?php echo $id_squadra; ?>,
+                                        <?php echo $calciatore['id']; ?>,
+                                        <?php echo $calciatore['fuori_listone']?>,
+                                                '<?php echo $squadraNome; ?>',
+                                                '<?php echo addslashes($calciatore['nome_calciatore']); ?>',
+                                                '<?php echo $calciatore['ruolo_calciatore']; ?>',
+                                                '<?php echo addslashes($calciatore['nome_squadra_calciatore']); ?>',
+                                        <?php echo intval($valore_prelazione); ?>,
+                                        <?php echo intval($finanze->totale_crediti_bilancio);?>,
+                                        <?php echo intval($calciatore->costo_calciatore); ?>
+                                                )">Richiedi Prelazione</button>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -1074,19 +1122,6 @@
         window.open(url);
     }
 
-    function openStadiumUpgrade() {
-        const modulo = document.getElementById('moduloStadium');
-        const upgradeCard = document.getElementById('upgradeCard');
-        modulo.style.display = 'block';
-        upgradeCard.style.display = 'none';
-    }
-
-    function closeStadiumUpgrade() {
-        const modulo = document.getElementById('moduloStadium');
-        const upgradeCard = document.getElementById('upgradeCard');
-        modulo.style.display = 'none';
-        upgradeCard.style.display = 'flex';
-    }
 
     function sendStadiumUpgrade(nomeSquadra) {
         const livelloStadio = document.getElementById('livelloStadio').value;
