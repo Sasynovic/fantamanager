@@ -328,9 +328,9 @@
                     $calciatori_prelazione = [];
 
                     if ($prelazioni) {
-                        $json_associazioni = json_decode($prelazioni, true);
-                        if (!empty($json_associazioni['associazioni'])) {
-                            $calciatori_prelazione = $json_associazioni['associazioni'];
+                        $json_prelazioni = json_decode($prelazioni, true);
+                        if (!empty($json_prelazioni['associazioni'])) {
+                            $calciatori_prelazione = $json_prelazioni['associazioni'];
                         }
                     }
 
@@ -478,7 +478,6 @@
                             echo '<p>Nessun finanza registrata</p>';
                         }
                         ?>
-
                     </div>
 
                     <div class="overview-card">
