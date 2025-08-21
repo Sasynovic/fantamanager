@@ -51,7 +51,16 @@ class finanze_squadra
 
         // Campi aggiornabili
         $allowedFields = [
-            'totale_crediti_bilancio' => PDO::PARAM_INT
+            'totale_crediti_bilancio' => PDO::PARAM_INT,
+            'guadagno_crediti_stadio_league' => PDO::PARAM_INT,
+            'guadagno_crediti_stadio_cup' => PDO::PARAM_INT,
+            'premi_league' => PDO::PARAM_INT,
+            'premi_cup' => PDO::PARAM_INT,
+            'prequalifiche_uefa_stadio' => PDO::PARAM_INT,
+            'prequalifiche_uefa_premio' => PDO::PARAM_INT,
+            'competizioni_uefa_stadio' => PDO::PARAM_INT,
+            'competizioni_uefa_premio' => PDO::PARAM_INT,
+            'punteggio_ranking' => PDO::PARAM_STR
         ];
 
         $fields = [];

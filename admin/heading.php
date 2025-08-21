@@ -96,6 +96,7 @@
                 <a href="gestione_squadre.php">Gestione Squadre</a>
                 <a href="gestione_presidenti.php">Gestione Presidenti</a>
                 <a href="setFVM.php">Gestione FVM</a>
+                <a href="setFinanze.php">Gestione Finanze</a>
             </div>
         </div>
 
