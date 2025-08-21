@@ -4,6 +4,7 @@ header("Access-Control-Allow-Origin: *");
 // Gli altri header CORS rimangono invariati
 header("Access-Control-Allow-Methods: GET");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Content-Type: application/json; charset=UTF-8");
 require_once '../../config/database.php';
 require_once '../../models/squadra.php';
 
