@@ -444,10 +444,6 @@
                             <h3 class="overview-label">Finanze prossima stagione</h3>
 
                             <div class="overview-item">
-                                <span class="overview-label">Crediti residui cassa:</span>
-                                <span class="overview-value"><?php echo $finanze->crediti_residui_cassa; ?></span>
-                            </div>
-                            <div class="overview-item">
                                 <span class="overview-label">Guadagno crediti stadio campionato:</span>
                                 <span class="overview-value"><?php echo $finanze->guadagno_crediti_stadio_league; ?></span>
                             </div>
@@ -481,7 +477,7 @@
                             </div>
                             <div class="overview-item">
                                 <span class="overview-label">Totale crediti prossima stagione:</span>
-                                <span class="overview-value"><?php echo $finanze->crediti_residui_cassa + $finanze->guadagno_crediti_stadio_league + $finanze->guadagno_crediti_stadio_cup + $finanze->competizioni_uefa_premio +$finanze->competizioni_uefa_stadio +$finanze->prequalifiche_uefa_premio + $finanze->prequalifiche_uefa_stadio + $finanze->premi_cup + $finanze->premi_league; ?></span>
+                                <span class="overview-value"><?php echo $finanze->guadagno_crediti_stadio_league + $finanze->guadagno_crediti_stadio_cup + $finanze->competizioni_uefa_premio +$finanze->competizioni_uefa_stadio +$finanze->prequalifiche_uefa_premio + $finanze->prequalifiche_uefa_stadio + $finanze->premi_cup + $finanze->premi_league; ?></span>
                             </div>
 
                         <?php } else { ?>

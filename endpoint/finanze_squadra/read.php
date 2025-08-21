@@ -34,7 +34,6 @@ if ($num > 0) {
             "prequalifiche_uefa_premio" => $prequalifiche_uefa_premio,
             "competizioni_uefa_stadio" => $competizioni_uefa_stadio,
             "competizioni_uefa_premio" => $competizioni_uefa_premio,
-            "crediti_residui_cassa" => $crediti_residui_cassa,
             "totale_crediti_bilancio" => $totale_crediti_bilancio,
             "punteggio_ranking" => $punteggio_ranking,
             "id_squadra" => $id_squadra
