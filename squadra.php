@@ -262,13 +262,30 @@
         </div>
 
         <ul class="menu-list">
-            <li class="menu-item"><a href="index.php">Dashboard</a></li>
-            <li class="menu-item"><a href="albo.php">Albo d'oro</a></li>
-            <li class="menu-item"><a href="vendita.php">Squadre in vendita</a></li>
-            <li class="menu-item"><a href="tool.php">Tool scambi</a></li>
-            <li class="menu-item"><a href="regolamento.php">Regolamento</a></li>
-            <li class="menu-item"><a href="ricerca.php">Ricerca</a></li>
-            <li class="menu-item"><a href="contatti.php">Contatti</a></li>
+            <li class="menu-item">
+                <a href="index.php">Dashboard</a>
+            </li>
+            <li class="menu-item">
+                <a href="albo.php">Albo d'oro</a>
+            </li>
+            <li class="menu-item">
+                <a href="vendita.php">Squadre in vendita</a>
+            </li>
+            <li class="menu-item">
+                <a href="tool.php">Tool scambi</a>
+            </li>
+            <li class="menu-item">
+                <a href="regolamento.php">Regolamento</a>
+            </li>
+            <li class="menu-item">
+                <a href="ricerca.php">Ricerca</a>
+            </li>
+            <li class="menu-item">
+                <a href="news.php">News</a>
+            </li>
+            <li class="menu-item">
+                <a href="contatti.php">Contatti</a>
+            </li>
         </ul>
     </aside>
 
@@ -425,7 +442,7 @@
                     </div>
 
                     <div class="overview-card">
-                        <h3>Finanze</h3>
+                        <h3>Finanze attuali</h3>
 
                         <?php if(!empty($json_finanze->finanze_squadra)) {
                             $finanze = $json_finanze->finanze_squadra[0]; // prendi la prima voce
@@ -623,7 +640,7 @@
                                 <label for="livelloStadio">Seleziona livello:</label>
                                 <input type="number" id="livelloStadio" min="<?php echo (1 + intval($json->squadra[0]->stadio->livello_stadio))?>" max="10" placeholder="Inserisci livello (1-10)" onchange="updateNewStadiumDetails()">
                             </div>
-                            <button class="view-tab" style="margin: 5px; background-color: var(--accento)" id="inviaModuloStadium" onclick="sendStadiumUpgrade(<?php echo $id_squadra ?>, <?php echo  $finanze->totale_crediti_bilancio ?>, '<?php echo $squadraNome?>')">Invia richiesta</button>
+                            <button disabled class="view-tab" style="margin: 5px; background-color: var(--accento)" id="inviaModuloStadium" onclick="sendStadiumUpgrade(<?php echo $id_squadra ?>, <?php echo  $finanze->totale_crediti_bilancio ?>, '<?php echo $squadraNome?>')">Invia richiesta</button>
                         </div>
                     </div>
                 </div>
@@ -749,7 +766,7 @@
                             if (!passkeyData.success) {
                                 throw new Error("❌ Passkey non valida!");
                             }
-                            const livelloStadioAttuale = <?php echo $json->squadra[0]->stadio->livello_stadio ?? 0; ?>;
+                            const livelloStadioAttuale = <?php echo $json->squadra[0]->stadio->livello_stadio; ?>;
                             const livelloStadioDesiderato = parseInt(document.getElementById('livelloStadio').value, 10);
 
                             if (!livelloStadioDesiderato || livelloStadioDesiderato < 1 || livelloStadioDesiderato > 10) {

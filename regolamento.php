@@ -43,6 +43,9 @@
                 <a href="ricerca.php">Ricerca</a>
             </li>
             <li class="menu-item">
+                <a href="news.php">News</a>
+            </li>
+            <li class="menu-item">
                 <a href="contatti.php">Contatti</a>
             </li>
         </ul>

@@ -45,13 +45,30 @@
         </div>
 
         <ul class="menu-list">
-            <li class="menu-item"><a href="index.php">Dashboard</a></li>
-            <li class="menu-item"><a href="albo.php">Albo d'oro</a></li>
-            <li class="menu-item"><a href="vendita.php">Squadre in vendita</a></li>
-            <li class="menu-item"><a href="tool.php">Tool scambi</a></li>
-            <li class="menu-item"><a href="regolamento.php">Regolamento</a></li>
-            <li class="menu-item"><a href="ricerca.php">Ricerca</a></li>
-            <li class="menu-item"><a href="contatti.php">Contatti</a></li>
+            <li class="menu-item">
+                <a href="index.php">Dashboard</a>
+            </li>
+            <li class="menu-item">
+                <a href="albo.php">Albo d'oro</a>
+            </li>
+            <li class="menu-item">
+                <a href="vendita.php">Squadre in vendita</a>
+            </li>
+            <li class="menu-item">
+                <a href="tool.php">Tool scambi</a>
+            </li>
+            <li class="menu-item">
+                <a href="regolamento.php">Regolamento</a>
+            </li>
+            <li class="menu-item">
+                <a href="ricerca.php">Ricerca</a>
+            </li>
+            <li class="menu-item">
+                <a href="news.php">News</a>
+            </li>
+            <li class="menu-item">
+                <a href="contatti.php">Contatti</a>
+            </li>
         </ul>
     </aside>
 
