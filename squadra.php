@@ -1118,6 +1118,7 @@
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({
                                         id: idAssociazione,
+                                        timestamp : 0,
                                         prelazione: 0
                                     })
                                 });
