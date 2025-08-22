@@ -12,7 +12,7 @@
     <script src="js/showmenu.js" defer></script>
     <style>
         .main-body-content {
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
 
         .ranking-header {
@@ -30,6 +30,87 @@
             display: flex;
             align-items: center;
             gap: 15px;
+        }
+
+        .search-container {
+            background-color: var(--blu-scuro, #1a2c56);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .search-wrapper {
+            position: relative;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            border: 2px solid var(--accento, #3c74f5);
+            border-radius: 25px;
+            background-color: white;
+            color: var(--blu-scuro, #1a2c56);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .search-input:focus {
+            border-color: var(--blu, #294582);
+            box-shadow: 0 0 0 3px rgba(60, 116, 245, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .search-input::placeholder {
+            color: #999;
+            font-style: italic;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accento, #3c74f5);
+            font-size: 1.2rem;
+            pointer-events: none;
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .clear-search:hover {
+            background-color: #f0f0f0;
+            color: #666;
+        }
+
+        .search-stats {
+            text-align: center;
+            margin-top: 15px;
+            color: white;
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
 
         .table-container {
@@ -51,16 +132,46 @@
         }
 
 
+
+        .no-results {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 40px 20px;
+        }
+
+        .highlight {
+            background-color: yellow;
+            color: black;
+            font-weight: bold;
+            border-radius: 3px;
+            padding: 1px 2px;
+        }
+
         @media (max-width: 768px) {
             .pagination {
                 gap: 4px;
             }
 
+
+            .search-input {
+                font-size: 0.9rem;
+                padding: 10px 40px 10px 16px;
+            }
+
+            .search-container {
+                padding: 15px;
+            }
         }
 
         @media (max-width: 480px) {
             .pagination {
                 gap: 2px;
+            }
+
+
+            .search-wrapper {
+                max-width: 100%;
             }
         }
     </style>
@@ -104,7 +215,7 @@
         </ul>
     </aside>
 
-    <div class="main-content">
+    <div class="main-content" >
         <header class="main-header">
             <div class="main-text-header">
                 <button class="back-button" onclick="window.history.back();">
@@ -115,8 +226,23 @@
             </div>
         </header>
 
-        <div class="main-body">
+        <div class="main-body" style="overflow-y: scroll">
             <div class="main-body-content" id="main-body-content">
+                <!-- Barra di ricerca -->
+                <div class="search-container">
+                    <div class="search-wrapper">
+                        <input
+                            type="text"
+                            id="searchInput"
+                            class="search-input"
+                            placeholder="Cerca squadra per nome..."
+                            autocomplete="off"
+                        >
+                        <button id="clearSearch" class="clear-search" title="Cancella ricerca">×</button>
+                    </div>
+                    <div id="searchStats" class="search-stats"></div>
+                </div>
+
                 <table id="rankingTable">
                     <thead>
                     <tr>
@@ -149,8 +275,15 @@
 
 <script>
     let rankingData = [];
+    let filteredData = [];
     let rankingPage = 1;
-    let rankingItemsPerPage = 15;
+    let rankingItemsPerPage = 30;
+    let currentSearch = '';
+
+    // Elementi DOM
+    const searchInput = document.getElementById('searchInput');
+    const clearButton = document.getElementById('clearSearch');
+    const searchStats = document.getElementById('searchStats');
 
     function loadRanking(page = 1) {
         rankingPage = page;
@@ -168,8 +301,8 @@
                         }))
                         .sort((a, b) => b.punteggio - a.punteggio);
 
-                    mostraRanking();
-                    renderRankingPagination();
+                    // Applica il filtro corrente
+                    applySearch(currentSearch);
                 } else {
                     document.querySelector('#rankingTable tbody').innerHTML =
                         '<tr><td colspan="3">Nessun dato disponibile.</td></tr>';
@@ -182,37 +315,92 @@
             });
     }
 
+    function applySearch(searchTerm) {
+        currentSearch = searchTerm.toLowerCase().trim();
+
+        if (currentSearch === '') {
+            filteredData = [...rankingData];
+            clearButton.style.display = 'none';
+        } else {
+            filteredData = rankingData.filter(team =>
+                team.nome_squadra.toLowerCase().includes(currentSearch)
+            );
+            clearButton.style.display = 'flex';
+        }
+
+        // Aggiorna le statistiche
+        updateSearchStats();
+
+        // Reset alla prima pagina quando si cerca
+        rankingPage = 1;
+
+        // Aggiorna visualizzazione
+        mostraRanking();
+        renderRankingPagination();
+    }
+
+    function updateSearchStats() {
+        if (currentSearch === '') {
+            searchStats.textContent = `Visualizzando ${rankingData.length} squadre totali`;
+        } else {
+            searchStats.textContent = `Trovate ${filteredData.length} squadre${filteredData.length !== 1 ? '' : ''} per "${currentSearch}"`;
+        }
+    }
+
+    function highlightSearchTerm(text, searchTerm) {
+        if (!searchTerm) return text;
+
+        const regex = new RegExp(`(${searchTerm})`, 'gi');
+        return text.replace(regex, '<span class="highlight">$1</span>');
+    }
+
     function mostraRanking() {
         const tbody = document.querySelector('#rankingTable tbody');
         tbody.innerHTML = '';
 
         const start = (rankingPage - 1) * rankingItemsPerPage;
         const end = start + rankingItemsPerPage;
-        const datiPagina = rankingData.slice(start, end);
+        const datiPagina = filteredData.slice(start, end);
 
         if (datiPagina.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="3">Nessun dato disponibile.</td></tr>';
+            if (currentSearch) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="no-results">
+                            Nessuna squadra trovata per "${currentSearch}"<br>
+                            <small>Prova con un termine di ricerca diverso</small>
+                        </td>
+                    </tr>`;
+            } else {
+                tbody.innerHTML = '<tr><td colspan="3">Nessun dato disponibile.</td></tr>';
+            }
             return;
         }
 
         datiPagina.forEach((r, index) => {
-            const posizione = start + index + 1;
+            // Calcola la posizione nella classifica originale
+            const originalIndex = rankingData.findIndex(team => team.id === r.id);
+            const posizione = originalIndex + 1;
+
             const tr = document.createElement('tr');
+            const highlightedName = highlightSearchTerm(r.nome_squadra, currentSearch);
+
             tr.innerHTML = `
-            <td>${posizione}</td>
-                <td><a href="squadra.php?id=${r.id}">${r.nome_squadra}</a></td><td>${r.punteggio}</td>
-        `;
+                <td>${posizione}</td>
+                <td><a href="squadra.php?id=${r.id}">${highlightedName}</a></td>
+                <td>${r.punteggio}</td>
+            `;
             tbody.appendChild(tr);
         });
 
-        // Aggiunge righe vuote per arrivare a 10
-        for (let i = datiPagina.length; i < rankingItemsPerPage; i++) {
+        // Aggiunge righe vuote per mantenere la consistenza visiva
+        for (let i = datiPagina.length; i < Math.min(rankingItemsPerPage, 10); i++) {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-        `;
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            `;
             tbody.appendChild(tr);
         }
     }
@@ -221,7 +409,7 @@
         const paginationContainer = document.getElementById('rankingPagination');
         paginationContainer.innerHTML = '';
 
-        const totalPages = Math.ceil(rankingData.length / rankingItemsPerPage);
+        const totalPages = Math.ceil(filteredData.length / rankingItemsPerPage);
 
         if (totalPages <= 1) return;
 
@@ -236,7 +424,11 @@
         prevButton.disabled = rankingPage === 1;
         prevButton.title = 'Pagina precedente';
         prevButton.addEventListener('click', () => {
-            if (rankingPage > 1) loadRanking(rankingPage - 1);
+            if (rankingPage > 1) {
+                rankingPage--;
+                mostraRanking();
+                renderRankingPagination();
+            }
         });
         paginationContainer.appendChild(prevButton);
 
@@ -258,7 +450,11 @@
             const firstButton = document.createElement('button');
             firstButton.className = 'page-btn';
             firstButton.textContent = '1';
-            firstButton.addEventListener('click', () => loadRanking(1));
+            firstButton.addEventListener('click', () => {
+                rankingPage = 1;
+                mostraRanking();
+                renderRankingPagination();
+            });
             paginationContainer.appendChild(firstButton);
 
             // Aggiungi puntini se c'è un gap
@@ -268,8 +464,9 @@
                 dotsButton.textContent = '...';
                 dotsButton.title = `Vai alla pagina ${Math.max(1, startPage - 5)}`;
                 dotsButton.addEventListener('click', () => {
-                    const targetPage = Math.max(1, startPage - 5);
-                    loadRanking(targetPage);
+                    rankingPage = Math.max(1, startPage - 5);
+                    mostraRanking();
+                    renderRankingPagination();
                 });
                 paginationContainer.appendChild(dotsButton);
             }
@@ -281,7 +478,11 @@
             pageButton.className = 'page-btn' + (i === rankingPage ? ' active' : '');
             pageButton.textContent = i;
             pageButton.title = `Pagina ${i}`;
-            pageButton.addEventListener('click', () => loadRanking(i));
+            pageButton.addEventListener('click', () => {
+                rankingPage = i;
+                mostraRanking();
+                renderRankingPagination();
+            });
             paginationContainer.appendChild(pageButton);
         }
 
@@ -294,8 +495,9 @@
                 dotsButton.textContent = '...';
                 dotsButton.title = `Vai alla pagina ${Math.min(totalPages, endPage + 5)}`;
                 dotsButton.addEventListener('click', () => {
-                    const targetPage = Math.min(totalPages, endPage + 5);
-                    loadRanking(targetPage);
+                    rankingPage = Math.min(totalPages, endPage + 5);
+                    mostraRanking();
+                    renderRankingPagination();
                 });
                 paginationContainer.appendChild(dotsButton);
             }
@@ -303,7 +505,11 @@
             const lastButton = document.createElement('button');
             lastButton.className = 'page-btn';
             lastButton.textContent = totalPages;
-            lastButton.addEventListener('click', () => loadRanking(totalPages));
+            lastButton.addEventListener('click', () => {
+                rankingPage = totalPages;
+                mostraRanking();
+                renderRankingPagination();
+            });
             paginationContainer.appendChild(lastButton);
         }
 
@@ -314,18 +520,34 @@
         nextButton.disabled = rankingPage === totalPages;
         nextButton.title = 'Pagina successiva';
         nextButton.addEventListener('click', () => {
-            if (rankingPage < totalPages) loadRanking(rankingPage + 1);
+            if (rankingPage < totalPages) {
+                rankingPage++;
+                mostraRanking();
+                renderRankingPagination();
+            }
         });
         paginationContainer.appendChild(nextButton);
     }
 
+    // Event listeners per la ricerca
+    searchInput.addEventListener('input', (e) => {
+        applySearch(e.target.value);
+    });
+
+    clearButton.addEventListener('click', () => {
+        searchInput.value = '';
+        applySearch('');
+        searchInput.focus();
+    });
+
     // Aggiorna la paginazione quando si ridimensiona la finestra
     window.addEventListener('resize', () => {
-        if (rankingData.length > 0) {
+        if (filteredData.length > 0) {
             renderRankingPagination();
         }
     });
 
+    // Inizializza
     loadRanking();
 </script>
 </body>
