@@ -37,6 +37,23 @@ try {
         echo json_encode(["success" => false, "message" => "Passkey errata o non trovata"]);
         exit;
     }
+    // Verifica se è l'admin (ID 83) - accesso completo a tutte le squadre
+    if ($presidente['id'] == 83) {
+        echo json_encode([
+            "success" => true,
+            "message" => "Accesso admin riuscito",
+            "is_admin" => true,
+            "presidente" => [
+                "id_presidente" => $presidente['id'],
+                "nome" => $presidente['nome'],
+                "cognome" => $presidente['cognome']
+            ],
+            "squadra" => [
+                "nome" => "ADMIN SYSTEM"
+            ]
+        ]);
+        exit;
+    }
 
     // Verifica se una delle due squadre appartiene al presidente e recupera anche il nome squadra
     $stmt = $conn->prepare("
