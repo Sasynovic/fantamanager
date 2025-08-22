@@ -2,7 +2,7 @@
 session_start();
 
 // Timeout in secondi
-$timeout = 120;
+$timeout = 12000;
 
 // Controlla se l'admin è loggato
 if (!isset($_SESSION['admin_logged_in'])) {
@@ -141,11 +141,6 @@ $nomeSezione = "squadra";
             </select>
         </div>
 
-        <div class="form-group">
-            <label for="valore_fvm">Valore fvm</label>
-            <input type="text" name="valore_fvm" placeholder="Valore fvm squadra">
-        </div>
-
         <div class="checkbox-label">
             <span>In vendita</span>
             <label class="toggle-switch">
@@ -253,11 +248,6 @@ $nomeSezione = "squadra";
             </select>
         </div>
 
-        <div class="form-group">
-            <label for="valore_fvm_edit">Valore fvm</label>
-            <input type="text" id="valore_fvm_edit" name="valore_fvm_edit" placeholder="Valore fvm squadra">
-        </div>
-
         <div class="checkbox-label">
             <span>In vendita</span>
             <label class="toggle-switch">
@@ -308,7 +298,6 @@ $nomeSezione = "squadra";
                     <span>Presidente: ${item.dirigenza.presidente}<span>
                     <span>Vice: ${item.dirigenza.vicepresidente}</span>
                     <span>Stadio: ${item.stadio.nome_stadio}</span>
-                    <span>Valore fvm: ${item.valore_fvm}</span>
                     <span>In vendita: ${item.vendita}</span>
                     <span>Credito: ${item.finanze.credito}</span>
                 </div>
@@ -333,11 +322,6 @@ $nomeSezione = "squadra";
                 //controlliamo se presidente e vice non sono uguali
                 if (data.id_pres === data.id_vice) {
                     alert("Il presidente e il vice non possono essere la stessa persona.");
-                    return false; // Non procedere con la creazione
-                }
-                // il valore fvm deve essere un numero positivo
-                if (isNaN(data.valore_fvm) || data.valore_fvm <= 0) {
-                    alert("Il valore fvm deve essere un numero positivo.");
                     return false; // Non procedere con la creazione
                 }
                 // Qui è possibile validare o manipolare i dati prima dell'invio
@@ -390,7 +374,6 @@ $nomeSezione = "squadra";
         // Popola i campi base
         document.getElementById('id-edit').value = dati.id || '';
         document.getElementById('nome_squadra_edit').value = dati.nome_squadra || '';
-        document.getElementById('valore_fvm_edit').value = dati.valore_fvm || '';
         document.getElementById('vendita_edit').checked = dati.vendita === "1" || dati.vendita === 1 || dati.vendita === true;
 
         // Attendi il caricamento dei dati delle select
@@ -481,7 +464,6 @@ $nomeSezione = "squadra";
         const id_pres = document.getElementById('id_pres_edit').value;
         const id_vice = document.getElementById('id_vice_edit').value === "NULL" ? null : document.getElementById('id_vice_edit').value;
         const id_stadio = document.getElementById('id_stadio_edit').value;
-        const valore_fvm = document.getElementById('valore_fvm_edit').value;
         const vendita = document.getElementById('vendita_edit').checked ? 1 : 0;
 
         // Validazione
@@ -490,17 +472,11 @@ $nomeSezione = "squadra";
             return false;
         }
 
-        if (isNaN(valore_fvm) || valore_fvm <= 0) {
-            alert("Il valore fvm deve essere un numero positivo.");
-            return false;
-        }
-
         const data = {
             nome_squadra: nome_squadra,
             id_pres: id_pres,
             id_vice: id_vice,
             id_stadio: id_stadio,
-            valore_fvm: valore_fvm,
             vendita: vendita
         };
 
