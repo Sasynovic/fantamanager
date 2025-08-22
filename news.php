@@ -148,7 +148,7 @@
             </div>
         </header>
 
-        <div class="main-body">
+        <div class="main-body" style="overflow-y: scroll;">
             <div class="main-body-content" id="main-body-content" style="padding: 30px;">
                 <div class="news-content" id="news-content">
                     <!-- Le news verranno caricate qui -->
