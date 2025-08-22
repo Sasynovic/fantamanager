@@ -2,7 +2,7 @@
 session_start();
 
 // Timeout in secondi
-$timeout = 120;
+$timeout = 12000;
 
 // Controllo accesso admin
 if (!isset($_SESSION['admin_logged_in'])) {

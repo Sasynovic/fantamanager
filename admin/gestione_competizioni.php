@@ -2,7 +2,7 @@
 session_start();
 
 // Timeout in secondi
-$timeout = 120;
+$timeout = 12000;
 
 // Controlla se l'admin è loggato
 if (!isset($_SESSION['admin_logged_in'])) {

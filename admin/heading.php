@@ -90,6 +90,8 @@
     <div class="menu">
         <a href="gestione_news.php">Gestione News</a>
 
+        <a href="download.php">Sezione download</a>
+
         <div class="dropdown">
             <span>Squadre ▾</span>
             <div class="dropdown-content">
