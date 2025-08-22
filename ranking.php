@@ -150,7 +150,7 @@
 <script>
     let rankingData = [];
     let rankingPage = 1;
-    let rankingItemsPerPage = 10;
+    let rankingItemsPerPage = 15;
 
     function loadRanking(page = 1) {
         rankingPage = page;
