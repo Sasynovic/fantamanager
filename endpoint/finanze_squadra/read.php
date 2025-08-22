@@ -26,6 +26,7 @@ if ($num > 0) {
         extract($row);
         $squadra_item = array(
             "id" => $id,
+            "nome_squadra" => $nome_squadra,
             "guadagno_crediti_stadio_league" => $guadagno_crediti_stadio_league,
             "guadagno_crediti_stadio_cup" => $guadagno_crediti_stadio_cup,
             "premi_league" => $premi_league,
