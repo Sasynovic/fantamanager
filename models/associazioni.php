@@ -27,6 +27,7 @@ class associazioni
                 a.n_movimenti,
                 a.scambiato,
                 a.prelazione,
+                a.timestamp,
                 
                 s.nome_squadra AS nome_squadra,
                 
