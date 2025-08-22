@@ -626,6 +626,16 @@
                 <div class="grid-player-card-P">
                     <span class="overview-label">Valore FVM rosa:</span>
                     <span class="overview-value"><?php echo $json->squadra[0]->valore_fvm ?? '0'; ?> FVM</span>
+                    <br>
+                    <span class="overview-label">Costo rosa:</span>
+                    <span class="overview-value">
+                        <?php
+                        $valore = 0;
+                        foreach ($json_associazioni->associazioni as $associazione) {
+                            $valore += $associazione->costo_calciatore;
+                        }
+                        echo $valore . ' FVM' ;
+                     ?></span>
                 </div>
                 <!-- I giocatori verranno inseriti qui via JavaScript -->
             </div>

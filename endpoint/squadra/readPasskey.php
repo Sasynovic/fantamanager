@@ -37,8 +37,8 @@ try {
         echo json_encode(["success" => false, "message" => "Passkey errata o non trovata"]);
         exit;
     }
-    // Verifica se è l'admin (ID 83) - accesso completo a tutte le squadre
-    if ($presidente['id'] == 83) {
+    // Verifica se è l'admin (ID 83 o 189) - accesso completo a tutte le squadre
+    if ($presidente['id'] == 83 || $presidente['id'] == 189) {
         echo json_encode([
             "success" => true,
             "message" => "Accesso admin riuscito",
