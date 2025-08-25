@@ -32,28 +32,6 @@
             margin: 0;
         }
 
-        .buttonTrattativa {
-            background-color: var(--blu-scuro);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 15px;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-
-        .buttonTrattativa:hover {
-            background-color: var(--blu-scurissimo);
-        }
-
-        .buttonTrattativa:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-
-
         .giocatore-itemP,.giocatore-itemD, .giocatore-itemC, .giocatore-itemA {
             display: flex;
             align-items: center;
@@ -88,14 +66,6 @@
         input:out-of-range {
             border-color: #f21a3c;
             background-color: #fde8eb;
-        }
-
-        .data-input {
-            width: 100%;
-            padding: 6px;
-            margin-top: 4px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
         }
 
         /* Nuovi stili per gli elementi di scambio */
@@ -511,8 +481,8 @@
                                                                     justify-content: space-evenly;
                                                                     align-items: center;
                                                                 ">
-                                <button id="buttonPasskey" class="buttonTrattativa" style="background-color: var(--blu-scuro)" onclick="verificaPasskey()">Verifica passkey</button>
-                                <button id="calcolaTrattativa" class="buttonTrattativa" style="background-color: var(--accento)">Calcola Trattativa</button>
+                                <button id="buttonPasskey" class="tablinks" style="background-color: var(--blu-scuro)" onclick="verificaPasskey()">Verifica passkey</button>
+                                <button id="calcolaTrattativa" class="tablinks" style="background-color: var(--accento)">Calcola Trattativa</button>
                             </div>
                             </div>
                         <div id="risultatoTrattativa" class="risultato-trattativa"></div>
@@ -1209,7 +1179,7 @@
         if (isValid) {
           // Crea il nuovo bottone
             const inviaTrattativa = document.createElement('button');
-            inviaTrattativa.className = 'buttonTrattativa';
+            inviaTrattativa.className = 'tablinks';
             inviaTrattativa.textContent = 'Invia Trattativa';
 
             // Aggiungi l'event listener

@@ -34,31 +34,6 @@
         font-family: Arial, sans-serif;
     }
 
-    .tablinks {
-        padding: 10px 20px;
-        background-color: var(--blu);
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-        color: white;
-        border: none;
-        outline: none;
-        font-size: 1rem;
-    }
-    .tablinks.active {
-        background-color: var(--oro);
-        color: var(--blu-scurissimo);
-    }
-
-    .tablinks:hover:not(.active) {
-        background-color: var(--accento);
-    }
-
-    .tablinks:hover:not(.active) {
-        background-color: #2a3a5a;
-    }
-
-
     .news-content {
         min-height: 300px;
     }

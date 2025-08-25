@@ -874,105 +874,10 @@
             <!-- Vista Settore Giovanile -->
             <div class="sgs-view" id="sgs-view">
                 <div class="overview-cards" id="buyCard" >
-                    <div class="overview-card" style="
-                                                                        display: flex;
-                                                                        justify-content: space-between;
-                                                                        align-items: center;
-                                                                    ">
-                        <h3>Acquista calciatori settore giovanile</h3>
-                        <button onclick="openSgs()">Acquista</button>
-                    </div>
-                </div>
-                <div class="overview-cards" id="moduloSgs" style="display: none">
                     <div class="overview-card">
-                        <div class="modulo-header" style="
-                                                                                    display: flex;
-                                                                                    flex-direction: row;
-                                                                                    width: 100%;
-                                                                                    align-items: center;
-                                                                                    justify-content: space-between;
-                                                                                    padding-bottom: 8px;
-                                                                                ">
-                            <h3>Modulo Settore Giovanile</h3>
-                            <button onclick="closeSgs()">X</button>
-                        </div>
-                        <div class="modulo-content" >
-                            <div class="modulo-input">
-                                <label for="nome1"></label>
-                                <input type="text" id="nome1" placeholder="Nome calciatore 1">
-                                <input type="number" id="offerta1" min="1" max="10" placeholder="Offerta calciatore 1">
-                            </div>
-                            <div class="modulo-input">
-                                <label for="nome2"></label>
-                                <input type="text" id="nome2" placeholder="Nome calciatore 2">
-                                <input type="number" id="offerta2" min="1" max="10" placeholder="Offerta calciatore 2">
-                            </div>
-                            <div class="modulo-input">
-                                <label for="nome3"></label>
-                                <input type="text" id="nome3" placeholder="Nome calciatore 3">
-                                <input type="number" id="offerta3" min="1" max="10" placeholder="Offerta calciatore 3">
-                            </div>
-                            <button id="inviaModuloSgs" onclick="sendSgs('<?php echo addslashes($json->squadra[0]->nome_squadra); ?>')">Invia</button>
-                        </div>
-                        <script>
-                            // Gestione dei tab - VERSIONE DEFINITIVA
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const tabs = document.querySelectorAll('.view-tab');
+                        <h3>Acquista calciatori settore giovanile</h3>
+                        <i style="font">Acquistabili a partire da settembre...</i>
 
-                                tabs.forEach(tab => {
-                                    tab.addEventListener('click', function(e) {
-                                        e.preventDefault();
-
-                                        // Rimuovi active da tutti i tab
-                                        tabs.forEach(t => t.classList.remove('active'));
-                                        // Aggiungi active al tab cliccato
-                                        this.classList.add('active');
-
-                                        // Nascondi tutte le view
-                                        document.querySelectorAll('.overview, .grid-view, .stadium-view, .albo-view, .sgs-view, .prl-view')
-                                            .forEach(v => v.classList.remove('active'));
-
-                                        // Mostra la view corretta
-                                        const viewId = this.getAttribute('data-view') + '-view';
-                                        const targetView = document.getElementById(viewId);
-                                        if(targetView) {
-                                            targetView.classList.add('active');
-                                        }
-                                    });
-                                });
-
-                                // Caricamento dei giocatori
-                                fetch('endpoint/associazioni/read.php?id_squadra=<?php echo $id_squadra; ?>&prelazione=0')
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        const players = data.associazioni;
-                                        const gridView = document.getElementById('grid-view');
-
-                                        const sortedPlayers = players.sort((a, b) => {
-                                            const order = { 'P': 0, 'D': 1, 'C': 2, 'A': 3 };
-                                            return order[a.ruolo_calciatore] - order[b.ruolo_calciatore];
-                                        });
-
-                                        sortedPlayers.forEach(player => {
-                                            const card = document.createElement('div');
-                                            card.className = `grid-player-card-${player.ruolo_calciatore}`;
-                                            card.innerHTML = `
-                                            <div class="player-role-badge role-${player.ruolo_calciatore}">${player.ruolo_calciatore}</div>
-                                            <div class="player-main-info">
-                                                <div class="player-name">${player.nome_calciatore}</div>
-                                                <div class="player-team">${player.nome_squadra_calciatore || 'N/A'}</div>
-                                                <div class="player-stats">
-                                                    <span>Costo: <span class="stat-value">${player.costo_calciatore} FVM</span></span>
-                                                    <span>FVM: <span class="stat-value">${player.fvm} FVM</span></span>
-                                                </div>
-                                            </div>
-                                        `;
-                                            gridView.appendChild(card);
-                                        });
-                                    })
-                                    .catch(error => console.error('Errore nel recupero dei dati:', error));
-                            });
-                        </script>
                     </div>
                 </div>
                 <div class="overview-cards">
@@ -1202,49 +1107,61 @@
 </html>
 
 <script>
-    function openSgs() {
-        const modulo = document.getElementById('moduloSgs');
-        const buyCard = document.getElementById('buyCard');
-        modulo.style.display = 'block';
-        buyCard.style.display = 'none';
-    }
+    // Gestione dei tab - VERSIONE DEFINITIVA
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.view-tab');
 
-    function closeSgs() {
-        const modulo = document.getElementById('moduloSgs');
-        const buyCard = document.getElementById('buyCard');
-        modulo.style.display = 'none';
-        buyCard.style.display = 'flex';
-    }
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Rimuovi active da tutti i tab
+                tabs.forEach(t => t.classList.remove('active'));
+                // Aggiungi active al tab cliccato
+                this.classList.add('active');
 
-    function sendSgs(nomeSquadra){
-        const getNome1 = document.getElementById('nome1').value;
-        const getNome2 = document.getElementById('nome2').value;
-        const getNome3 = document.getElementById('nome3').value;
-        const getOfferta1 = document.getElementById('offerta1').value || 0;
-        const getOfferta2 = document.getElementById('offerta2').value || 0;
-        const getOfferta3 = document.getElementById('offerta3').value || 0;
+                // Nascondi tutte le view
+                document.querySelectorAll('.overview, .grid-view, .stadium-view, .albo-view, .sgs-view, .prl-view')
+                    .forEach(v => v.classList.remove('active'));
 
-        const tot = parseInt(getOfferta1) + parseInt(getOfferta2) + parseInt(getOfferta3);
+                // Mostra la view corretta
+                const viewId = this.getAttribute('data-view') + '-view';
+                const targetView = document.getElementById(viewId);
+                if(targetView) {
+                    targetView.classList.add('active');
+                }
+            });
+        });
 
-        if(tot>10){
-            alert("L'offerta totale non può superare 10 FVM");
-            return;
-        }
+        // Caricamento dei giocatori
+        fetch('endpoint/associazioni/read.php?id_squadra=<?php echo $id_squadra; ?>&prelazione=0')
+            .then(response => response.json())
+            .then(data => {
+                const players = data.associazioni;
+                const gridView = document.getElementById('grid-view');
 
-        const numeroWhatsApp = "+393371447208";
+                const sortedPlayers = players.sort((a, b) => {
+                    const order = { 'P': 0, 'D': 1, 'C': 2, 'A': 3 };
+                    return order[a.ruolo_calciatore] - order[b.ruolo_calciatore];
+                });
 
-        const messaggio = `Ciao, sono ${nomeSquadra} e interessato ai seguenti calciatori del settore giovanile:%0A` +
-            `1. Nome: ${getNome1}, Offerta: ${getOfferta1} FVM%0A` +
-            `2. Nome: ${getNome2}, Offerta: ${getOfferta2} FVM%0A` +
-            `3. Nome: ${getNome3}, Offerta: ${getOfferta3} FVM`;
-        const url = `https://wa.me/${numeroWhatsApp}?text=${messaggio}`;
-
-        const conferma1 = confirm(`Sei sicuro di voler acquistare i calciatori indicati?`);
-        if (!conferma1) return;
-
-        const conferma2 = confirm("Questa operazione è irreversibile! Sei sicuro?");
-        if (!conferma2) return;
-
-        window.open(url);
-    }
+                sortedPlayers.forEach(player => {
+                    const card = document.createElement('div');
+                    card.className = `grid-player-card-${player.ruolo_calciatore}`;
+                    card.innerHTML = `
+                                            <div class="player-role-badge role-${player.ruolo_calciatore}">${player.ruolo_calciatore}</div>
+                                            <div class="player-main-info">
+                                                <div class="player-name">${player.nome_calciatore}</div>
+                                                <div class="player-team">${player.nome_squadra_calciatore || 'N/A'}</div>
+                                                <div class="player-stats">
+                                                    <span>Costo: <span class="stat-value">${player.costo_calciatore} FVM</span></span>
+                                                    <span>FVM: <span class="stat-value">${player.fvm} FVM</span></span>
+                                                </div>
+                                            </div>
+                                        `;
+                    gridView.appendChild(card);
+                });
+            })
+            .catch(error => console.error('Errore nel recupero dei dati:', error));
+    });
 </script>
+

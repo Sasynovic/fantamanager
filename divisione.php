@@ -134,25 +134,25 @@
 
                             // Crea la tabella HTML
                             const tableHTML = `
-                                        <table class="competizioni-table">
-                        <thead class="competizioni-table__header">
-                            <tr class="competizioni-table__row">
-                                <th class="competizioni-table__header-cell">Nome</th>
-                                <th class="competizioni-table__header-cell">Stagione</th>
-                                <th class="competizioni-table__header-cell">Azioni</th>
-                            </tr>
-                        </thead>
-                        <tbody class="competizioni-table__body">
-                            ${competizioni.map(comp => `
-                                <tr class="competizioni-table__row">
-                                    <td class="competizioni-table__cell competizioni-table__cell">${comp.nome_competizione}</td>
-                                    <td class="competizioni-table__cell competizioni-table__cell">${comp.anno}</td>
-                                    <td class="competizioni-table__cell competizioni-table__cell"><a class="comp-button" href='competizione.php?id=${comp.id}'>Dettagli</a></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
+                                                        <table class="competizioni-table">
+                                        <thead class="competizioni-table__header">
+                                            <tr class="competizioni-table__row">
+                                                <th class="competizioni-table__header-cell">Nome</th>
+                                                <th class="competizioni-table__header-cell">Stagione</th>
+                                                <th class="competizioni-table__header-cell">Azioni</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="competizioni-table__body">
+                                            ${competizioni.map(comp => `
+                                                <tr class="competizioni-table__row">
+                                                    <td class="competizioni-table__cell competizioni-table__cell">${comp.nome_competizione}</td>
+                                                    <td class="competizioni-table__cell competizioni-table__cell">${comp.anno}</td>
+                                                    <td class="competizioni-table__cell competizioni-table__cell"><a class="tablinks" style="background-color: var(--accento)" href='competizione.php?id=${comp.id}'>Dettagli</a></td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                `;
 
                             contentContainer.innerHTML = tableHTML;
                         }

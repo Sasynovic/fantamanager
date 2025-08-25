@@ -72,21 +72,6 @@ input{
     cursor: not-allowed;
 }
 
-/*Comp button href in a usato in divisione.php*/
-
-button, .comp-button{
-    padding: 4px 8px;
-    border-radius: 30px;
-    font-weight: bold;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    background: var(--accento)
-}
-
-button:hover ,.comp-button:hover{
-    background-color: #1c4cad;
-}
 
 .main-menu {
     width: 20%;
@@ -277,7 +262,6 @@ button:hover ,.comp-button:hover{
     border: none;
     cursor: pointer;
     box-shadow: none;
-
 }
 
 .back-button img{
@@ -410,6 +394,163 @@ button:hover ,.comp-button:hover{
     padding: 35px;
     position: absolute;
     border-radius: 50%;
+}
+
+/* Stili per la ricerca avanzata */
+.search-container {
+    background-color: var(--blu-scuro, #1a2c56);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin: 20px auto;
+    width: 90%;
+    max-width: 800px;
+}
+
+.search-wrapper {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 45px 12px 20px;
+    border: 2px solid var(--accento, #3c74f5);
+    border-radius: 25px;
+    background-color: white;
+    color: var(--blu-scuro, #1a2c56);
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.search-input:focus {
+    border-color: var(--blu, #294582);
+    box-shadow: 0 0 0 3px rgba(60, 116, 245, 0.1);
+    transform: translateY(-1px);
+}
+
+.search-input::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+.search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accento, #3c74f5);
+    font-size: 1.2rem;
+    pointer-events: none;
+}
+
+.clear-search {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.clear-search:hover {
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+.search-stats {
+    text-align: center;
+    margin-top: 15px;
+    color: white;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.highlight {
+    background-color: yellow;
+    color: black;
+    font-weight: bold;
+    border-radius: 3px;
+    padding: 1px 2px;
+}
+
+.no-results {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    padding: 40px 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px dashed #ccc;
+    margin: 20px;
+}
+
+.news-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+@media (max-width: 768px) {
+    .search-input {
+        font-size: 0.9rem;
+        padding: 10px 40px 10px 16px;
+    }
+
+    .search-container {
+        padding: 15px;
+        width: 95%;
+    }
+
+}
+
+@media (max-width: 480px) {
+    .search-wrapper {
+        max-width: 100%;
+    }
+
+}
+
+
+/*Tablinks - Nome attuale per i bottoni - cerchiamo di omologare con forma romboidale*/
+.tablinks {
+    padding: 10px 20px;
+    background-color: var(--blu);
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+}
+.tablinks.active {
+    background-color: var(--oro);
+    color: var(--blu-scurissimo);
+}
+
+.tablinks:hover:not(.active) {
+    background-color: var(--accento);
+}
+
+.tablinks:hover:not(.active) {
+    background-color: #2a3a5a;
 }
 
 /*stile per la tabella*/

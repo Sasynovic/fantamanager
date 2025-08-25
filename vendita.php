@@ -221,10 +221,10 @@
                     <td>${squadra.prezzo} €</td>
                     <td><span class="rating">${getRatingStars(squadra.rate)}</span></td>
                     <td class="action-buttons">
-                        <button class="buy-btn">Acquista</button>
+                        <button class="tablinks" style="background-color: var(--accento)" ">Acquista</button>
                     </td>
                 `;
-            const button = tr.querySelector('.buy-btn');
+            const button = tr.querySelector('.tablinks');
             button.addEventListener('click', () => acquistaSquadra(squadra.nome_squadra, squadra.prezzo, squadra.rate));
             tbody.appendChild(tr);
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>FMPro</title>
+    <title>FMPro - Ricerca</title>
     <link rel="icon" href="public/background/logo.png" type="image/png">
 
     <link rel="stylesheet" href="css/style.css" />
@@ -13,18 +13,6 @@
     <script src="js/showmenu.js" defer></script>
 
     <style>
-        .filter{
-            background: linear-gradient(135deg, var(--accento), var(--blu-scurissimo));
-            margin: 20px auto;
-            width: 90%;
-            border: 1px solid white;
-            border-radius: 30px;
-            text-align: center;
-            padding: 20px;
-        }
-        .filter-item{
-            margin: 10px 0;
-        }
         .main-body-content{
             height: 100%;
             overflow-y: scroll;
@@ -33,8 +21,8 @@
             justify-content: flex-start;
         }
     </style>
-
 </head>
+
 <body>
 <div class="main-container">
     <!-- Menu laterale -->
@@ -60,13 +48,13 @@
             <li class="menu-item">
                 <a href="regolamento.php">Regolamento</a>
             </li>
-            <li class="menu-item">
+            <li class="menu-item active">
                 <a href="ricerca.php">Ricerca</a>
             </li>
             <li class="menu-item">
                 <a href="news.php">News</a>
             </li>
-            <li class="menu-item active">
+            <li class="menu-item">
                 <a href="ranking.php">Classifica Ranking</a>
             </li>
             <li class="menu-item">
@@ -81,39 +69,41 @@
                 <button class="back-button" onclick="window.history.back();">
                     <img src="public/chevron/chevronL.svg" alt="Indietro" height="40" width="40"/>
                 </button>
-                <h1>Ricerca</h1>
+                <h1>Ricerca Squadre</h1>
                 <h1 id="hamburger-menu"></h1>
             </div>
         </header>
 
         <div class="main-body">
             <div class="main-body-content" id="main-body-content">
-                <div class="filter">
-                    <h2>Filtri di ricerca</h2>
-                    <div class="filter-item">
-                        <label for="team"></label>
-                        <input type="text" id="team" placeholder="Squadra" />
+                <!-- Barra di ricerca avanzata -->
+                <div class="search-container">
+                    <div class="search-wrapper">
+                        <input
+                                type="text"
+                                id="searchInput"
+                                class="search-input"
+                                placeholder="Cerca squadre per nome o presidente..."
+                                autocomplete="off"
+                        >
+                        <button id="clearSearch" class="clear-search" title="Cancella ricerca">×</button>
                     </div>
-                    <div class="filter-item">
-                        <label for="player"></label>
-                        <input type="text" id="player" placeholder="Presidente" />
-                    </div>
-                    <button id="search-button">Cerca</button>
+                    <div id="searchStats" class="search-stats"></div>
                 </div>
 
-                <table id="squadraTable">
+                <table class="squadra-table" id="squadraTable">
                     <thead>
                     <tr>
                         <th>Squadra</th>
                         <th>Presidente</th>
-                        <th></th>
+                        <th>Dettagli</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr><td colspan="3">Caricamento dati...</td></tr>
                     </tbody>
                 </table>
-                <div id="pagination" class="pagination"></div>
+                <div id="pagination" class="news-pagination"></div>
             </div>
         </div>
 
@@ -132,134 +122,237 @@
 </div>
 
 <script>
-    let currentPage = 1;
-    const itemsPerPage = 10;
-    let totalPages = 1;
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const clearButton = document.getElementById('clearSearch');
+        const searchStats = document.getElementById('searchStats');
 
-    function fetchSquadraData(team = '', player = '', page = 1) {
-        const query = new URLSearchParams({
-            nome_squadra: team,
-            nome_presidente: player,
-            page: page,          // Invia la pagina corrente all'API
-            items_per_page: itemsPerPage  // Invia il numero di elementi per pagina
+        let allSquadre = [];
+        let filteredSquadre = [];
+        let currentPage = 1;
+        let currentSearch = '';
+        const itemsPerPage = 10;
+
+        // Inizializza
+        fetchAllSquadre();
+
+        // Event listeners per la ricerca
+        searchInput.addEventListener('input', (e) => {
+            applySearch(e.target.value);
         });
-        const url = `${window.location.origin}/endpoint/squadra/read.php?${query}`;
 
-        const tbody = document.querySelector('#squadraTable tbody');
-        tbody.innerHTML = '<tr><td colspan="3">Caricamento dati...</td></tr>';
+        clearButton.addEventListener('click', () => {
+            searchInput.value = '';
+            applySearch('');
+            searchInput.focus();
+        });
 
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                // Usa i dati della paginazione forniti dall'API
-                currentPage = data.pagination.current_page;
-                totalPages = data.pagination.total_pages;
+        function fetchAllSquadre() {
+            const url = `${window.location.origin}/endpoint/squadra/read.php?limit=1000`;
 
-                const squadre = data.squadra || [];
-                renderTable(squadre);
-                renderPagination(data.pagination);
-            })
-            .catch(err => {
-                console.error('Errore:', err);
-                tbody.innerHTML = '<tr><td colspan="3">Errore nel caricamento dei dati.</td></tr>';
-            });
-    }
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.squadra || !Array.isArray(data.squadra)) {
+                        throw new Error('Formato dati non valido');
+                    }
 
-    function renderTable(squadre) {
-        const tbody = document.querySelector('#squadraTable tbody');
-        tbody.innerHTML = '';
-
-        if (squadre.length === 0) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = '<td colspan="3">Nessun risultato trovato.</td>';
-            tbody.appendChild(tr);
-            return;
+                    allSquadre = data.squadra;
+                    applySearch(''); // Inizializza con tutti i risultati
+                })
+                .catch(error => {
+                    console.error('Errore nel caricamento delle squadre:', error);
+                    const tbody = document.querySelector('#squadraTable tbody');
+                    tbody.innerHTML = '<tr><td colspan="3">Errore nel caricamento dei dati.</td></tr>';
+                });
         }
 
-        squadre.forEach(squadra => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-            <td>${squadra.nome_squadra}</td>
-            <td>${squadra.dirigenza.presidente}</td>
-            <td><a href="squadra.php?id=${squadra.id}"><button>Dettagli</button></a></td>
-        `;
-            tbody.appendChild(tr);
-        });
-    }
+        function applySearch(searchTerm) {
+            currentSearch = searchTerm.toLowerCase().trim();
 
-    function renderPagination(paginationData) {
-        const container = document.getElementById('pagination');
-        container.innerHTML = '';
+            if (currentSearch === '') {
+                filteredSquadre = [...allSquadre];
+                clearButton.style.display = 'none';
+            } else {
+                filteredSquadre = allSquadre.filter(squadra => {
+                    // Cerca nel nome della squadra
+                    const matchesSquadra = squadra.nome_squadra.toLowerCase().includes(currentSearch);
 
-        if (paginationData.total_pages <= 1) return;
+                    // Cerca nel nome del presidente
+                    const matchesPresidente = squadra.dirigenza && squadra.dirigenza.presidente &&
+                        squadra.dirigenza.presidente.toLowerCase().includes(currentSearch);
 
-        const createBtn = (label, page, disabled = false) => {
-            const btn = document.createElement('button');
-            btn.textContent = label;
-            btn.disabled = disabled;
-            btn.className = 'page-btn' + (page === paginationData.current_page ? ' active' : '');
-            btn.onclick = () => {
-                // Mantiene i filtri quando cambia pagina
-                const team = document.getElementById('team').value.trim();
-                const player = document.getElementById('player').value.trim();
-                fetchSquadraData(team, player, page);
-            };
-            return btn;
+                    return matchesSquadra || matchesPresidente;
+                });
+                clearButton.style.display = 'flex';
+            }
+
+            // Aggiorna le statistiche
+            updateSearchStats();
+
+            // Reset alla prima pagina quando si cerca
+            currentPage = 1;
+
+            // Aggiorna visualizzazione
+            renderSquadre();
+            renderPagination();
+        }
+
+        function updateSearchStats() {
+            if (currentSearch === '') {
+                searchStats.textContent = `Visualizzando ${allSquadre.length} squadre totali`;
+            } else {
+                searchStats.textContent = `Trovate ${filteredSquadre.length} squadre per "${currentSearch}"`;
+            }
+        }
+
+        function highlightSearchTerm(text, searchTerm) {
+            if (!searchTerm || !text) return text;
+
+            const regex = new RegExp(`(${escapeRegExp(searchTerm)})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function renderSquadre() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageSquadre = filteredSquadre.slice(startIndex, endIndex);
+            const tbody = document.querySelector('#squadraTable tbody');
+
+            if (pageSquadre.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="3">
+                            <div class="no-results">
+                                Nessuna squadra trovata<br>
+                            </div>
+                        </td>
+                    </tr>`;
+                return;
+            }
+
+            let html = '';
+            pageSquadre.forEach(squadra => {
+                const highlightedSquadra = highlightSearchTerm(squadra.nome_squadra, currentSearch);
+                const highlightedPresidente = squadra.dirigenza && squadra.dirigenza.presidente ?
+                    highlightSearchTerm(squadra.dirigenza.presidente, currentSearch) : 'N/D';
+
+                html += `
+                    <tr>
+                        <td>${highlightedSquadra}</td>
+                        <td>${highlightedPresidente}</td>
+                        <td><a href="squadra.php?id=${squadra.id}"><button class="tablinks" style="background-color: var(--accento)">Dettagli</button></a></td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredSquadre.length / itemsPerPage);
+            const paginationContainer = document.getElementById('pagination');
+
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            // Configurazione per la paginazione
+            const maxVisiblePages = window.innerWidth <= 480 ? 3 : (window.innerWidth <= 768 ? 5 : 7);
+            const sidePages = Math.floor(maxVisiblePages / 2);
+
+            let html = '';
+
+            // Bottone Precedente
+            html += `
+                <button class="page-btn prev" ${currentPage === 1 ? 'disabled' : ''}
+                    onclick="changePage(${currentPage - 1})" title="Pagina precedente">
+                    ‹
+                </button>
+            `;
+
+            // Calcola l'intervallo di pagine da mostrare
+            let startPage = Math.max(1, currentPage - sidePages);
+            let endPage = Math.min(totalPages, currentPage + sidePages);
+
+            // Aggiusta l'intervallo se siamo vicini agli estremi
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                if (startPage === 1) {
+                    endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                } else if (endPage === totalPages) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+            }
+
+            // Mostra sempre la prima pagina se non è nell'intervallo
+            if (startPage > 1) {
+                html += `<button class="page-btn" onclick="changePage(1)">1</button>`;
+
+                // Aggiungi puntini se c'è un gap
+                if (startPage > 2) {
+                    html += `
+                        <button class="page-btn dots" onclick="changePage(${Math.max(1, startPage - 5)})"
+                            title="Vai alla pagina ${Math.max(1, startPage - 5)}">
+                            ...
+                        </button>`;
+                }
+            }
+
+            // Pagine nell'intervallo visibile
+            for (let i = startPage; i <= endPage; i++) {
+                html += `
+                    <button class="page-btn ${i === currentPage ? 'active' : ''}"
+                        onclick="changePage(${i})" title="Pagina ${i}">
+                        ${i}
+                    </button>
+                `;
+            }
+
+            // Mostra sempre l'ultima pagina se non è nell'intervallo
+            if (endPage < totalPages) {
+                // Aggiungi puntini se c'è un gap
+                if (endPage < totalPages - 1) {
+                    html += `
+                        <button class="page-btn dots" onclick="changePage(${Math.min(totalPages, endPage + 5)})"
+                            title="Vai alla pagina ${Math.min(totalPages, endPage + 5)}">
+                            ...
+                        </button>`;
+                }
+
+                html += `<button class="page-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
+            }
+
+            // Bottone Successivo
+            html += `
+                <button class="page-btn next" ${currentPage === totalPages ? 'disabled' : ''}
+                    onclick="changePage(${currentPage + 1})" title="Pagina successiva">
+                    ›
+                </button>
+            `;
+
+            paginationContainer.innerHTML = html;
+        }
+
+        window.changePage = function(page) {
+            if (page !== currentPage && page >= 1) {
+                currentPage = page;
+                renderSquadre();
+                renderPagination();
+                document.querySelector('.search-container').scrollIntoView({ behavior: 'smooth' });
+            }
         };
 
-        // Pulsante pagina precedente
-        container.appendChild(createBtn('«', paginationData.current_page - 1, !paginationData.has_previous_page));
-
-        // Calcola le pagine da mostrare (mostra 5 numeri di pagina)
-        let startPage = Math.max(1, paginationData.current_page - 2);
-        let endPage = Math.min(paginationData.total_pages, startPage + 4);
-
-        // Aggiusta startPage se necessario
-        if (endPage - startPage < 4) {
-            startPage = Math.max(1, endPage - 4);
-        }
-
-        // Prima pagina (se non è inclusa nel range)
-        if (startPage > 1) {
-            container.appendChild(createBtn(1, 1));
-            if (startPage > 2) {
-                // Aggiunge puntini di sospensione
-                const ellipsis = document.createElement('span');
-                ellipsis.textContent = '...';
-                ellipsis.className = 'pagination-ellipsis';
-                container.appendChild(ellipsis);
+        // Aggiorna la paginazione quando si ridimensiona la finestra
+        window.addEventListener('resize', () => {
+            if (filteredSquadre.length > 0) {
+                renderPagination();
             }
-        }
-
-        // Pagine numeriche
-        for (let i = startPage; i <= endPage; i++) {
-            container.appendChild(createBtn(i, i));
-        }
-
-        // Ultima pagina (se non è inclusa nel range)
-        if (endPage < paginationData.total_pages) {
-            if (endPage < paginationData.total_pages - 1) {
-                // Aggiunge puntini di sospensione
-                const ellipsis = document.createElement('span');
-                ellipsis.textContent = '...';
-                ellipsis.className = 'pagination-ellipsis';
-                container.appendChild(ellipsis);
-            }
-            container.appendChild(createBtn(paginationData.total_pages, paginationData.total_pages));
-        }
-
-        // Pulsante pagina successiva
-        container.appendChild(createBtn('»', paginationData.current_page + 1, !paginationData.has_next_page));
-    }
-
-    document.getElementById('search-button').addEventListener('click', () => {
-        const team = document.getElementById('team').value.trim();
-        const player = document.getElementById('player').value.trim();
-        fetchSquadraData(team, player, 1); // Resetta alla prima pagina quando si cerca
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchSquadraData();
+        });
     });
 </script>
 </body>

@@ -13,87 +13,9 @@
     <style>
         .news-content {
             min-height: 300px;
-            padding: 20px 0;
-        }
-
-        .search-container {
-            background-color: var(--blu-scuro, #1a2c56);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .search-wrapper {
-            position: relative;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .search-input {
+            padding: 30px;
             width: 100%;
-            padding: 12px 45px 12px 20px;
-            border: 2px solid var(--accento, #3c74f5);
-            border-radius: 25px;
-            background-color: white;
-            color: var(--blu-scuro, #1a2c56);
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-        }
 
-        .search-input:focus {
-            border-color: var(--blu, #294582);
-            box-shadow: 0 0 0 3px rgba(60, 116, 245, 0.1);
-            transform: translateY(-1px);
-        }
-
-        .search-input::placeholder {
-            color: #999;
-            font-style: italic;
-        }
-
-        .search-icon {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--accento, #3c74f5);
-            font-size: 1.2rem;
-            pointer-events: none;
-        }
-
-        .clear-search {
-            position: absolute;
-            right: 40px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #999;
-            font-size: 1.3rem;
-            cursor: pointer;
-            padding: 2px;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .clear-search:hover {
-            background-color: #f0f0f0;
-            color: #666;
-        }
-
-        .search-stats {
-            text-align: center;
-            margin-top: 15px;
-            color: white;
-            font-size: 0.9rem;
-            opacity: 0.8;
         }
 
         .news-item {
@@ -148,14 +70,6 @@
             margin-bottom: 15px;
         }
 
-        .highlight {
-            background-color: yellow;
-            color: black;
-            font-weight: bold;
-            border-radius: 3px;
-            padding: 1px 2px;
-        }
-
         .news-pagination {
             display: flex;
             justify-content: center;
@@ -166,25 +80,6 @@
         }
 
 
-        .no-news, .error-message {
-            text-align: center;
-            padding: 40px;
-            font-size: 1.2rem;
-            color: #777;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            border: 1px dashed #ccc;
-        }
-
-        .no-results {
-            text-align: center;
-            color: #777;
-            font-style: italic;
-            padding: 40px 20px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            border: 1px dashed #ccc;
-        }
 
         @media (max-width: 768px) {
             .news-item {
@@ -201,21 +96,9 @@
                 gap: 4px;
             }
 
-            .search-input {
-                font-size: 0.9rem;
-                padding: 10px 40px 10px 16px;
-            }
-
-            .search-container {
-                padding: 15px;
-            }
         }
 
         @media (max-width: 480px) {
-
-            .search-wrapper {
-                max-width: 100%;
-            }
 
             .news-pagination {
                 gap: 2px;
@@ -275,7 +158,7 @@
         </header>
 
         <div class="main-body" style="overflow-y: scroll;">
-            <div class="main-body-content" id="main-body-content" style="padding: 30px;">
+            <div class="main-body-content" id="main-body-content">
 
                 <!-- Barra di ricerca -->
                 <div class="search-container">
@@ -423,7 +306,6 @@
                     newsContent.innerHTML = `
                         <div class="no-results">
                             Nessuna news trovata per "${currentSearch}"<br>
-                            <small>Prova con un termine di ricerca diverso</small>
                         </div>`;
                 } else {
                     newsContent.innerHTML = `<div class="no-news">Nessuna news disponibile</div>`;
