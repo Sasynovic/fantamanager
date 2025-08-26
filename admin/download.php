@@ -58,6 +58,7 @@ $nomeSezione = "download";
                         "ID Associazione": assoc.id,
                         "ID Squadra": assoc.id_squadra,
                         "Nome Squadra": assoc.nome_squadra,
+                        "ID Calciatore": assoc.id_calciatore,
                         "Nome Calciatore": assoc.nome_calciatore,
                         "Ruolo": assoc.ruolo_calciatore,
                         "Costo": assoc.costo_calciatore,

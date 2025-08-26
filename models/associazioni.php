@@ -31,9 +31,10 @@ class associazioni
                 
                 s.nome_squadra AS nome_squadra,
                 
+                c.id AS id_calciatore,
                 c.nome AS nome_calciatore,
                 c.squadra AS nome_squadra_calciatore,
-               c.fvm,
+                c.fvm,
                 c.eta,
                 c.ruolo AS ruolo_calciatore,
                 c.fuori_listone AS fuori_listone

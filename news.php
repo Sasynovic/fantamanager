@@ -15,7 +15,6 @@
             min-height: 300px;
             padding: 30px;
             width: 100%;
-
         }
 
         .news-item {
