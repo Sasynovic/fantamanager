@@ -13,74 +13,21 @@
     <script src="js/showmenu.js" defer></script>
 </head>
 <style>
-
-    .main-body{
-        height: 82%;
-    }
-
     .main-body-content{
         height: 100%;
         overflow-y: scroll;
+        padding: 30px;
     }
 
-    main-footer{
-        height: 10%;
-    }
-
-    .news-container {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 20px;
-        font-family: Arial, sans-serif;
-    }
-
-    .news-content {
-        min-height: 300px;
-    }
-
-    .news-item {
-        padding: 15px;
-        margin-bottom: 15px;
-        border-radius: 5px;
-        border: 2px solid var(--accento);
-        background: white;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .news-item h3 {
-        margin-top: 0;
-        color: var(--accento);
-    }
-
-
-    .news-item .news-meta {
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 10px;
-    }
-
-    .news-pagination {
-        display: flex;
-        justify-content: center;
-        margin-top: 30px;
-        gap: 5px;
-    }
-
-    .tab{
-        align-items: center;
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 20px;
-    }
     .container{
         width: 100%;
         height: 100%;
+    }
 
-    }
-    .news-contenuto *{
-        color: black;
-    }
+   .view-tabs{
+       margin-bottom: 0;
+   }
+
 </style>
 
 <body>
@@ -156,14 +103,12 @@
                 <h1 id="hamburger-menu">≡</h1>
             </div>
         </header>
-        <h3  style="text-align: center; padding: 10px; background-color: var(--accento)" >   Clicca sul nome della squadra per maggiori dettagli</h3>
-
 
         <div class="main-body">
             <div class="main-body-content" id="main-body-content">
                 <div class="container">
 
-                    <div class="tab">
+                    <div class="view-tabs">
                         <button class="tablinks" onclick="openTab(event, 'classifica')" id="defaultOpen">Classifica</button>
                         <button class="tablinks" onclick="openTab(event, 'news')">News</button>
                     </div>
