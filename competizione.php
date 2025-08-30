@@ -16,7 +16,7 @@
     .main-body-content{
         height: 100%;
         overflow-y: scroll;
-        padding: 30px;
+        padding: 20px;
     }
 
     .container{
