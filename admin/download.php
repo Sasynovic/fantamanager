@@ -35,6 +35,16 @@ $nomeSezione = "download";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestione <?php echo $nomeSezione?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+    </style>
 </head>
 <body>
 <div class="app-container">
@@ -44,6 +54,7 @@ $nomeSezione = "download";
         <button id="download-presidenti" class="btn btn-primary"> Download presidenti + squadra</button>
         <button id="download-prelazioni" class="btn btn-primary"> Download prelazioni</button>
     </div>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
