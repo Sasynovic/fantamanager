@@ -6,6 +6,7 @@ header("Access-Control-Allow-Origin: *");
 // Gli altri header CORS rimangono invariati
 header("Access-Control-Allow-Methods: GET");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Content-Type: application/json; charset=UTF-8");
 require_once '../../config/database.php';
 require_once '../../models/associazioni.php';
 
@@ -35,6 +36,7 @@ if ($num > 0) {
             "id" => $id,
             "id_squadra" => $id_squadra,
             "nome_squadra" => $nome_squadra,
+            "id_calciatore" => $id_calciatore,
             "nome_calciatore" => $nome_calciatore,
             "ruolo_calciatore" => $ruolo_calciatore,
             "costo_calciatore" => $costo_calciatore,
