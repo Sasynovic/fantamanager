@@ -15,7 +15,8 @@
 
     <style>
         .tool-container{
-            width: 90%;
+            width: 100%;
+            max-width: 1440px;
         }
 
         .select-container{
@@ -44,16 +45,16 @@
             transition: background-color 0.2s ease-in-out;
         }
         .giocatore-itemP {
-            background-color: #f8ab29;
+            background-color: var(--oro);
         }
         .giocatore-itemD {
-            background-color: #63c623;
+            background-color: var(--verde);
         }
         .giocatore-itemC {
-            background-color: #2e6be6;
+            background-color: var(--accento);
         }
         .giocatore-itemA {
-            background-color: #f21a3c;
+            background-color: var(--rosso);
         }
 
         .data-prestito-container select, .data-credito-container select {
@@ -64,7 +65,7 @@
         }
 
         input:out-of-range {
-            border-color: #f21a3c;
+            border-color: var(--rosso);
             background-color: #fde8eb;
         }
 
@@ -146,19 +147,19 @@
         }
 
         .selected-playerP .selected-player-info {
-            background-color: #f8ab29;
+            background-color: var(--oro);
         }
 
         .selected-playerD .selected-player-info {
-            background-color: #63c623;
+            background-color: var(--verde);
         }
 
         .selected-playerC .selected-player-info {
-            background-color: #2e6be6;
+            background-color: var(--accento);
         }
 
         .selected-playerA .selected-player-info {
-            background-color: #f21a3c;
+            background-color: var(--rosso);
         }
 
         .prestito-select-container {
@@ -221,14 +222,14 @@
             padding: 20px;
         }
 
-
         .risultato-trattativa {
-            margin-top: 20px;
             padding: 15px;
             border-radius: 5px;
             background-color: #f9f9f9;
             border: 1px solid #ddd;
             display: none;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .success {
@@ -255,29 +256,8 @@
             overflow-y: scroll;
         }
         .main-body-content{
-            margin-top: 20px;
+           padding: 20px;
         }
-
-        @media (max-width: 1024px) {
-            .player-select-container {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .team-container {
-                width: 100%;
-            }
-            .select-container{
-                display: flex;
-                flex-direction: column;
-            }
-
-            .select-container > select {
-                width: auto ;
-                margin-bottom: 15px;
-            }
-
-        }
-
 
         .notes {
             justify-content: space-evenly;
@@ -286,7 +266,6 @@
             border-radius: 8px;
             padding: 10px;
             margin-bottom: 20px;
-            width: 50%;
             text-align: center;
         }
 
@@ -309,6 +288,24 @@
 
         .market-calendar li:last-child {
             border-bottom: none;
+        }
+
+        @media (max-width: 1024px) {
+            .player-select-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .team-container {
+                width: 100%;
+            }
+            .select-container{
+                display: flex;
+                flex-direction: column;
+            }
+            .select-container > select {
+                width: auto ;
+                margin-bottom: 15px;
+            }
         }
     </style>
 </head>
@@ -470,22 +467,26 @@
                         </div>
                     </div>
 
-                    <div class="team-container">
-                        <div id="passkey">
+                    <div class="team-container" id="passkey" style="
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 10px;
+                                ">
                             <div class="team-header">Inserisci la tua passkey per concludere la trattativa</div>
                             <form id="passkeyForm" >
                                 <input type="password" id="passkeyInput" placeholder="Inserisci la tua passkey" maxlength="6" >
                             </form>
-                            <div                                             style="
-                                                                    display: flex;
-                                                                    justify-content: space-evenly;
-                                                                    align-items: center;
-                                                                ">
-                                <button id="buttonPasskey" class="tablinks" style="background-color: var(--blu-scuro)" onclick="verificaPasskey()">Verifica passkey</button>
-                                <button id="calcolaTrattativa" class="tablinks" style="background-color: var(--accento)">Calcola Trattativa</button>
-                            </div>
-                            </div>
-                        <div id="risultatoTrattativa" class="risultato-trattativa"></div>
+                                <div                                             style="
+                                                                        display: flex;
+                                                                        justify-content: space-evenly;
+                                                                        align-items: center;
+                                                                        flex-direction: column;
+                                                                        gap: 10px;
+                                                                    ">
+                                    <button id="buttonPasskey" class="tablinks" style="background-color: var(--blu-scuro)" onclick="verificaPasskey()">Verifica passkey</button>
+                                    <button id="calcolaTrattativa" class="tablinks" style="background-color: var(--accento)">Calcola Trattativa</button>
+                                    <div id="risultatoTrattativa" class="risultato-trattativa"></div>
+                                </div>
                     </div>
                 </div>
             </div>
@@ -576,24 +577,23 @@
             if (data && data.tipologia_scambio) {
                 tipologieScambio = data.tipologia_scambio;
 
-                // Organizza le finestre di mercato per tipo di prestito
                 tipologieScambio.forEach(tipo => {
-                    if (tipo.nome_metodo === "Prestito" && tipo.id_finestra_mercato) {
-                        // Se non esiste ancora un array per questa tipologia, crealo
-                        if (!finestreMercato["Prestito"]) {
-                            finestreMercato["Prestito"] = [];
+                    // Controlla se è un prestito (anche con diritto/obbligo)
+                    if (tipo.nome_metodo.includes("Prestito") && tipo.id_finestra_mercato) {
+                        // Se non esiste ancora l'array per questa tipologia, crealo
+                        if (!finestreMercato[tipo.nome_metodo]) {
+                            finestreMercato[tipo.nome_metodo] = [];
                         }
-                        // Aggiungi questa finestra mercato all'array della tipologia
-                        finestreMercato["Prestito"].push({
+
+                        // Aggiungi la finestra di mercato
+                        finestreMercato[tipo.nome_metodo].push({
                             id: tipo.id_finestra_mercato,
                             nome: tipo.finestra_mercato.nome,
                             data_inizio: tipo.finestra_mercato.data_inizio,
                             data_fine: tipo.finestra_mercato.data_fine
                         });
                     }
-                    // Aggiungi altre tipologie se necessario
                 });
-
             }
         })
         .catch(error => {
@@ -954,7 +954,7 @@
         const risultatoEl = document.getElementById('risultatoTrattativa');
 
         // Mostra sempre il risultato
-        risultatoEl.style.display = 'block';
+        risultatoEl.style.display = 'flex';
         risultatoEl.className = 'risultato-trattativa';
 
         // 1. Validazione lato client
@@ -1041,7 +1041,7 @@
         const creditoTeam1 = [creditoTeam1Subito, creditoTeam1Meta, creditoTeam1Fine];
         const creditoTeam2 = [creditoTeam2Subito, creditoTeam2Meta, creditoTeam2Fine];
 
-        // Raccogli dettagli giocatori squadra 1
+        // Raccogli dettagli giocatori selezionati
         function raccogliGiocatori(container) {
             return Array.from(container.querySelectorAll('.selected-player')).map(el => {
                 const playerId = el.querySelector('.remove-player').dataset.id;
@@ -1066,18 +1066,22 @@
                 // Determinazione valore trasferimento
                 let valore = 1; // Default
 
-                if (tipoTrasferimento) { // Solo se c'è un tipo selezionato
+                if (tipoTrasferimento) {
                     tipologieScambio.forEach(tipo => {
-                        // if (tipo.id_metodo === tipoTrasferimento) {
-                            if (dataCredito !== null && tipo.id_finestra_mercato && tipo.id_finestra_mercato.toString() === dataCredito) {
+                        const matchByMetodo = tipo.id_metodo.toString() === tipoTrasferimento;
+                        const matchByTipologia = tipo.id_tipologia.toString() === tipoTrasferimento;
+
+                        if (matchByMetodo || matchByTipologia) {
+                            if (dataCredito !== null && tipo.id_finestra_mercato?.toString() === dataCredito) {
                                 valore = tipo.id_tipologia;
                             }
-                            else if (dataPrestito !== null && tipo.id_finestra_mercato && tipo.id_finestra_mercato.toString() === dataPrestito) {
+                            else if (dataPrestito !== null && tipo.id_finestra_mercato?.toString() === dataPrestito) {
                                 valore = tipo.id_tipologia;
                             }
-                        // }
+                        }
                     });
-                } else {
+                }
+                else {
                     valore = 0; // Nessun tipo selezionato
                 }
 
@@ -1121,7 +1125,7 @@
 
         // Visualizza i dati raccolti per debug o conferma
         const risultatoEl = document.getElementById('risultatoTrattativa');
-        risultatoEl.style.display = 'block';
+        risultatoEl.style.display = 'flex';
 
         // 1. Validazione lato client
         if (!idSquadra1 || !idSquadra2) {
@@ -1373,7 +1377,7 @@
         };
 
         const risultatoEl = document.getElementById('risultatoTrattativa');
-        risultatoEl.style.display = 'block';
+        risultatoEl.style.display = 'flex';
         //
         if (!verificaTipiTrasferimento(datiTrattativa.squadra1.giocatori) ||
             !verificaTipiTrasferimento(datiTrattativa.squadra2.giocatori)) {
