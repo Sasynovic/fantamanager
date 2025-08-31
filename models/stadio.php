@@ -45,8 +45,8 @@ class stadio
         $allowedFields = [
             'livello_stadio' => PDO::PARAM_INT,
             'costo_manutenzione' => PDO::PARAM_INT,
-            'bonus_casa_n' => PDO::PARAM_INT,
-            'bonus_casa_u' => PDO::PARAM_INT,
+            'bonus_casa_n' => PDO::PARAM_STR,
+            'bonus_casa_u' => PDO::PARAM_STR,
             'sold_out' => PDO::PARAM_INT,
             'abbonati' => PDO::PARAM_INT,
             'costo_costruzione' => PDO::PARAM_INT,
