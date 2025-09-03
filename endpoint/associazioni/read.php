@@ -47,7 +47,8 @@ if ($num > 0) {
             "scambiato" => $scambiato,
             "fuori_listone" => $fuori_listone,
             "prelazione" => $prelazione,
-            "Timestamp" => $timestamp
+            "Timestamp" => $timestamp,
+            "fine_prelazione" => $fine_prelazione
         );
 
         $associazioni_arr["associazioni"][] = $associazioni_item;

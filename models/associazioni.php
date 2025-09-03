@@ -28,6 +28,7 @@ class associazioni
                 a.scambiato,
                 a.prelazione,
                 a.timestamp,
+                a.fine_prelazione,
                 
                 s.nome_squadra AS nome_squadra,
                 

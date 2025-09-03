@@ -914,13 +914,6 @@
                             <span class="overview-label">Nota 1:</span>
                             <span class="overview-value">Il valore di prelazione equivale al valore massimo tra FVM e Costo di acquisto del calciatore</span>
                         </div>
-                        <div class="overview-item" style="margin-top: 15px;">
-                            <span class="overview-label">Nota 2:</span>
-                            <span class="overview-value" style="color: #ff4444; font-weight: bold;">
-                                Prelazioni possibili fino al 1 Agosto 2026
-                                <div id="countdown-prelazioni" style="display: inline-block; margin-left: 10px;"></div>
-                            </span>
-                        </div>
                     </div>
 
                     <?php if (count($calciatori_prelazione) > 0): ?>
@@ -937,7 +930,9 @@
                                     <div class="player-stats">
                                         <span>Prelazione: <span class="stat-value"><?php echo $valore_prelazione; ?> FVM</span></span>
                                     </div>
-                                </div>
+                                    <div class="player-stats"><span>Data fine prelazione: <span><span class="stat-value"><?php echo htmlspecialchars(date('Y-m-d', strtotime($calciatore['fine_prelazione'])));?></span></span>
+                                    </div>
+                                    </div>
                                 <button class="view-tab" style="margin: 5px; background-color: var(--accento)"
                                         onclick="inviaRichiestaPrelazione(
                                         <?php echo $id_squadra; ?>,
@@ -964,34 +959,6 @@
             </div>
             <!--script prelazioni-->
             <script>
-                // Countdown per le prelazioni
-                function updateCountdown() {
-                    const endDate = new Date('August 1, 2026 23:59:59').getTime();
-                    const now = new Date().getTime();
-                    const distance = endDate - now;
-
-                    // Calcoli per giorni, ore, minuti, secondi
-                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                    // Visualizzazione
-                    document.getElementById("countdown-prelazioni").innerHTML =
-                        `<span style="color: #ff0000; font-weight: bold;">
-                            [${days}g ${hours}h ${minutes}m ${seconds}s]
-                         </span>`;
-
-                    // Se la data è passata
-                    if (distance < 0) {
-                        document.getElementById("countdown-prelazioni").innerHTML =
-                            `<span style="color: #ff0000; font-weight: bold;">TERMINE SCADUTO</span>`;
-                    }
-                }
-                // Aggiorna il countdown ogni secondo
-                setInterval(updateCountdown, 1000);
-                updateCountdown(); // Esegui immediatamente
-
                 function inviaRichiestaPrelazione(idSquadra, idAssociazione, fuoriListone, nomeSquad, nomeCalciatore, ruolo, squadra, valorePrelazione, finanzeSquadra, costoCalciatore) {
                     if (fuoriListone == 0) {
                         const passkeyInput = prompt('Inserisci la passkey per confermare la richiesta di prelazione:');
