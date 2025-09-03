@@ -849,9 +849,8 @@ $nomeSezione = "trattative"
                                                         headers: { 'Content-Type': 'application/json' },
                                                         body: JSON.stringify({
                                                             id_squadra: operazione.id_squadra
-                                                            // rimuovi il commento a questa riga per cambiare l'impostazione
-                                                            // scambiato: operazione.scambiato,
-                                                            // n_movimenti: operazione.n_movimenti
+                                                            scambiato: operazione.scambiato,
+                                                            n_movimenti: operazione.n_movimenti
                                                         })
                                                     }).then(response => {
                                                         if (!response.ok) {
