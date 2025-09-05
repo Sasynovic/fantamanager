@@ -591,7 +591,6 @@ $nomeSezione = "trattative"
                         if (ufficializzata !== 1) {
                             alert('Modifica apportata con successo!');
                             window.location.reload();
-                            // return Promise.resolve();
                         }
 
                         // 3. Se ufficializzata, processa operazioni e crediti
@@ -842,13 +841,11 @@ $nomeSezione = "trattative"
                                                 // 3.5 Aggiorna le associazioni
                                                 console.log('Preparazione aggiornamento associazioni...');
                                                 const updatePromises = ArrayOperazioni.map(operazione => {
-                                                    console.log(`Aggiornamento associazione ${operazione.id_associazione}`);
-
                                                     return fetch(`../endpoint/associazioni/update.php?id=${operazione.id_associazione}`, {
                                                         method: 'PUT',
                                                         headers: { 'Content-Type': 'application/json' },
                                                         body: JSON.stringify({
-                                                            id_squadra: operazione.id_squadra
+                                                            id_squadra: operazione.id_squadra,
                                                             scambiato: operazione.scambiato,
                                                             n_movimenti: operazione.n_movimenti
                                                         })
