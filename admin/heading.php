@@ -99,6 +99,7 @@
                 <a href="gestione_presidenti.php">Gestione Presidenti</a>
                 <a href="setFVM.php">Gestione FVM</a>
                 <a href="setFinanze.php">Gestione Finanze</a>
+                <a href="setRose.php">Gestione Rose</a>
             </div>
         </div>
 

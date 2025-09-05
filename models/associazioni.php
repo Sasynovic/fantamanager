@@ -135,6 +135,93 @@ class associazioni
         }
     }
 
+
+    public function release($id_squadra, $id_calciatore): bool
+    {
+        // Validazione degli ID
+        if (!is_numeric($id_squadra) || $id_squadra <= 0) {
+            throw new InvalidArgumentException("L'ID della squadra non è valido");
+        }
+        if (!is_numeric($id_calciatore) || $id_calciatore <= 0) {
+            throw new InvalidArgumentException("L'ID del calciatore non è valido");
+        }
+
+        $query = "UPDATE " . $this->table_name . " 
+                  SET id_squadra = NULL 
+                  WHERE id_squadra = :id_squadra AND id_calciatore = :id_calciatore";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id_squadra', $id_squadra, PDO::PARAM_INT);
+        $stmt->bindParam(':id_calciatore', $id_calciatore, PDO::PARAM_INT);
+
+        try {
+            $stmt->execute();
+            return ($stmt->rowCount() > 0);
+        } catch (PDOException $e) {
+            error_log("Errore durante lo svincolo del calciatore: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function switch($id_squadra_attuale, $id_squadra_nuova, $id_calciatore, $costo_calciatore): bool
+    {
+        // Validazione degli ID
+        if (!is_numeric($id_squadra_attuale) || $id_squadra_attuale <= 0) {
+            throw new InvalidArgumentException("L'ID della squadra attuale non è valido");
+        }
+        if (!is_numeric($id_squadra_nuova) || $id_squadra_nuova <= 0) {
+            throw new InvalidArgumentException("L'ID della nuova squadra non è valido");
+        }
+        if (!is_numeric($id_calciatore) || $id_calciatore <= 0) {
+            throw new InvalidArgumentException("L'ID del calciatore non è valido");
+        }
+        if (!is_numeric($costo_calciatore) || $costo_calciatore < 0) {
+            throw new InvalidArgumentException("Il costo del calciatore non è valido");
+        }
+
+        $query = "UPDATE " . $this->table_name . " 
+                  SET id_squadra = :id_squadra_nuova, 
+                      costo_calciatore = :costo_calciatore
+                  WHERE id_squadra = :id_squadra_attuale AND id_calciatore = :id_calciatore";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id_squadra_nuova', $id_squadra_nuova, PDO::PARAM_INT);
+        $stmt->bindParam(':costo_calciatore', $costo_calciatore, PDO::PARAM_INT);
+        $stmt->bindParam(':id_squadra_attuale', $id_squadra_attuale, PDO::PARAM_INT);
+        $stmt->bindParam(':id_calciatore', $id_calciatore, PDO::PARAM_INT);
+
+        try {
+            $stmt->execute();
+            return ($stmt->rowCount() > 0);
+        } catch (PDOException $e) {
+            error_log("Errore durante lo scambio del calciatore: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function create($id_squadra, $id_calciatore, $costo_calciatore)
+    {
+        $query = "INSERT INTO " . $this->table_name . " (id_squadra, id_calciatore, costo_calciatore) 
+                  VALUES (:id_squadra, :id_calciatore, :costo_calciatore)";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id_squadra', $id_squadra, PDO::PARAM_INT);
+        $stmt->bindParam(':id_calciatore', $id_calciatore, PDO::PARAM_INT);
+        $stmt->bindParam(':costo_calciatore', $costo_calciatore, PDO::PARAM_INT);
+        try {
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Errore durante l'inserimento del calciatore: " . $e->getMessage());
+            return false;
+        }
+
+
+    }
+
+
+
+
+
 }
            
 
