@@ -933,7 +933,7 @@
                                     <div class="player-stats"><span>Data fine prelazione: <span><span class="stat-value"><?php echo htmlspecialchars(date('Y-m-d', strtotime($calciatore['fine_prelazione'])));?></span></span>
                                     </div>
                                     </div>
-                                <button class="view-tab" style="margin: 5px; background-color: var(--accento)"
+                                <button disabled class="view-tab" style="margin: 5px; background-color: var(--accento)"
                                         onclick="inviaRichiestaPrelazione(
                                         <?php echo $id_squadra; ?>,
                                         <?php echo $calciatore['id']; ?>,
@@ -959,95 +959,95 @@
             </div>
             <!--script prelazioni-->
             <script>
-                function inviaRichiestaPrelazione(idSquadra, idAssociazione, fuoriListone, nomeSquad, nomeCalciatore, ruolo, squadra, valorePrelazione, finanzeSquadra, costoCalciatore) {
-                    if (fuoriListone == 0) {
-                        const passkeyInput = prompt('Inserisci la passkey per confermare la richiesta di prelazione:');
-                        if (!passkeyInput) {
-                            alert('⚠️ Operazione annullata: nessuna passkey inserita');
-                            return;
-                        }
-                        // 🔑 Verifica passkey
-                        fetch('endpoint/squadra/readPasskey.php', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                idSquadra1: idSquadra,
-                                idSquadra2: idSquadra,
-                                passkey: passkeyInput
-                            })
-                        })
-                            .then(response => response.json())
-                            .then(passkeyData => {
-                                if (!passkeyData.success) {
-                                    throw new Error("❌ Passkey non valida!");
-                                }
-                                if (valorePrelazione > finanzeSquadra) {
-                                    throw new Error("❌ Non hai abbastanza crediti per richiedere questa prelazione!");
-                                }
-
-                                const val = finanzeSquadra - valorePrelazione;
-                                // Aggiorna le finanze
-                                return fetch(`../endpoint/finanze_squadra/update.php?id=${idSquadra}`, {
-                                    method: 'PUT',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        id: idSquadra,
-                                        totale_crediti_bilancio: val
-                                    })
-                                });
-                            })
-                            .then(() => {
-                                // Aggiorna l'associazione
-                                return fetch(`../endpoint/associazioni/update.php?id=${idAssociazione}`, {
-                                    method: 'PUT',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        id: idAssociazione,
-                                        timestamp : 0,
-                                        prelazione: 0
-                                    })
-                                });
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (!data.success) {
-                                    throw new Error("❌ Errore nell'invio della richiesta di prelazione: " + data.message);
-                                }
-
-                                const action = `Richiesta prelazione squadra ${nomeSquad}`;
-                                const description = `
-                                <p>Richiesta prelazione squadra <strong>${nomeSquad}</strong> (ID: <strong>${idSquadra}</strong>)</p>
-                                <ul>
-                                    <li><b>Calciatore:</b> ${nomeCalciatore}</li>
-                                    <li><b>Ruolo:</b> ${ruolo}</li>
-                                    <li><b>Squadra:</b> ${squadra}</li>
-                                    <li><b>Costo calciatore:</b> ${costoCalciatore} FVM</li>
-                                    <li><b>Valore prelazione:</b> ${valorePrelazione} FVM</li>
-                                </ul>
-                            `;
-
-                                alert('✅ Richiesta di prelazione inviata con successo!');
-
-                                return fetch('sendMail.php', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ action: action, description: description })
-                                });
-                            })
-                            .then(response => response.text())
-                            .then(data => {
-                                 // 🔄 Aggiorna la schermata dopo 1 secondo
-                                setTimeout(() => {
-                                    location.reload();
-                                }, 1000);
-                            })
-                            .catch(err => {
-                                alert(err.message || ('❌ Errore: ' + err));
-                            });
-                    } else {
-                        alert('⚠️ Il calciatore è fuori listone, non è possibile richiedere la prelazione');
-                    }
-                }
+                // function inviaRichiestaPrelazione(idSquadra, idAssociazione, fuoriListone, nomeSquad, nomeCalciatore, ruolo, squadra, valorePrelazione, finanzeSquadra, costoCalciatore) {
+                //     if (fuoriListone == 0) {
+                //         const passkeyInput = prompt('Inserisci la passkey per confermare la richiesta di prelazione:');
+                //         if (!passkeyInput) {
+                //             alert('⚠️ Operazione annullata: nessuna passkey inserita');
+                //             return;
+                //         }
+                //         // 🔑 Verifica passkey
+                //         fetch('endpoint/squadra/readPasskey.php', {
+                //             method: 'POST',
+                //             headers: { 'Content-Type': 'application/json' },
+                //             body: JSON.stringify({
+                //                 idSquadra1: idSquadra,
+                //                 idSquadra2: idSquadra,
+                //                 passkey: passkeyInput
+                //             })
+                //         })
+                //             .then(response => response.json())
+                //             .then(passkeyData => {
+                //                 if (!passkeyData.success) {
+                //                     throw new Error("❌ Passkey non valida!");
+                //                 }
+                //                 if (valorePrelazione > finanzeSquadra) {
+                //                     throw new Error("❌ Non hai abbastanza crediti per richiedere questa prelazione!");
+                //                 }
+                //
+                //                 const val = finanzeSquadra - valorePrelazione;
+                //                 // Aggiorna le finanze
+                //                 return fetch(`../endpoint/finanze_squadra/update.php?id=${idSquadra}`, {
+                //                     method: 'PUT',
+                //                     headers: { 'Content-Type': 'application/json' },
+                //                     body: JSON.stringify({
+                //                         id: idSquadra,
+                //                         totale_crediti_bilancio: val
+                //                     })
+                //                 });
+                //             })
+                //             .then(() => {
+                //                 // Aggiorna l'associazione
+                //                 return fetch(`../endpoint/associazioni/update.php?id=${idAssociazione}`, {
+                //                     method: 'PUT',
+                //                     headers: { 'Content-Type': 'application/json' },
+                //                     body: JSON.stringify({
+                //                         id: idAssociazione,
+                //                         timestamp : 0,
+                //                         prelazione: 0
+                //                     })
+                //                 });
+                //             })
+                //             .then(response => response.json())
+                //             .then(data => {
+                //                 if (!data.success) {
+                //                     throw new Error("❌ Errore nell'invio della richiesta di prelazione: " + data.message);
+                //                 }
+                //
+                //                 const action = `Richiesta prelazione squadra ${nomeSquad}`;
+                //                 const description = `
+                //                 <p>Richiesta prelazione squadra <strong>${nomeSquad}</strong> (ID: <strong>${idSquadra}</strong>)</p>
+                //                 <ul>
+                //                     <li><b>Calciatore:</b> ${nomeCalciatore}</li>
+                //                     <li><b>Ruolo:</b> ${ruolo}</li>
+                //                     <li><b>Squadra:</b> ${squadra}</li>
+                //                     <li><b>Costo calciatore:</b> ${costoCalciatore} FVM</li>
+                //                     <li><b>Valore prelazione:</b> ${valorePrelazione} FVM</li>
+                //                 </ul>
+                //             `;
+                //
+                //                 alert('✅ Richiesta di prelazione inviata con successo!');
+                //
+                //                 return fetch('sendMail.php', {
+                //                     method: 'POST',
+                //                     headers: { 'Content-Type': 'application/json' },
+                //                     body: JSON.stringify({ action: action, description: description })
+                //                 });
+                //             })
+                //             .then(response => response.text())
+                //             .then(data => {
+                //                  // 🔄 Aggiorna la schermata dopo 1 secondo
+                //                 setTimeout(() => {
+                //                     location.reload();
+                //                 }, 1000);
+                //             })
+                //             .catch(err => {
+                //                 alert(err.message || ('❌ Errore: ' + err));
+                //             });
+                //     } else {
+                //         alert('⚠️ Il calciatore è fuori listone, non è possibile richiedere la prelazione');
+                //     }
+                // }
 
             </script>
         </div>
@@ -1122,6 +1122,10 @@
                                                 <div class="player-stats">
                                                     <span>Costo: <span class="stat-value">${player.costo_calciatore} FVM</span></span>
                                                     <span>FVM: <span class="stat-value">${player.fvm} FVM</span></span>
+                                                </div>
+                                                <div class="player-stats">
+                                                    <span>Movimenti: <span class="stat-value">${player.n_movimenti} </span></span>
+                                                    <span>Scambiato: <span class="stat-value">${player.scambiato ? "Sì" : "No"}</span></span>
                                                 </div>
                                             </div>
                                         `;
