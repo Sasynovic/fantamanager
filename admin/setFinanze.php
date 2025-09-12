@@ -173,10 +173,19 @@ $nomeSezione = "Finanze Squadra";
 
             csvData = data.map(row => {
                 const mapped = {};
+
+                // Mappa colonne obbligatorie
                 requiredCols.forEach(col => {
                     const key = Object.keys(row).find(k => k.toLowerCase() === col);
                     mapped[col] = row[key]?.trim();
                 });
+
+                // Mappa colonne opzionali (se presenti)
+                optionalCols.forEach(col => {
+                    const key = Object.keys(row).find(k => k.toLowerCase() === col);
+                    mapped[col] = key ? row[key]?.trim() : null;
+                });
+
                 mapped.status = 'pending';
                 mapped.message = '';
                 return mapped;
@@ -185,7 +194,7 @@ $nomeSezione = "Finanze Squadra";
             updateResultsUI();
             document.getElementById('summary').innerHTML =
                 `<div class="alert alert-success">File CSV caricato correttamente. ${csvData.length} record trovati.</div>
-         <button id="start-update" class="btn btn-primary">Avvia Aggiornamento</button>`;
+                  <button id="start-update" class="btn btn-primary">Avvia Aggiornamento</button>`;
 
             document.getElementById('start-update').addEventListener('click', startUpdateProcess);
         }
@@ -271,19 +280,19 @@ $nomeSezione = "Finanze Squadra";
             successData.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-            <td>${row.id}</td>
-            <td>${row.totale_crediti_bilancio || '-'}</td>
-            <td>${row.guadagno_crediti_stadio_league}</td>
-            <td>${row.guadagno_crediti_stadio_cup}</td>
-            <td>${row.premi_league}</td>
-            <td>${row.premi_cup}</td>
-            <td>${row.prequalifiche_uefa_stadio}</td>
-            <td>${row.prequalifiche_uefa_premio}</td>
-            <td>${row.competizioni_uefa_stadio}</td>
-            <td>${row.competizioni_uefa_premio}</td>
-            <td>${row.punteggio_ranking || '-'}</td>
-            <td><span class="badge bg-success">Successo</span></td>
-        `;
+                    <td>${row.id}</td>
+                    <td>${row.totale_crediti_bilancio || '-'}</td>
+                    <td>${row.guadagno_crediti_stadio_league}</td>
+                    <td>${row.guadagno_crediti_stadio_cup}</td>
+                    <td>${row.premi_league}</td>
+                    <td>${row.premi_cup}</td>
+                    <td>${row.prequalifiche_uefa_stadio}</td>
+                    <td>${row.prequalifiche_uefa_premio}</td>
+                    <td>${row.competizioni_uefa_stadio}</td>
+                    <td>${row.competizioni_uefa_premio}</td>
+                    <td>${row.punteggio_ranking || '-'}</td>
+                    <td><span class="badge bg-success">Successo</span></td>
+                `;
                 tbody.appendChild(tr);
             });
 
