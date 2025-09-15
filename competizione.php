@@ -109,8 +109,8 @@
                 <div class="container">
 
                     <div class="view-tabs">
-                        <button class="tablinks" onclick="openTab(event, 'classifica')" id="defaultOpen">Classifica</button>
-                        <button class="tablinks" onclick="openTab(event, 'news')">News</button>
+                        <button class="view-tab" onclick="openTab(event, 'classifica')" id="defaultOpen">Classifica</button>
+                        <button class="view-tab" onclick="openTab(event, 'news')">News</button>
                     </div>
 
                     <div id="classifica" name="tabcontent" >
@@ -213,7 +213,7 @@
                                     // Elementi DOM
                                     const newsContent = document.getElementById('news-content');
                                     const paginationContainer = document.getElementById('news-pagination');
-                                    const tabButtons = document.querySelectorAll('.tablinks');
+                                    const tabButtons = document.querySelectorAll('.view-tab');
 
                                     // Stato dell'applicazione
                                     let currentTab = 'all';
@@ -391,14 +391,14 @@
 
 <script>
     function openTab(evt, tabName) {
-        let i, tabcontent, tablinks;
+        let i, tabcontent, viewtab;
         tabcontent = document.getElementsByName("tabcontent");
         for (i = 0; i < tabcontent.length; i++) {
             tabcontent[i].style.display = "none";
         }
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        viewtab = document.getElementsByClassName("view-tab");
+        for (i = 0; i < viewtab.length; i++) {
+            viewtab[i].className = viewtab[i].className.replace(" active", "");
         }
         document.getElementById(tabName).style.display = "block";
         evt.currentTarget.className += " active";

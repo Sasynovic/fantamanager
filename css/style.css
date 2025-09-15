@@ -601,6 +601,7 @@ input{
     border: none;
     outline: none;
     font-size: 1rem;
+    width: 100%;
 }
 .tablinks.active {
     background-color: var(--oro);
@@ -614,6 +615,25 @@ input{
 .tablinks:hover:not(.active) {
     background-color: #2a3a5a;
 }
+
+.tablinks-delete{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 12px;
+    background-color: var(--rosso);
+    cursor: pointer;
+    border: none;
+}
+
+/* Stile per i tab di visualizzazione */
 .view-tabs {
     display: flex;
     justify-content: center;
@@ -623,6 +643,28 @@ input{
     z-index: 100;
     flex-wrap: wrap;
 }
+
+.view-tab {
+    padding: 10px 20px;
+    background-color: var(--blu);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    color: white;
+    border: none;
+    outline: none;
+}
+
+.view-tab.active {
+    background-color: var(--oro);
+    color: var(--blu-scurissimo);
+}
+
+.view-tab:hover:not(.active) {
+    background-color: #2a3a5a;
+}
+
 
 /*stile per la tabella*/
 /* BLOCK: Tabella competizioni */
