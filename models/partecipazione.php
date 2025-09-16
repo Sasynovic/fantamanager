@@ -38,6 +38,7 @@ class partecipazione
                             c.nome_competizione AS nomeCompetizione,
                             d.nome_divisione AS nomeDivisione,
                             c.id_divisione AS id_divisione,
+                            c.tipo,
                             
                             s.id AS id_squadra,
                             s.nome_squadra AS nome_squadra,
@@ -65,7 +66,8 @@ class partecipazione
         }
         if($id_squadra) {
             $query .= " AND p.id_squadra = :id_squadra";
-                        $query .= " AND p.id_competizione <41";
+                        $query .= " AND c.tipo = 1";
+
         }
         $query .= " ORDER BY p.id ASC";
 
