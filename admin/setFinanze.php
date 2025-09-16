@@ -224,16 +224,20 @@ $nomeSezione = "Finanze Squadra";
                 }
 
                 const promises = batch.map(row => {
-                    // Prepara il payload
                     const payload = {};
                     Object.keys(row).forEach(k => {
                         if (k !== 'status' && k !== 'message') {
-                            const num = parseFloat(row[k].replace(',', '.'));
-                            payload[k] = isNaN(num) ? row[k] : num;
+                            const val = row[k];
+                            if (val == null) return; // salta null o undefined
+
+                            const str = String(val).replace(',', '.');
+                            const num = parseFloat(str);
+                            payload[k] = isNaN(num) ? val : num;
                         }
                     });
 
-                    return fetch(`${window.location.protocol}//${window.location.host}/endpoint/finanze_squadra/update.php?id=${row.id}`, {
+
+                return fetch(`${window.location.protocol}//${window.location.host}/endpoint/finanze_squadra/update.php?id=${row.id}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
