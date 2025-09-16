@@ -60,13 +60,14 @@ if ($num > 0) {
             "dirigenza" => [
                 "id_pres" => $row['id_pres'],
                 "presidente" => $row['nome_pres'] . ' ' . $row['cognome_pres'],
-                "id_vice" => $row['id_vice'],
-                "vicepresidente" => $row['nome_vice'] . ' ' . $row['cognome_vice'],
+                "id_vice" => $row['id_vice'] ?? null,
+                "vicepresidente" => $row['nome_vice'] . ' ' . $row['cognome_vice'] ,
                 ],
             "finanze" => [
                 "credito" => $row['credito'],
+                'credito_sgs' => $row['credito_sgs'],
+                'mercato_sgs' => $row['mercato_sgs'],
             ],
-
             "stadio" => [
                 "id_stadio" => $row['id_stadio'],
                 "nome_stadio" => $row['nome_stadio'],

@@ -28,6 +28,7 @@ if ($num > 0) {
     extract($first_row);
 
     $partecipazioni_arr["nome_competizione"] = $nomeDivisione . " " . $nomeCompetizione;
+    $partecipazioni_arr["id_divisione"] = $id_divisione;
     $partecipazioni_arr["id_competizione"] = $id_competizione;
     $partecipazioni_arr["squadre"] = array();
 

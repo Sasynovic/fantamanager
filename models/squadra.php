@@ -153,6 +153,8 @@ class squadra
                                 s.id_pres,
                                 s.id_vice,
                                 s.id_stadio,
+                                s.credito_sgs,
+                                s.mercato_sgs,
                                 
                                 pres.nome AS nome_pres,
                                 pres.cognome AS cognome_pres,
@@ -255,7 +257,9 @@ class squadra
             'costo_iscrizione' => PDO::PARAM_INT,
             'valore_fvm' => PDO::PARAM_INT,
             'fvm_old' => PDO::PARAM_INT,
-            'credito' => PDO::PARAM_INT
+            'credito' => PDO::PARAM_INT,
+            'credito_sgs' => PDO::PARAM_INT,
+            'mercato_sgs' => PDO::PARAM_BOOL
         ];
 
         foreach ($allowedFields as $field => $type) {
