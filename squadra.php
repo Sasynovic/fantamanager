@@ -1051,10 +1051,17 @@
                     $ora   = (int)$oggi->format("H"); // ora (00-23)
 
                     // Controllo intervallo: 23–25 settembre dalle 9 alle 14
-                    if($oggi >= new DateTime($oggi->format("Y")."-09-23 09:00") && $oggi <= new DateTime($oggi->format("Y")."-09-25 14:00")){
+                    if($oggi >= new DateTime($oggi->format("Y")."-09-23 08:59") && $oggi <= new DateTime($oggi->format("Y")."-09-23 14:01"))
+                    {
+                        $mercatoAperto = 1;
+                    }else if($oggi >= new DateTime($oggi->format("Y")."-09-24 08:59") && $oggi <= new DateTime($oggi->format("Y")."-09-24 14:01"))
+                    {
+                        $mercatoAperto = 1;
+                    }else if($oggi >= new DateTime($oggi->format("Y")."-09-25 08:59") && $oggi <= new DateTime($oggi->format("Y")."-09-25 14:01"))
+                    {
                         $mercatoAperto = 1;
                     }else{
-                        $mercatoAperto = 1;
+                        $mercatoAperto = 0;
                     }
 
                     if($mercatoSgs == 1 && $mercatoAperto == 1){
@@ -1072,12 +1079,12 @@
                                const sezione = document.getElementById("sgsOffer");
                                 sezione.innerHTML = `
                                   <h3>Acquista calciatori settore giovanile</h3>
-                                  <p>Il mercato del settore giovanile è chiuso.</p>`;
+                                  <p>Il mercato del settore giovanile è chiuso.<br> Hai acquisito il diritto di parteciparvi in quanto hai pagato la tariffa di accesso. <br>Il mercato è aperto i giorni 23, 24 e 25 Settembre dalle 9:00 alle 14:00.</p>`;
                               </script>';
                     }else{
                         echo '<script>
             const sezione = document.getElementById("sgsOffer");
-            sezione.innerHTML = \'<h3>Acquista calciatori settore giovanile</h3><p>Il mercato del settore giovanile è chiuso.</p><br>\';
+            sezione.innerHTML = \'<h3>Acquista calciatori settore giovanile</h3><p>Il mercato del settore giovanile è chiuso. <br>Clicca su <b>richiedi apertura mercato</b> per acquistare la prelazione di accesso.</p><br>\';
             
             const buyAccess = document.createElement("button");
             buyAccess.classList.add("tablinks");
