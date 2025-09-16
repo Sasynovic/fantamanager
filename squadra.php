@@ -50,37 +50,6 @@
 
         }
 
-        /* Stile per i tab di visualizzazione */
-        .view-tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-            gap: 10px;
-            position: relative;
-            z-index: 100;
-            flex-wrap: wrap;
-        }
-
-        .view-tab {
-            padding: 10px 20px;
-            background-color: var(--blu);
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: bold;
-            color: white;
-            border: none;
-            outline: none;
-        }
-
-        .view-tab.active {
-            background-color: var(--oro);
-            color: var(--blu-scurissimo);
-        }
-
-        .view-tab:hover:not(.active) {
-            background-color: #2a3a5a;
-        }
 
         /* Stile per la vista a griglia */
         .grid-view {
@@ -242,12 +211,38 @@
             align-items: center;
         }
 
+        .sgs-select{
+            width: 50%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .button-container{
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sgs-input-group{
+            margin-bottom: 15px;
+        }
+
+        .sgs-input{
+            width: 49%;
+        }
+
         /* Responsive design */
         @media (max-width: 1024px) {
             .modulo-content{
                 display: grid;
                 grid-auto-columns: min-content;
             }
+            .sgs-input-group > *{
+                width: 100%;
+            }
+
         }
     </style>
 </head>
@@ -314,6 +309,8 @@
                         $json = json_decode($data);
                         echo $json->squadra[0]->nome_squadra ?? 'Squadra non trovata';
                         $squadraNome = $json->squadra[0]->nome_squadra ?? 'Squadra non trovata';
+                        $squadraCreditosgs = $json->squadra[0] -> finanze -> credito_sgs ?? 0;
+                        $mercatoSgs = $json->squadra[0] -> finanze -> mercato_sgs ?? 0;
                     } else {
                         echo 'Squadra non trovata';
                     }
@@ -368,13 +365,18 @@
 
                     if ($finanze) {
                         $json_finanze = json_decode($finanze);
+                        $totale_crediti_bilancio = $json_finanze->finanze_squadra[0]->totale_crediti_bilancio ?? 0;
+
                     }
+
+                    $id_divisione = 0;
 
                     $partecipazione = file_get_contents($baseUrl.'endpoint/partecipazione/read.php?id_squadra='.$id_squadra, false, stream_context_create([
                         'http' => ['method' => 'GET', 'header' => 'Content-Type: application/json']
                     ]));
                     if ($partecipazione) {
                         $json_partecipazione = json_decode($partecipazione);
+                        $id_divisione = $json_partecipazione->id_divisione ?? 0;
                     }
                     ?>
                 </h1>
@@ -759,7 +761,6 @@
                 }
 
                 function sendStadiumUpgrade(idSquadra, totaleCreditiBilancio, nomeSquadra) {
-                    console.log(nomeSquadra);
                     const passkeyInput = prompt('Inserisci la passkey per confermare la richiesta di prelazione:');
                     if (!passkeyInput) {
                         alert('⚠️ Operazione annullata: nessuna passkey inserita');
@@ -874,12 +875,676 @@
             <!-- Vista Settore Giovanile -->
             <div class="sgs-view" id="sgs-view">
                 <div class="overview-cards" id="buyCard" >
-                    <div class="overview-card">
+                    <div class="overview-card" id="sgsOffer">
                         <h3>Acquista calciatori settore giovanile</h3>
-                        <i style="font">Acquistabili a partire da settembre...</i>
+                        <p>Puoi offrire al max: <b><?php echo $squadraCreditosgs ?> FVM</b></p><br>
 
+                        <div class="filter-list">
+                            <select class="sgs-select" id="ruolo">
+                                <option value="0" selected>Tutti i ruoli</option>
+                                <option value="P">Portiere</option>
+                                <option value="D">Difensore</option>
+                                <option value="C">Centrocampista</option>
+                                <option value="A">Attaccante</option>
+                            </select>
+                            <select class="sgs-select" id="squadra_reale">
+                                <option value="0" selected>Tutte le squadre</option>
+                                <option value="Atalanta">Atalanta</option>
+                                <option value="Bologna">Bologna</option>
+                                <option value="Cagliari">Cagliari</option>
+                                <option value="Cremonese">Cremonese</option>
+                                <option value="Como">Como</option>
+                                <option value="Fiorentina">Fiorentina</option>
+                                <option value="Genoa">Genoa</option>
+                                <option value="Hellas Verona">Hellas Verona</option>
+                                <option value="Inter">Inter</option>
+                                <option value="Juventus">Juventus</option>
+                                <option value="Lazio">Lazio</option>
+                                <option value="Lecce">Lecce</option>
+                                <option value="Milan">Milan</option>
+                                <option value="Napoli">Napoli</option>
+                                <option value="Parma">Parma</option>
+                                <option value="Pisa">Pisa</option>
+                                <option value="Roma">Roma</option>
+                                <option value="Sassuolo">Sassuolo</option>
+                                <option value="Torino">Torino</option>
+                                <option value="Udinese">Udinese</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <div class="sgs-input-group">
+                                <select id="sgs-select-1" class="sgs-select"></select>
+                                <input  class="sgs-input"type="number" id="sgs-input-1" placeholder="Inserisci crediti" min="0" max="<?php echo $squadraCreditosgs ?>">
+                            </div>
+
+                            <div class="sgs-input-group">
+                                <select id="sgs-select-2" class="sgs-select"></select>
+                                <input class="sgs-input" type="number" id="sgs-input-2" placeholder="Inserisci crediti" min="0" max="<?php echo $squadraCreditosgs ?>">
+                            </div>
+
+                            <div class="sgs-input-group">
+                                <select id="sgs-select-3" class="sgs-select"></select>
+                                <input class="sgs-input" type="number" id="sgs-input-3" placeholder="Inserisci crediti" min="0" max="<?php echo $squadraCreditosgs ?>">
+                            </div>
+                        </div>
+
+                        <button id="send-offer" class="tablinks" style="background-color: var(--accento)" onclick="sendOffer(<?php echo $id_squadra ?>, <?php echo $squadraCreditosgs ?>)">
+                            Invia Offerte
+                        </button>
+                        <script>
+                            function fetchSelect(){
+                                const squadra_reale_filter = document.getElementById("squadra_reale");
+                                const ruolo_filter = document.getElementById("ruolo");
+
+                                const selectIds = ["sgs-select-1", "sgs-select-2", "sgs-select-3"];
+                                let calciatoriList = []; // memorizza tutti i calciatori
+
+                                const idDivisione = <?php echo $id_divisione; ?>;
+                                fetch(`../endpoint/settore_giovanile/read_offer.php?id_divisione=${idDivisione}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        calciatoriList = data.gestione_settore_giovanile.map(item => {
+                                            const c = item.associazione.calciatore;
+                                            return {
+                                                id: item.associazione.id,
+                                                nome: `${c.cognome} ${c.nome}`,
+                                                squadra: c.squadra,
+                                                ruolo: c.ruolo,
+                                                text: `${c.cognome} ${c.nome} - ${c.squadra} - ${c.ruolo}`,
+                                                assegnato: c.offerte.some(o => o.id_squadra === <?php echo $id_squadra; ?>)
+                                                    || c.offerte.some(o => Number(o.assegnato) === 1)
+                                            };
+                                        });
+
+                                        // popolamento iniziale
+                                        selectIds.forEach(id => populateSelect(document.getElementById(id), calciatoriList));
+                                    })
+                                    .catch(error => console.error("Errore nel fetch:", error));
+
+                                // funzione per filtrare la lista
+                                function getFilteredList(){
+                                    const squadraSel = squadra_reale_filter.value;
+                                    const ruoloSel = ruolo_filter.value;
+
+                                    return calciatoriList.filter(c => {
+                                        let ok = true;
+                                        if (squadraSel !== "0") ok = ok && c.squadra.toLowerCase() === squadraSel.toLowerCase();
+                                        if (ruoloSel !== "0") ok = ok && c.ruolo === ruoloSel;
+                                        if(c.assegnato) ok = false; // escludo calciatori già assegnati
+                                        return ok;
+                                    });
+                                }
+
+                                // funzione per popolare una select con lista filtrata
+                                function populateSelect(select, list){
+                                    const currentValue = select.value; // provo a mantenere selezione
+                                    select.innerHTML = "";
+                                    const defaultOption = document.createElement("option");
+                                    defaultOption.value = "0";
+                                    defaultOption.textContent = "Seleziona un calciatore";
+                                    select.appendChild(defaultOption);
+
+                                    list.forEach(c => {
+                                        const option = document.createElement("option");
+                                        option.value = c.id;
+                                        option.textContent = c.text;
+                                        select.appendChild(option);
+                                    });
+
+                                    // se il valore corrente è ancora presente, lo rimetto selezionato
+                                    if ([...select.options].some(o => o.value === currentValue)){
+                                        select.value = currentValue;
+                                    }
+                                }
+
+                                // funzione per aggiornare tutte le select dopo filtro
+                                function filterSelects(){
+                                    const filtered = getFilteredList();
+                                    selectIds.forEach(id => {
+
+                                        const select = document.getElementById(id);
+
+                                        // se la select ha già un valore selezionato diverso da "0", NON la ripopoliamo
+                                        if (select.value !== "0" && select.value !== "") {
+                                            return;
+                                        }
+
+                                        // altrimenti la ripopoliamo col filtro
+                                        populateSelect(select, filtered);
+
+                                        populateSelect(document.getElementById(id), filtered);
+                                    });
+                                    updateSelects();
+                                }
+
+                                // funzione per disabilitare duplicati
+                                function updateSelects(){
+                                    const selectedValues = selectIds.map(id => document.getElementById(id).value);
+
+                                    selectIds.forEach(id => {
+                                        const select = document.getElementById(id);
+                                        Array.from(select.options).forEach(option => {
+                                            option.disabled = selectedValues.includes(option.value) && select.value !== option.value;
+                                        });
+                                    });
+                                }
+
+                                // listeners
+                                squadra_reale_filter.addEventListener("change", filterSelects);
+                                ruolo_filter.addEventListener("change", filterSelects);
+
+                                selectIds.forEach(id => {
+                                    document.getElementById(id).addEventListener("change", updateSelects);
+                                });
+                            }
+                        </script>
+                    </div>
+
+                    <?php
+
+                    date_default_timezone_set("Europe/Rome");
+
+                    $oggi = new DateTime();
+                    $giorno = (int)$oggi->format("d"); // giorno del mese
+                    $mese  = (int)$oggi->format("m"); // mese (01-12)
+                    $ora   = (int)$oggi->format("H"); // ora (00-23)
+
+                    // Controllo intervallo: 23–25 settembre dalle 9 alle 14
+                    if($oggi >= new DateTime($oggi->format("Y")."-09-23 09:00") && $oggi <= new DateTime($oggi->format("Y")."-09-25 14:00")){
+                        $mercatoAperto = 1;
+                    }else{
+                        $mercatoAperto = 1;
+                    }
+
+                    if($mercatoSgs == 1 && $mercatoAperto == 1){
+                        echo '
+                            <script>
+                                const selectIds = ["sgs-select-1", "sgs-select-2", "sgs-select-3"];
+                                let calciatoriList = []; // memorizza tutti i calciatori
+        
+                                // Carico i calciatori
+                                fetchSelect();
+                            
+                            </script>';
+                    }else if($mercatoSgs == 1 && $mercatoAperto == 0){
+                        echo '<script>
+                               const sezione = document.getElementById("sgsOffer");
+                                sezione.innerHTML = `
+                                  <h3>Acquista calciatori settore giovanile</h3>
+                                  <p>Il mercato del settore giovanile è chiuso.</p>`;
+                              </script>';
+                    }else{
+                        echo '<script>
+            const sezione = document.getElementById("sgsOffer");
+            sezione.innerHTML = \'<h3>Acquista calciatori settore giovanile</h3><p>Il mercato del settore giovanile è chiuso.</p><br>\';
+            
+            const buyAccess = document.createElement("button");
+            buyAccess.classList.add("tablinks");
+            buyAccess.style.backgroundColor = "var(--rosso)";
+            buyAccess.textContent = "Richiedi apertura mercato";
+            buyAccess.id = "buyAccess";
+            
+            sezione.appendChild(buyAccess);
+            
+            buyAccess.onclick = function() {
+                const passkey = prompt("Inserisci la passkey per richiedere l\'apertura del mercato del settore giovanile:");
+                if(!passkey) {
+                    alert("Operazione annullata: nessuna passkey inserita");
+                    return;
+                }
+                
+                fetch("../endpoint/squadra/readPasskey.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        idSquadra1: "'.$id_squadra.'",
+                        idSquadra2: "'.$id_squadra.'",
+                        passkey: passkey
+                    })
+                })
+                .then(response => response.json())
+                .then(passkeyData => {
+                    if(!passkeyData.success) {
+                        throw new Error("Passkey non valida!");
+                    }
+                    if('.$totale_crediti_bilancio.' < 5) {
+                        throw new Error("Crediti insufficienti per richiedere l\'apertura del mercato del settore giovanile. Sono necessari almeno 5 FVM.");
+                    } else {
+                        if(!confirm("La richiesta di apertura del mercato del settore giovanile costa 5 FVM. Procedere?")) {
+                            return;
+                        }
+                    }
+                    
+                    fetch("../endpoint/finanze_squadra/update.php?id='.$id_squadra.'", {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            id: "'.$id_squadra.'",
+                            totale_crediti_bilancio: '.$totale_crediti_bilancio.' - 5
+                        })
+                    })
+                    .then(() => {
+                        fetch("../endpoint/squadra/update.php?id='.$id_squadra.'", {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                id: "'.$id_squadra.'",
+                                mercato_sgs: 1
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if(data.success) {
+                                alert("Richiesta di apertura mercato inviata con successo!");
+                                window.location.reload();
+                            } else {
+                                throw new Error("Errore nell\'invio della richiesta di apertura mercato.");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Errore:", error);
+                            alert("Errore: " + error.message);
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error("Errore:", error);
+                    alert("Errore: " + error.message);
+                });
+            };
+          </script>';
+                    }
+                    ?>
+                </div>
+
+                <div class="overview-cards">
+                    <div class="overview-card">
+                        <h3>Offerte settore giovanile</h3>
+
+                        <p>Il costo di acquisto del calciatore verrà scalato dalle finanze della squadra solo in caso di accettazione dell'offerta.</p>
+                        <br>
+
+                        <div class="grid-view active" id="offerteGiovaniliContainer" style="display: grid">
+                            <!-- Le offerte verranno caricate qui via JavaScript -->
+                        </div>
                     </div>
                 </div>
+
+                <script>
+
+                    let contaOfferte = 0;
+
+                    fetch(`../endpoint/settore_giovanile/read_offer.php?id_squadra=<?php echo $id_squadra; ?>`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const container = document.getElementById("offerteGiovaniliContainer");
+                            container.innerHTML = "";
+
+                            if (data.gestione_settore_giovanile && data.gestione_settore_giovanile.length > 0) {
+                                let offerteTrovate = false;
+
+                                data.gestione_settore_giovanile.forEach(item => {
+                                    const calciatore = item.associazione.calciatore;
+
+                                    if (calciatore.offerte && calciatore.offerte.length > 0) {
+                                        offerteTrovate = true;
+                                        calciatore.offerte.forEach(offerta => {
+
+                                            contaOfferte++;
+
+                                            if(offerta.assegnato === 1) {
+                                                const playerCard = document.createElement("div");
+                                                playerCard.classList.add(`grid-player-card-${calciatore.ruolo}`);
+
+                                                playerCard.innerHTML = `
+                                                <div class="player-main-info">
+                                                    <div class="player-name">${calciatore.cognome} ${calciatore.nome}</div>
+                                                    <div class="player-team">${calciatore.squadra} - Div. ${item.associazione.nome_divisione}</div>
+                                                    <div class="player-team">
+                                                        <span>Offerta: <span class="stat-value" id="offer-valure-${offerta.id_offerta}">${offerta.valore_offerta} FVM</span></span>
+                                                    </div>
+                                                      <p style="color: var(--verde); font-weight: bold; margin-top: 10px;">Offerta accettata!</p>
+                                                    </div>
+                                                </div>
+                                                `;
+                                                container.appendChild(playerCard);
+                                            }else{
+
+                                            const playerCard = document.createElement("div");
+                                            playerCard.classList.add(`grid-player-card-${calciatore.ruolo}`);
+
+                                            playerCard.innerHTML = `
+                                                <button class="tablinks-delete" style="background-color: var(--rosso)" onclick="deleteOffer(${offerta.id_offerta}, ${offerta.valore_offerta})">X</button>
+                                                <div class="player-main-info">
+                                                    <div class="player-name">${calciatore.cognome} ${calciatore.nome}</div>
+                                                    <div class="player-team">${calciatore.squadra} - Div. ${item.associazione.nome_divisione}</div>
+                                                    <div class="player-team">
+                                                        <span>Offerta: <span class="stat-value" id="offer-valure-${offerta.id_offerta}">${offerta.valore_offerta} FVM</span></span>
+                                                    </div>
+                                                    <div class="button-container">
+                                                        <button class="tablinks" style="background-color: var(--oro);" id="edit-offer-${offerta.id_offerta}"
+                                                            onclick="editOffer(${offerta.id_offerta}, ${<?php echo (int)$squadraCreditosgs ?>})">
+                                                            Modifica Offerta
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            `;
+
+                                            container.appendChild(playerCard);
+                                            }
+                                        });
+                                    }
+                                });
+
+                                if (!offerteTrovate) {
+                                    container.innerHTML = '<p>Nessuna offerta in corso</p>';
+                                }
+                            } else {
+                                container.innerHTML = '<p>Nessuna offerta in corso</p>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Errore nel fetch delle offerte giovanili:", error);
+                            document.getElementById("offerteGiovaniliContainer").innerHTML = '<p>Nessuna offerta trovata</p>';
+                        });
+
+                    function deleteOffer(offerId, valore_offerta) {
+                        const nuovoCredito = <?php echo (int)$squadraCreditosgs ?> + valore_offerta;
+                        if (!confirm("Sei sicuro di voler eliminare questa offerta?")) return;
+
+                        const passkey = prompt("Inserisci la passkey per confermare l'eliminazione dell'offerta:");
+                        if (!passkey) {
+                            alert("Operazione annullata: nessuna passkey inserita");
+                            return;
+                        }
+
+                        fetch('../endpoint/squadra/readPasskey.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                idSquadra1: <?php echo $id_squadra; ?>,
+                                idSquadra2: <?php echo $id_squadra; ?>,
+                                passkey: passkey
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(passkeyData => {
+                            if (!passkeyData.success) {
+                                throw new Error("Passkey non valida!");
+                            }
+                            fetch(`../endpoint/settore_giovanile/delete_offer.php?id=${offerId}`, {
+                                method: "DELETE"
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        fetch('../endpoint/squadra/update.php?id=<?php echo $id_squadra; ?>', {
+                                            method: 'PUT',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({
+                                                id: <?php echo $id_squadra; ?>,
+                                                credito_sgs: nuovoCredito
+                                        })
+                                        })
+                                        .then( response => response.json() )
+                                        .then( data =>
+                                            {
+                                                if(data.success) {
+                                                    alert("Offerta eliminata con successo!");
+                                                    location.reload();
+                                            }else {
+                                                    alert("Errore nell'aggiornamento dei crediti SGS.");
+                                                }
+                                            }
+                                        );
+                                    } else {
+                                        throw new Error("Errore nell'eliminazione dell'offerta.");
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error("Errore:", error);
+                                    alert("Errore: " + error.message);
+                                });
+                        })
+                        .catch(error => {
+                            console.error("Errore:", error);
+                            alert("Errore: " + error.message);
+                        });
+                    }
+
+                    function editOffer(offerId, maxOffer) {
+                        // Implementa la logica per modificare l'offerta
+                        const oldValueElement = document.getElementById(`offer-valure-${offerId}`);
+                        oldValueElement.style.display = 'none';
+
+                        const editButton = document.getElementById(`edit-offer-${offerId}`);
+                        editButton.style.display = 'none';
+
+                        const newValueInput = document.createElement('input');
+                        newValueInput.type = 'number';
+                        newValueInput.min = '0';
+                        newValueInput.max = '10';
+                        newValueInput.value = oldValueElement.textContent.replace(' FVM', '');
+                        newValueInput.id = `new-offer-value-${offerId}`;
+                        oldValueElement.parentNode.appendChild(newValueInput);
+
+                        const saveButton = document.createElement('button');
+                        saveButton.textContent = 'Salva';
+                        saveButton.classList.add('tablinks');
+                        saveButton.style.backgroundColor = 'var(--verde)';
+
+
+                        const cancelButton = document.createElement('button');
+                        cancelButton.textContent = 'Annulla';
+                        cancelButton.classList.add('tablinks');
+                        cancelButton.style.backgroundColor = 'var(--rosso)';
+                        editButton.parentNode.appendChild(saveButton);
+                        editButton.parentNode.appendChild(cancelButton);
+                        editButton.style.display = 'none';
+
+                        cancelButton.onclick = () => {
+                            newValueInput.remove();
+                            oldValueElement.style.display = '';
+                            saveButton.remove();
+                            cancelButton.remove();
+                            editButton.style.display = 'block';
+                        }
+
+                        saveButton.onclick = () => {
+                            const newValue = parseInt(newValueInput.value);
+                            const oldValue = parseInt(oldValueElement.textContent.replace(' FVM', ''));
+
+                            const maxOfferEdit = <?php echo (int)$squadraCreditosgs ?> + oldValue;
+
+                            if (isNaN(newValue) || newValue < 0 || newValue > maxOfferEdit) {
+                                alert(`Valore non valido. Inserisci un numero tra 0 e ${maxOfferEdit}`);
+                                return;
+                            }
+
+                            const passkey = prompt("Inserisci la passkey per confermare la modifica dell'offerta:");
+                            if (!passkey) {
+                                alert("Operazione annullata: nessuna passkey inserita");
+                                return;
+                            }
+
+                            fetch('../endpoint/squadra/readPasskey.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    idSquadra1: <?php echo $id_squadra; ?>,
+                                    idSquadra2: <?php echo $id_squadra; ?>,
+                                    passkey: passkey
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(passkeyData => {
+                                if (!passkeyData.success) {
+                                    throw new Error("Passkey non valida!");
+                                }
+                                fetch(`../endpoint/settore_giovanile/update_offer.php?id=${offerId}`, {
+                                    method: 'PUT',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ valore_offerta: newValue })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        fetch('../endpoint/squadra/update.php?id=<?php echo $id_squadra; ?>', {
+                                            method: 'PUT',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({
+                                                id: <?php echo $id_squadra; ?>,
+                                                credito_sgs: maxOfferEdit - newValue
+                                            })
+                                        })
+                                        .then( response => response.json() )
+                                        .then( data =>
+                                            {
+                                                if(data.success) {
+                                                    alert('Offerta aggiornata con successo!');
+                                                    location.reload();
+                                                }else {
+                                                    alert("Errore nell'aggiornamento dei crediti SGS.");
+                                                }
+                                            }
+                                        );
+
+                                    } else {
+                                        throw new Error('Errore nell\'aggiornamento dell\'offerta.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Errore:', error);
+                                    alert('Errore: ' + error.message);
+                                });
+                            })
+                            .catch(error => {
+                                console.error('Errore:', error);
+                                alert('Errore: ' + error.message);
+                            });
+                        };
+                    }
+
+                    function sendOffer(idSquadra, maxOffer) {
+                        const selectIds = ["sgs-select-1", "sgs-select-2", "sgs-select-3"];
+                        let totalOffer = 0;
+                        let offers = [];
+
+                        for (let i = 0; i < selectIds.length; i++) {
+                            const select = document.getElementById(selectIds[i]);
+                            const input = document.getElementById(`sgs-input-${i + 1}`);
+
+                            const calciatoreId = parseInt(select.value);
+                            const offerValue = parseInt(input.value);
+
+                            if (calciatoreId && !isNaN(offerValue) && offerValue > 0) {
+                                totalOffer += offerValue;
+                                offers.push({ calciatoreId, offerValue });
+                            }
+                        }
+
+                        if (offers.length === 0) {
+                            alert("Inserisci almeno un'offerta valida.");
+                            return;
+                        }
+
+                        if (totalOffer > maxOffer) {
+                            alert(`Il totale delle offerte (${totalOffer} FVM) supera il credito disponibile (${maxOffer} FVM).`);
+                            return;
+                        }
+                        if(contaOfferte + offers.length > 3){
+                            alert("Puoi avere un massimo di 3 offerte attive contemporaneamente. Elimina alcune offerte prima di inviarne di nuove.");
+                            return;
+                        }
+
+                        const passkey = prompt("Inserisci la passkey per confermare l'invio delle offerte:");
+                        if (!passkey) {
+                            alert("Operazione annullata: nessuna passkey inserita");
+                            return;
+                        }
+
+                        fetch('../endpoint/squadra/readPasskey.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                idSquadra1: idSquadra,
+                                idSquadra2: idSquadra,
+                                passkey: passkey
+                            })
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Errore nella verifica passkey');
+                                }
+                                return response.json();
+                            })
+                            .then(passkeyData => {
+                                if (!passkeyData.success) {
+                                    throw new Error("Passkey non valida!");
+                                }
+
+                                // Invia tutte le offerte
+                                return Promise.all(offers.map(offer => {
+                                    return fetch('../endpoint/settore_giovanile/create_offer.php', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            id_squadra: idSquadra,
+                                            id_associazione_g: offer.calciatoreId,
+                                            valore_offerta: offer.offerValue
+                                        })
+                                    })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error('Errore nell\'invio dell\'offerta');
+                                        }
+                                        return response.json();
+                                    });
+                                }));
+
+
+                            })
+                            .then(results => {
+                                // Verifica che tutte le offerte siano state create con successo
+                                const allSuccess = results.every(result => result && result.success);
+
+                                if (!allSuccess) {
+                                    throw new Error('Errore nell\'invio di una o più offerte');
+                                }
+
+                                // AGGIORNA I CREDITI UNA VOLTA SOLA DOPO TUTTE LE OFFERTE
+                                return fetch('../endpoint/squadra/update.php?id=' + idSquadra, {
+                                    method: 'PUT',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        id: idSquadra,
+                                        credito_sgs: maxOffer - totalOffer
+                                    })
+                                });
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Errore nell\'aggiornamento dei crediti');
+                                }
+                                return response.json();
+                            })
+                            .then(creditData => {
+                                if (!creditData.success) {
+                                    throw new Error('Errore nell\'aggiornamento dei crediti SGS');
+                                }
+
+                                alert('Offerte inviate con successo!');
+                                location.reload();
+                            })
+                            .catch(error => {
+                                console.error('Errore:', error);
+                                alert('Errore: ' + error.message);
+                            });
+                    }
+
+                </script>
+
                 <div class="overview-cards">
                     <?php
                     if(!empty($json_settore_giovanile->settore_giovanile)) {
@@ -933,7 +1598,7 @@
                                     <div class="player-stats"><span>Data fine prelazione: <span><span class="stat-value"><?php echo htmlspecialchars(date('Y-m-d', strtotime($calciatore['fine_prelazione'])));?></span></span>
                                     </div>
                                     </div>
-                                <button disabled class="view-tab" style="margin: 5px; background-color: var(--accento)"
+                                <button disabled class="tablinks" style="background-color: var(--accento)"
                                         onclick="inviaRichiestaPrelazione(
                                         <?php echo $id_squadra; ?>,
                                         <?php echo $calciatore['id']; ?>,
@@ -1051,7 +1716,6 @@
 
             </script>
         </div>
-
 
         <footer class="main-footer">
             <div class="swiper-container footer-swiper">
