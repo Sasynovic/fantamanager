@@ -225,7 +225,7 @@
                     </td>
                 `;
             const button = tr.querySelector('.tablinks');
-            button.addEventListener('click', () => acquistaSquadra(squadra.nome_squadra, squadra.prezzo, squadra.rate));
+            button.addEventListener('click', () => acquistaSquadra(squadra.id,squadra.nome_squadra, squadra.prezzo, squadra.rate));
             tbody.appendChild(tr);
 
             // Carica le competizioni per questa squadra
@@ -307,7 +307,7 @@
     }
 
     // Funzione per gestire l'acquisto di una squadra
-    function acquistaSquadra(nomeSquadra,prezzo, rate) {
+    function acquistaSquadra(idSquadra,nomeSquadra,prezzo, rate) {
         const conferma1 = confirm(`Sei sicuro di voler acquistare ${nomeSquadra}?`);
         if (!conferma1) return;
 
@@ -323,11 +323,29 @@
             return;
         }
 
-        const numeroWhatsApp = "+393371447208";
-        const messaggio = `Richiesta acquisto squadra: ${nomeSquadra} - ${rate} Stelle - ${prezzo}€%0ANome: ${nome}%0ACognome: ${cognome}%0AEmail: ${email}`;
-        const url = `https://wa.me/${numeroWhatsApp}?text=${messaggio}`;
-
-        window.open(url);
+        fetch(`../endpoint/squadra/update.php?id=${idSquadra}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: idSquadra,
+                vendita: 0
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Squadra acquistata con successo! Verrai reindirizzato a WhatsApp per completare l'acquisto.");
+                const numeroWhatsApp = "+393371447208";
+                const messaggio = `Richiesta acquisto squadra: ${nomeSquadra} - ${rate} Stelle - ${prezzo}€%0ANome: ${nome}%0ACognome: ${cognome}%0AEmail: ${email}`;
+                const url = `https://wa.me/${numeroWhatsApp}?text=${messaggio}`;
+                window.open(url);
+                loadSquadre(currentPage); // Ricarica la lista delle squadre
+            } else {
+                alert("Errore durante l'acquisto della squadra: " + data.message);
+            }
+        })
     }
 
     // Gestori eventi per i filtri
