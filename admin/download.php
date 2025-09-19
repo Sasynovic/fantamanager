@@ -127,19 +127,19 @@ $nomeSezione = "download";
                 .then(r => r.json())
                 .then(finanze_squadra => {
                     const datiFinanzePS = finanze_squadra.finanze_squadra.map(fin => ({
-                        "ID squadra": fin.id,
-                        "Guadagno crediti stadio lega": fin.guadagno_crediti_stadio_league,
-                        "Guadagno crediti stadio coppa": fin.guadagno_crediti_stadio_cup,
-                        "Premi lega": fin.premi_league,
-                        "Premi coppa": fin.premi_cup,
-                        "Prequalifiche uefa stadio": fin.prequalifiche_uefa_stadio,
-                        "Prequalifiche uefa premio": fin.prequalifiche_uefa_premio,
-                        "Competizioni uefa stadio": fin.competizioni_uefa_stadio,
-                        "Competizioni uefa premio": fin.competizioni_uefa_premio,
+                        "id": fin.id,
+                        "guadagno_crediti_stadio_league": fin.guadagno_crediti_stadio_league,
+                        "guadagno_crediti_stadio_cup": fin.guadagno_crediti_stadio_cup,
+                        "premi_league": fin.premi_league,
+                        "premi_cup": fin.premi_cup,
+                        "prequalifiche_uefa_stadio": fin.prequalifiche_uefa_stadio,
+                        "prequalifiche_uefa_premio": fin.prequalifiche_uefa_premio,
+                        "competizioni_uefa_stadio": fin.competizioni_uefa_stadio,
+                        "competizioni_uefa_premio": fin.competizioni_uefa_premio,
                     }))
                     const datiFinanze = finanze_squadra.finanze_squadra.map(fin => ({
-                            "ID squadra": fin.id,
-                            "Totale crediti bilancio": fin.totale_crediti_bilancio,
+                            "id": fin.id,
+                            "totale_crediti_bilancio": fin.totale_crediti_bilancio,
                         }));
 
                     const wb = XLSX.utils.book_new();
