@@ -83,8 +83,8 @@ $nomeSezione = "Finanze Squadra";
                 <p>guadagno_crediti_stadio_cup</p>
                 <p>premi_league</p>
                 <p>premi_cup</p>
-                <p>prequapfiche_uefa_stadio</p>
-                <p>prequapfiche_uefa_premio</p>
+                <p>prequalifiche_uefa_stadio</p>
+                <p>prequalifiche_uefa_premio</p>
                 <p>competizioni_uefa_stadio</p>
                 <p>competizioni_uefa_premio</p>
                 <p>totale_crediti_bilancio <strong>(opzionale)</strong></p>
@@ -191,10 +191,20 @@ $nomeSezione = "Finanze Squadra";
                 return mapped;
             }).filter(item => item.id);
 
+            // 🔎 Controlla se c’è almeno una colonna opzionale presente
+            const optionalPresent = optionalCols.filter(col =>
+                Object.keys(firstRow).some(k => k.toLowerCase() === col)
+            );
+
+            let infoText = `${csvData.length} record trovati.`;
+            if (optionalPresent.length > 0) {
+                infoText += ` Colonne opzionali rilevate: ${optionalPresent.join(', ')}.`;
+            }
+
             updateResultsUI();
             document.getElementById('summary').innerHTML =
-                `<div class="alert alert-success">File CSV caricato correttamente. ${csvData.length} record trovati.</div>
-                  <button id="start-update" class="btn btn-primary">Avvia Aggiornamento</button>`;
+                `<div class="alert alert-success">File CSV caricato correttamente. ${infoText}</div>
+          <button id="start-update" class="btn btn-primary">Avvia Aggiornamento</button>`;
 
             document.getElementById('start-update').addEventListener('click', startUpdateProcess);
         }
