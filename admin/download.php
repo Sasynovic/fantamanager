@@ -296,6 +296,7 @@ $nomeSezione = "download";
 
                     return {
                         "Nome divisione": ass.nome_divisione,
+                        "ID calciatore": ass.id_calciatore,
                         "Nome calciatore": calciatore.nome + " " + calciatore.cognome,
                         "Ruolo": calciatore.ruolo,
                         "Squadra": offerta.id_squadra || "",
