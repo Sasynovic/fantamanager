@@ -53,6 +53,7 @@ $nomeSezione = "download";
         <button id="download-stadio" class="btn btn-primary"> Download stadio</button>
         <button id="download-presidenti" class="btn btn-primary"> Download presidenti + squadra</button>
         <button id="download-prelazioni" class="btn btn-primary"> Download prelazioni</button>
+        <button id="download-sgs" class="btn btn-primary"> Download settore giovanile</button>
     </div>
 
 
@@ -277,4 +278,63 @@ $nomeSezione = "download";
                     alert("Errore durante l'esportazione. Controlla la console.");
                 });
         });
+
+        //download sgs
+        document.getElementById('download-sgs').addEventListener('click', async function() {
+            try {
+                // 1. Crea un nuovo workbook
+                const wb = XLSX.utils.book_new();
+
+                // ========== PRIMO ENDPOINT: Buste ==========
+                const res1 = await fetch('https://barrettasalvatore.it/endpoint/settore_giovanile/read_offer.php?assegnato=1');
+                const data1 = await res1.json();
+
+                const datiSgs = data1.gestione_settore_giovanile.map(item => {
+                    const ass = item.associazione;
+                    const calciatore = ass.calciatore;
+                    const offerta = calciatore.offerte[0] || {};
+
+                    return {
+                        "Nome divisione": ass.nome_divisione,
+                        "Nome calciatore": calciatore.nome + " " + calciatore.cognome,
+                        "Ruolo": calciatore.ruolo,
+                        "Squadra": offerta.id_squadra || "",
+                        "Valore offerta": offerta.valore_offerta || ""
+                    };
+                });
+
+                XLSX.utils.book_append_sheet(
+                    wb,
+                    XLSX.utils.json_to_sheet(datiSgs),
+                    "Buste"
+                );
+
+                // ========== SECONDO ENDPOINT: Settore Giovanile ==========
+                const res2 = await fetch('https://barrettasalvatore.it/endpoint/settore_giovanile/read.php');
+                const data2 = await res2.json();
+
+                const datiCalciatori = data2.settore_giovanile.map(c => ({
+                    "ID": c.id,
+                    "Squadra": c.nome_squadra,
+                    "Calciatore": c.nome_calciatore,
+                    "Stagione": c.stagione,
+                    "Fuori listone": c.fuori_listone ?? "",
+                    "Prima squadra": c.prima_squadra ?? ""
+                }));
+
+                XLSX.utils.book_append_sheet(
+                    wb,
+                    XLSX.utils.json_to_sheet(datiCalciatori),
+                    "Settore Giovanile"
+                );
+
+                // ========= Salvataggio finale =========
+                XLSX.writeFile(wb, `SGS_${new Date().toISOString().slice(0,10)}.xlsx`);
+
+            } catch (error) {
+                console.error("Errore durante l'esportazione:", error);
+                alert("Errore durante l'esportazione. Controlla la console.");
+            }
+        });
+
     </script>
