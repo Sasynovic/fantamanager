@@ -957,8 +957,8 @@
                                             };
                                         });
 
-                                        // popolamento iniziale
-                                        selectIds.forEach(id => populateSelect(document.getElementById(id), calciatoriList));
+                                        // popolamento iniziale già filtrato per rimuovere i calciatori gia assegnati
+                                        selectIds.forEach(id => populateSelect(document.getElementById(id), getFilteredList()));
                                     })
                                     .catch(error => console.error("Errore nel fetch:", error));
 
@@ -1172,6 +1172,13 @@
                         <p>Il costo di acquisto del calciatore verrà scalato dalle finanze della squadra solo in caso di accettazione dell'offerta.</p>
                         <br>
 
+                        <!-- Bottone unico per sbloccare tutte le offerte -->
+                        <button class="tablinks" style="background-color: var(--oro); margin-bottom: 10px;" onclick="unlockAll()">
+                            🔓 Sblocca tutte le offerte
+                        </button>
+
+                        <br>
+
                         <div class="grid-view active" id="offerteGiovaniliContainer" style="display: grid">
                             <!-- Le offerte verranno caricate qui via JavaScript -->
                         </div>
@@ -1179,8 +1186,8 @@
                 </div>
 
                 <script>
-
                     let contaOfferte = 0;
+                    let offerteReali = {};
 
                     fetch(`../endpoint/settore_giovanile/read_offer.php?id_squadra=<?php echo $id_squadra; ?>`)
                         .then(response => response.json())
@@ -1196,50 +1203,48 @@
 
                                     if (calciatore.offerte && calciatore.offerte.length > 0) {
                                         offerteTrovate = true;
-                                        calciatore.offerte.forEach(offerta => {
 
+                                        calciatore.offerte.forEach(offerta => {
                                             contaOfferte++;
 
-                                            if(offerta.assegnato === 1) {
-                                                const playerCard = document.createElement("div");
-                                                playerCard.classList.add(`grid-player-card-${calciatore.ruolo}`);
-
-                                                playerCard.innerHTML = `
-                                                <div class="player-main-info">
-                                                    <div class="player-name">${calciatore.cognome} ${calciatore.nome}</div>
-                                                    <div class="player-team">${calciatore.squadra} - Div. ${item.associazione.nome_divisione}</div>
-                                                    <div class="player-team">
-                                                        <span>Offerta: <span class="stat-value" id="offer-valure-${offerta.id_offerta}">${offerta.valore_offerta} FVM</span></span>
-                                                    </div>
-                                                      <p style="color: var(--verde); font-weight: bold; margin-top: 10px;">Offerta accettata!</p>
-                                                    </div>
-                                                </div>
-                                                `;
-                                                container.appendChild(playerCard);
-                                            }else{
+                                            // Salviamo i dati reali in memoria
+                                            offerteReali[offerta.id_offerta] = {
+                                                cognome: calciatore.cognome,
+                                                nome: calciatore.nome,
+                                                squadra: calciatore.squadra,
+                                                divisione: item.associazione.nome_divisione,
+                                                valore_offerta: offerta.valore_offerta,
+                                                assegnato: offerta.assegnato
+                                            };
 
                                             const playerCard = document.createElement("div");
                                             playerCard.classList.add(`grid-player-card-${calciatore.ruolo}`);
+                                            playerCard.id = `offer-card-${offerta.id_offerta}`;
 
+                                            // Card iniziale (blur + dati nascosti)
                                             playerCard.innerHTML = `
-                                                <button class="tablinks-delete" style="background-color: var(--rosso)" onclick="deleteOffer(${offerta.id_offerta}, ${offerta.valore_offerta})">X</button>
-                                                <div class="player-main-info">
-                                                    <div class="player-name">${calciatore.cognome} ${calciatore.nome}</div>
-                                                    <div class="player-team">${calciatore.squadra} - Div. ${item.associazione.nome_divisione}</div>
-                                                    <div class="player-team">
-                                                        <span>Offerta: <span class="stat-value" id="offer-valure-${offerta.id_offerta}">${offerta.valore_offerta} FVM</span></span>
-                                                    </div>
-                                                    <div class="button-container">
-                                                        <button class="tablinks" style="background-color: var(--oro);" id="edit-offer-${offerta.id_offerta}"
-                                                            onclick="editOffer(${offerta.id_offerta}, ${<?php echo (int)$squadraCreditosgs ?>})">
-                                                            Modifica Offerta
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            `;
+                                ${offerta.assegnato !== 1 ? `
+                                    <button class="tablinks-delete" style="background-color: var(--rosso)"
+                                        onclick="deleteOffer(${offerta.id_offerta}, ${offerta.valore_offerta})">X</button>` : ""}
+                                <div class="player-main-info" style="filter: blur(8px);">
+                                    <div class="player-name">*** ***</div>
+                                    <div class="player-team">Squadra nascosta</div>
+                                    <div class="player-team">
+                                        <span>Offerta: <span class="stat-value">***</span></span>
+                                    </div>
+                                    ${offerta.assegnato !== 1 ? `
+                                        <div class="button-container">
+                                            <button class="tablinks" style="background-color: var(--oro);" id="edit-offer-${offerta.id_offerta}"
+                                                onclick="editOffer(${offerta.id_offerta}, ${<?php echo (int)$squadraCreditosgs ?>})">
+                                                Modifica Offerta
+                                            </button>
+                                        </div>` : ""}
+                                    ${offerta.assegnato === 1 ? `
+                                        <p style="color: var(--verde); font-weight: bold; margin-top: 10px;">Offerta accettata!</p>` : ""}
+                                </div>
+                            `;
 
                                             container.appendChild(playerCard);
-                                            }
                                         });
                                     }
                                 });
@@ -1256,7 +1261,67 @@
                             document.getElementById("offerteGiovaniliContainer").innerHTML = '<p>Nessuna offerta trovata</p>';
                         });
 
-                    function deleteOffer(offerId, valore_offerta) {
+                    // 🔓 Funzione per sbloccare TUTTE le card
+                    function unlockAll() {
+                        const passkeyInput = prompt("Inserisci la passkey per sbloccare tutte le offerte:");
+                        if (!passkeyInput) {
+                            alert("⚠️ Nessuna passkey inserita");
+                            return;
+                        }
+
+                        fetch('../endpoint/squadra/readPasskey.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                idSquadra1: <?php echo $id_squadra ?>,
+                                idSquadra2: <?php echo $id_squadra ?>,
+                                passkey: passkeyInput
+                            })
+                        })
+                            .then(response => response.json())
+                            .then(passkeyData => {
+                                if (!passkeyData.success) {
+                                    alert("❌ Passkey non valida!");
+                                    return;
+                                }
+
+                                // Sblocca tutte le card in un colpo
+                                for (let idOfferta in offerteReali) {
+                                    const dettagli = offerteReali[idOfferta];
+                                    const card = document.getElementById(`offer-card-${idOfferta}`);
+                                    if (!card) continue;
+
+                                    const mainInfo = card.querySelector(".player-main-info");
+                                    if (mainInfo) {
+                                        mainInfo.style.filter = "none";
+                                        mainInfo.innerHTML = `
+                                        <div class="player-name">${dettagli.cognome} ${dettagli.nome}</div>
+                                        <div class="player-team">${dettagli.squadra} - Div. ${dettagli.divisione}</div>
+                                        <div class="player-team">
+                                            <span>Offerta: <span class="stat-value">${dettagli.valore_offerta} FVM</span></span>
+                                        </div>
+                                           ${dettagli.assegnato === 1
+                                            ? `<p style="color: var(--verde); font-weight: bold; margin-top: 10px;">Offerta accettata!</p>`
+                                            : `
+                                            <div class="button-container">
+                                                <button class="tablinks" style="background-color: var(--oro);"
+                                                    onclick="editOffer(${idOfferta}, ${<?php echo (int)$squadraCreditosgs ?>})">
+                                                    Modifica Offerta
+                                                </button>
+                                            </div>
+                                        `}
+                                `;
+                                    }
+                                }
+                            })
+                            .catch(err => {
+                                console.error("Errore:", err);
+                                alert("⚠️ Errore durante lo sblocco");
+                            });
+                    }
+
+
+                function deleteOffer(offerId, valore_offerta) {
                         const nuovoCredito = <?php echo (int)$squadraCreditosgs ?> + valore_offerta;
                         if (!confirm("Sei sicuro di voler eliminare questa offerta?")) return;
 
