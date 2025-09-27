@@ -286,7 +286,7 @@ $nomeSezione = "download";
                 const wb = XLSX.utils.book_new();
 
                 // ========== PRIMO ENDPOINT: Buste ==========
-                const res1 = await fetch('https://barrettasalvatore.it/endpoint/settore_giovanile/read_offer.php?assegnato=1');
+                const res1 = await fetch('https://fantamanagerpro.eu/endpoint/settore_giovanile/read_offer.php?assegnato=1');
                 const data1 = await res1.json();
 
                 const datiSgs = data1.gestione_settore_giovanile.map(item => {
@@ -311,7 +311,7 @@ $nomeSezione = "download";
                 );
 
                 // ========== SECONDO ENDPOINT: Settore Giovanile ==========
-                const res2 = await fetch('https://barrettasalvatore.it/endpoint/settore_giovanile/read.php');
+                const res2 = await fetch('https://fantamanagerpro.eu/endpoint/settore_giovanile/read.php');
                 const data2 = await res2.json();
 
                 const datiCalciatori = data2.settore_giovanile.map(c => ({
