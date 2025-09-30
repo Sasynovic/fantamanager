@@ -11,8 +11,8 @@
     <script src="js/renderFooter.js" defer></script>
     <script src="js/showmenu.js" defer></script>
     <style>
-        .main-body-content {
-            margin-bottom: 20px;
+        .main-body-content{
+            padding: 20px;
         }
     </style>
 </head>

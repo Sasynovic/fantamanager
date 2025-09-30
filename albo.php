@@ -19,7 +19,9 @@
         }
 
         .main-body-content{
-            margin-top: 20px;
+            overflow-y: scroll;
+            padding: 20px;
+            height: 100%;
         }
 
         .albo-header {

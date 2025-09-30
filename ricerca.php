@@ -16,8 +16,7 @@
         .main-body-content{
             height: 100%;
             overflow-y: scroll;
-        }
-        .main-body-content{
+            padding: 20px;
             justify-content: flex-start;
         }
     </style>

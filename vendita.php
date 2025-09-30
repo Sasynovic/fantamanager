@@ -40,7 +40,7 @@
         .main-body-content{
             height: 100%;
             justify-content: flex-start;
-            margin-top: 20px;
+            padding: 20px;
         }
 
         @media (max-width: 992px) {
