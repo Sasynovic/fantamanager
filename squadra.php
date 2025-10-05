@@ -1172,10 +1172,23 @@
                         <p>Il costo di acquisto del calciatore verrà scalato dalle finanze della squadra solo in caso di accettazione dell'offerta.</p>
                         <br>
 
-                        <!-- Bottone unico per sbloccare tutte le offerte -->
-                        <button class="tablinks" style="background-color: var(--oro); margin-bottom: 10px;" onclick="unlockAll()">
-                            🔓 Sblocca tutte le offerte
-                        </button>
+                        <div id="unlockButtonContainer"></div>
+
+                        <script>
+                            // Controllo sulla data
+                            const oggi = new Date();
+                            const limite = new Date("2025-09-25");
+
+                            // Se oggi è prima del 25 settembre 2025, mostra il bottone
+                            if (oggi < limite) {
+                                const unlockButtonContainer = document.getElementById("unlockButtonContainer");
+                                unlockButtonContainer.innerHTML = `
+                                    <button class="tablinks" style="background-color: var(--oro); margin-bottom: 10px;" onclick="unlockAll()">
+                                        🔓 Sblocca tutte le offerte
+                                    </button>
+                                `;
+                            }
+                        </script>
 
                         <br>
 
@@ -1195,6 +1208,11 @@
                             const container = document.getElementById("offerteGiovaniliContainer");
                             container.innerHTML = "";
 
+                            // Controllo sulla data
+                            const oggi = new Date();
+                            const limite = new Date("2025-09-25");
+                            const mostraDati = oggi > limite; // true se la data odierna è maggiore del 25 settembre 2025
+
                             if (data.gestione_settore_giovanile && data.gestione_settore_giovanile.length > 0) {
                                 let offerteTrovate = false;
 
@@ -1207,7 +1225,6 @@
                                         calciatore.offerte.forEach(offerta => {
                                             contaOfferte++;
 
-                                            // Salviamo i dati reali in memoria
                                             offerteReali[offerta.id_offerta] = {
                                                 cognome: calciatore.cognome,
                                                 nome: calciatore.nome,
@@ -1221,8 +1238,32 @@
                                             playerCard.classList.add(`grid-player-card-${calciatore.ruolo}`);
                                             playerCard.id = `offer-card-${offerta.id_offerta}`;
 
-                                            // Card iniziale (blur + dati nascosti)
-                                            playerCard.innerHTML = `
+                                            // Se siamo dopo il 25 settembre 2025, mostra i dati reali
+                                            if (mostraDati) {
+                                                playerCard.innerHTML = `
+                                ${offerta.assegnato !== 1 ? `
+                                    <button class="tablinks-delete" style="background-color: var(--rosso)"
+                                        onclick="deleteOffer(${offerta.id_offerta}, ${offerta.valore_offerta})">X</button>` : ""}
+                                <div class="player-main-info">
+                                    <div class="player-name">${calciatore.nome} ${calciatore.cognome}</div>
+                                    <div class="player-team">${calciatore.squadra}</div>
+                                    <div class="player-team">
+                                        <span>Offerta: <span class="stat-value">${offerta.valore_offerta}</span></span>
+                                    </div>
+                                    ${offerta.assegnato !== 1 ? `
+                                        <div class="button-container">
+                                            <button class="tablinks" style="background-color: var(--oro);" id="edit-offer-${offerta.id_offerta}"
+                                                onclick="editOffer(${offerta.id_offerta}, ${<?php echo (int)$squadraCreditosgs ?>})">
+                                                Modifica Offerta
+                                            </button>
+                                        </div>` : ""}
+                                    ${offerta.assegnato === 1 ? `
+                                        <p style="color: var(--verde); font-weight: bold; margin-top: 10px;">Offerta accettata!</p>` : ""}
+                                </div>
+                            `;
+                                            } else {
+                                                // Altrimenti mostra la card con blur e dati nascosti
+                                                playerCard.innerHTML = `
                                 ${offerta.assegnato !== 1 ? `
                                     <button class="tablinks-delete" style="background-color: var(--rosso)"
                                         onclick="deleteOffer(${offerta.id_offerta}, ${offerta.valore_offerta})">X</button>` : ""}
@@ -1243,6 +1284,7 @@
                                         <p style="color: var(--verde); font-weight: bold; margin-top: 10px;">Offerta accettata!</p>` : ""}
                                 </div>
                             `;
+                                            }
 
                                             container.appendChild(playerCard);
                                         });
@@ -1260,6 +1302,7 @@
                             console.error("Errore nel fetch delle offerte giovanili:", error);
                             document.getElementById("offerteGiovaniliContainer").innerHTML = '<p>Nessuna offerta trovata</p>';
                         });
+
 
                     // 🔓 Funzione per sbloccare TUTTE le card
                     function unlockAll() {
