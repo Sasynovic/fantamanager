@@ -106,7 +106,7 @@ class partecipazione
             'Gs' => PDO::PARAM_INT,
             'Dr' => PDO::PARAM_INT,
             'Pt' => PDO::PARAM_INT,
-            'PtTotale' => PDO::PARAM_STR
+            'PtTotali' => PDO::PARAM_STR
         ];
 
         foreach ($allowedFields as $field => $type) {
