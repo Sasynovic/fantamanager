@@ -178,7 +178,7 @@
                                             classificaHTML += `
                     <tr>
                         <td>${index + 1}</td>
-                        <td><a href="squadra.php?id=${s.id_squadra}">${s.nome_squadra || 'N/D'}</a></td>
+                        <td><b><a href="squadra.php?id=${s.id_squadra}">${s.nome_squadra || 'N/D'}</a></b></td>
                         <td>${s.penalizzazione || 0}</td>
                         <td>${s.giocate || 0}</td>
                         <td>${s.vittorie || 0}</td>
@@ -186,7 +186,7 @@
                         <td>${s.sconfitte || 0}</td>
                         <td>${s.gol_fatti || 0}</td>
                         <td>${s.gol_subiti || 0}</td>
-                        <td>${s.punti || 0}</td>
+                        <td><b>${s.punti || 0}</b></td>
                         <td>${s.punti_totali || 0}</td>
                     </tr>`;
                                         });
