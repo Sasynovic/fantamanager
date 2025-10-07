@@ -533,6 +533,12 @@
     // Aggiungi queste variabili globali
     let maxCreditoTeam1 = 0;
     let maxCreditoTeam2 = 0;
+    //Variabili per i limiti di mercato
+    let limitMarketTeam1 = 0;
+    let limitMarketTeam2 = 0;
+    //totale crediti a bilancio
+    let totaleBilCreditiTeam1 = 0;
+    let totaleBilCreditiTeam2 = 0;
 
     const datiPasskey = {
         idSquadra1: null,
@@ -655,11 +661,19 @@
             fetchData(`endpoint/squadra/read.php?id_squadra=${id}`)
                 .then(data => {
                     const creditoMassimo = data.squadra[0]?.finanze.credito || 0;
+                    const limitMarket = data.squadra[0]?.finanze.limit_market || 0;
+                    const totaleBilancio = data.squadra[0]?.finanze.totale_crediti_bilancio || 0;
+
                     if (squadraSelezionata === 'squadra1') {
                         maxCreditoTeam1 = creditoMassimo;
+                        limitMarketTeam1 = limitMarket;
+                        totaleBilCreditiTeam1 = totaleBilancio;
+
                         document.getElementById('maxCreditoTeam1').textContent = creditoMassimo;
                     } else {
                         maxCreditoTeam2 = creditoMassimo;
+                        limitMarketTeam2 = limitMarket;
+                        totaleBilCreditiTeam2 = totaleBilancio;
                         document.getElementById('maxCreditoTeam2').textContent = creditoMassimo;
                     }
                 });
@@ -1533,6 +1547,68 @@
         // Il valore totale include: valore base + crediti (che già contengono i riscatti)
         const valoreSquadra1 = valoreBaseSquadra1 + creditiTeam1.totale;
         const valoreSquadra2 = valoreBaseSquadra2 + creditiTeam2.totale;
+
+        const creditiConsumatiOra1 = creditiTeam1.credito1 + creditiTeam1.credito2;
+        const creditiConsumatiOra2 = creditiTeam2.credito1 + creditiTeam2.credito2;
+
+        if(creditiConsumatiOra1 > totaleBilCreditiTeam1) {
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.innerHTML = `Il totale crediti della Squadra 1 (${creditiConsumatiOra1.toFixed(2)}) supera il massimo consentito di ${totaleBilCreditiTeam1}. Trattativa non valida.`;
+            return false;
+        }
+        if(creditiConsumatiOra2 > totaleBilCreditiTeam2) {
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.innerHTML = `Non hai fondi sufficienti per completare la trattativa. Il totale crediti della Squadra 2 (${creditiConsumatiOra2.toFixed(2)}) supera il massimo consentito di ${totaleBilCreditiTeam2}. Trattativa non valida.`;
+            return false;
+        }
+
+        console.log('Valore Squadra 1:', valoreSquadra1);
+        console.log('Valore Squadra 2:', valoreSquadra2);
+
+        // === INIZIO CONTROLLI LIMITMARKET CON SCAMBIO ===
+
+        // Crea variabili temporanee per i limit market
+        const tempLimitMarket1 = limitMarketTeam1;
+        const tempLimitMarket2 = limitMarketTeam2;
+
+        const valoreTotale1 = valoreBaseSquadra1 + creditiTeam1.totale;
+        console.log('Valore rimozione Squadra 1:', valoreTotale1);
+        const valoreTotale2 = valoreBaseSquadra2 + creditiTeam2.totale;
+        console.log('Valore rimozione Squadra 2:', valoreTotale2);
+
+        // Calcola il valore residuo dopo lo scambio per ogni squadra
+        // Squadra 1: limit market - ciò che cede + ciò che acquisisce
+        const valoreResiduoSquadra1 = tempLimitMarket1
+            - valoreTotale1
+            + valoreTotale2  // ciò che acquisisce (giocatori dall'altra squadra)
+
+        // Squadra 2: limit market - ciò che cede + ciò che acquisisce
+        const valoreResiduoSquadra2 = tempLimitMarket2
+            - valoreTotale2
+            + valoreTotale1;
+
+        console.log('Valore residuo Squadra 1:', valoreResiduoSquadra1);
+        console.log('Valore residuo Squadra 2:', valoreResiduoSquadra2);
+        console.log('30% Limit Market Squadra 1:', tempLimitMarket1 * 0.3);
+        console.log('30% Limit Market Squadra 2:', tempLimitMarket2 * 0.3);
+
+        // Verifica che il valore residuo non scenda sotto il 30% del limit market originale
+        const sogliaMinimaSquadra1 = tempLimitMarket1 * 0.3;
+        const sogliaMinimaSquadra2 = tempLimitMarket2 * 0.3;
+
+        if (valoreResiduoSquadra1 < sogliaMinimaSquadra1) {
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.innerHTML = `TRATTATIVA NON VALIDA: Il valore residuo della Squadra 1 dopo lo scambio (${valoreResiduoSquadra1.toFixed(2)}) è inferiore al 30% del limit market (${sogliaMinimaSquadra1.toFixed(2)}). Puoi fare trattative solo per migliorare la tua condizione.`;
+            return false;
+        }
+
+        if (valoreResiduoSquadra2 < sogliaMinimaSquadra2) {
+            risultatoEl.className = 'risultato-trattativa error';
+            risultatoEl.innerHTML = `TRATTATIVA NON VALIDA: Il valore residuo della Squadra 2 dopo lo scambio (${valoreResiduoSquadra2.toFixed(2)}) è inferiore al 30% del limit market (${sogliaMinimaSquadra2.toFixed(2)}). Puoi fare trattative solo per migliorare la tua condizione.`;
+            return false;
+        }
+
+
 
         // 6. Determina quale squadra ha il valore più alto (target)
         const target = valoreSquadra1 > valoreSquadra2 ?

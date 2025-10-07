@@ -12,6 +12,9 @@ $database = new database();
 $db = $database->getConnection();
 $squadra = new squadra($db);
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Parametri di paginazione
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $limit = isset($_GET['limit']) ? max(1, intval($_GET['limit'])) : 10;
@@ -67,6 +70,8 @@ if ($num > 0) {
                 "credito" => $row['credito'],
                 'credito_sgs' => $row['credito_sgs'],
                 'mercato_sgs' => $row['mercato_sgs'],
+                'limit_market' => $row['limit_market'],
+                "totale_crediti_bilancio" => $row['totale_crediti_bilancio'],
             ],
             "stadio" => [
                 "id_stadio" => $row['id_stadio'],

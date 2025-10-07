@@ -6,12 +6,6 @@ class squadra
     private $conn;
     private $table_name = "squadre";
 
-    public $id;
-    public $nome_squadra;
-    public $id_pres;
-    public $id_vice;
-    public $id_stadio;
-
     public function __construct($db)
     {
         $this->conn = $db;
@@ -155,6 +149,7 @@ class squadra
                                 s.id_stadio,
                                 s.credito_sgs,
                                 s.mercato_sgs,
+                                s.limit_market,
                                 
                                 pres.nome AS nome_pres,
                                 pres.cognome AS cognome_pres,
@@ -169,12 +164,15 @@ class squadra
                                 st.bonus_casa_n,
                                 st.bonus_casa_u,
                                 st.sold_out,
-                                st.abbonati
+                                st.abbonati,
+                                
+                                fs.totale_crediti_bilancio
                             
                             FROM " . $this->table_name . " s
                             LEFT JOIN presidenti pres ON s.id_pres = pres.id
                             LEFT JOIN presidenti vice ON s.id_vice = vice.id
                             LEFT JOIN stadio st ON s.id_stadio = st.id
+                            LEFT JOIN finanze_squadra fs ON s.id = fs.id_squadra
                             WHERE 1=1";
 
         // Aggiunta dinamica dei filtri
@@ -235,7 +233,7 @@ class squadra
     {
         // Validazione dell'ID
         if (!is_numeric($id) || $id <= 0) {
-            throw new InvalidArgumentException("L'ID della trattativa non è valido");
+            throw new InvalidArgumentException("L'ID della squadra non è valido");
         }
 
         // Verifica che $data sia un array
@@ -289,7 +287,7 @@ class squadra
             $stmt->execute();
             return ($stmt->rowCount() > 0);
         } catch (PDOException $e) {
-            error_log("Errore durante l'aggiornamento della trattativa: " . $e->getMessage());
+            error_log("Errore durante l'aggiornamento della squadra: " . $e->getMessage());
             return false;
         }
     }
