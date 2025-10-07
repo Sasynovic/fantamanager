@@ -83,4 +83,62 @@ class partecipazione
         return $stmt;
     }
 
+    public function update($id_squadra, $id_competizione, $data): bool
+    {
+        // Verifica che $data sia un array
+        if (!is_array($data)) {
+            throw new InvalidArgumentException("I dati per l'aggiornamento devono essere un array");
+        }
+
+        // Costruzione della query dinamica
+        $fields = [];
+        $params = [':id' => $id_squadra, ':id_competizione' => $id_competizione];
+
+        // Lista dei campi aggiornabili
+        $allowedFields = [
+            'Pos' => PDO::PARAM_INT,
+            'Pen' => PDO::PARAM_INT,
+            'G' => PDO::PARAM_INT,
+            'V' => PDO::PARAM_INT,
+            'N' => PDO::PARAM_INT,
+            'P' => PDO::PARAM_INT,
+            'Gf' => PDO::PARAM_INT,
+            'Gs' => PDO::PARAM_INT,
+            'Dr' => PDO::PARAM_INT,
+            'Pt' => PDO::PARAM_INT,
+            'PtTotale' => PDO::PARAM_STR
+        ];
+
+        foreach ($allowedFields as $field => $type) {
+            if (isset($data[$field])) {
+                $fields[] = "$field = :$field";
+                $params[":$field"] = $data[$field];
+            }
+        }
+
+        if (empty($fields)) {
+            return false;
+        }
+
+        $query = "UPDATE " . $this->table_name . " 
+              SET " . implode(', ', $fields) . " 
+                WHERE id_squadra = :id AND id_competizione = :id_competizione";
+
+        $stmt = $this->conn->prepare($query);
+
+        // Bind dei parametri
+        foreach ($params as $key => $value) {
+            $type = $allowedFields[str_replace(':', '', $key)] ?? PDO::PARAM_STR;
+            $stmt->bindValue($key, $value, $type);
+        }
+
+        try {
+            $stmt->execute();
+            return ($stmt->rowCount() > 0);
+        } catch (PDOException $e) {
+            error_log("Errore durante l'aggiornamento della partecipazione : " . $e->getMessage());
+            return false;
+        }
+    }
+
 }
