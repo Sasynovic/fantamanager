@@ -1548,17 +1548,15 @@
         const valoreSquadra1 = valoreBaseSquadra1 + creditiTeam1.totale;
         const valoreSquadra2 = valoreBaseSquadra2 + creditiTeam2.totale;
 
-        const creditiConsumatiOra1 = creditiTeam1.credito1 + creditiTeam1.credito2;
-        const creditiConsumatiOra2 = creditiTeam2.credito1 + creditiTeam2.credito2;
-
-        if(creditiConsumatiOra1 > totaleBilCreditiTeam1) {
+        // Verifica che i crediti totali non superino il bilancio attuale
+        if(creditiTeam1.credito1  > totaleBilCreditiTeam1) {
             risultatoEl.className = 'risultato-trattativa error';
-            risultatoEl.innerHTML = `Il totale crediti della Squadra 1 (${creditiConsumatiOra1.toFixed(2)}) supera il massimo consentito di ${totaleBilCreditiTeam1}. Trattativa non valida.`;
+            risultatoEl.innerHTML = `Il totale crediti della Squadra 1 (${creditiTeam1.credito1.toFixed(2)}) supera il massimo consentito di ${totaleBilCreditiTeam1}. Trattativa non valida.`;
             return false;
         }
-        if(creditiConsumatiOra2 > totaleBilCreditiTeam2) {
+        if(creditiTeam2.credito > totaleBilCreditiTeam2) {
             risultatoEl.className = 'risultato-trattativa error';
-            risultatoEl.innerHTML = `Non hai fondi sufficienti per completare la trattativa. Il totale crediti della Squadra 2 (${creditiConsumatiOra2.toFixed(2)}) supera il massimo consentito di ${totaleBilCreditiTeam2}. Trattativa non valida.`;
+            risultatoEl.innerHTML = `Non hai fondi sufficienti per completare la trattativa. Il totale crediti della Squadra 2 (${creditiTeam2.credito.toFixed(2)}) supera il massimo consentito di ${totaleBilCreditiTeam2}. Trattativa non valida.`;
             return false;
         }
 
@@ -1607,8 +1605,6 @@
             risultatoEl.innerHTML = `TRATTATIVA NON VALIDA: Il valore residuo della Squadra 2 dopo lo scambio (${valoreResiduoSquadra2.toFixed(2)}) è inferiore al 30% del limit market (${sogliaMinimaSquadra2.toFixed(2)}). Puoi fare trattative solo per migliorare la tua condizione.`;
             return false;
         }
-
-
 
         // 6. Determina quale squadra ha il valore più alto (target)
         const target = valoreSquadra1 > valoreSquadra2 ?
