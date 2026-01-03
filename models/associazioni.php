@@ -218,10 +218,28 @@ class associazioni
 
     }
 
+    public function dealReset()
+    {
+        //creaimo timestamp da impostare per tutte le operazioni
+        $timestamp = date('Y-m-d H:i:s');
 
+        $query = "UPDATE " . $this->table_name . " 
+                  SET scambiato = 0, 
+                      n_movimenti = 0, 
+                      prelazione = 0, 
+                      timestamp = :timestamp";
 
+        $stmt = $this->conn->prepare($query);
 
-
+        $stmt->bindParam(':timestamp', $timestamp, PDO::PARAM_STR);
+        try {
+            $stmt->execute();
+            return ($stmt->rowCount() > 0);
+        } catch (PDOException $e) {
+            error_log("Errore durante il reset delle trattative: " . $e->getMessage());
+            return false;
+        }
+    }
 }
            
 

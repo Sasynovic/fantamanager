@@ -112,6 +112,8 @@ $nomeSezione = "Gestione Associazioni";
 <div class="app-container">
     <h1><?php echo $nomeSezione?></h1>
 
+    <button style="margin: 10px" class="btn btn-primary" onclick="resetAssociazioni()">Reset associazioni</button>
+
     <div id="istruzioni" style="background-color:#f0f8ff; border-left:5px solid #007acc; padding:16px 20px; margin-bottom:20px; border-radius:8px; font-family:'Segoe UI', sans-serif;">
         <h3>Nota Importante</h3>
         <p>
@@ -434,6 +436,29 @@ $nomeSezione = "Gestione Associazioni";
                         console.log("Processo completato al 100%");
                     }
                 });
+        });
+    }
+
+    function resetAssociazioni(){
+        if (!confirm("Sei sicuro di voler resettare tutte le associazioni dei calciatori? Questa operazione non può essere annullata.")) {
+            return;
+        }
+
+        fetch('../endpoint/associazioni/update.php?id=0&reset=1', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert("Tutte le associazioni dei calciatori sono state resettate con successo.");
+            } else {
+                alert("Errore nel resettare le associazioni: " + (data.message || "Errore sconosciuto."));
+            }
+        })
+        .catch(error => {
+            console.error("Errore nella richiesta di reset:", error);
+            alert("Errore di connessione: " + error.message);
         });
     }
 </script>
