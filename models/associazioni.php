@@ -96,6 +96,7 @@ class associazioni
 
         // Lista dei campi aggiornabili
         $allowedFields = [
+            'costo_calciatore' => PDO::PARAM_INT,
             'id_squadra' => PDO::PARAM_INT,
             'scambiato' => PDO::PARAM_INT,
             'n_movimenti' => PDO::PARAM_INT,

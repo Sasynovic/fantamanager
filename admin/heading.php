@@ -100,6 +100,8 @@
                 <a href="setFVM.php">Gestione FVM</a>
                 <a href="setFinanze.php">Gestione Finanze</a>
                 <a href="setRose.php">Gestione Rose</a>
+                <a href="setClassifiche.php">Gestione Classifiche</a>
+                <a href="setAssociazioni.php">Gestione associazioni</a>
             </div>
         </div>
 
