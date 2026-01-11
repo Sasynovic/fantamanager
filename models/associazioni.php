@@ -105,6 +105,8 @@ class associazioni
             'scambiato' => PDO::PARAM_INT,
             'n_movimenti' => PDO::PARAM_INT,
             'prelazione' => PDO::PARAM_INT,
+            'fuori_listone' => PDO::PARAM_INT,
+            'fine_prelazione' => PDO::PARAM_STR,
             'timestamp' => PDO::PARAM_STR
         ];
 
