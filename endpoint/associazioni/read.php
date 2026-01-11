@@ -14,6 +14,8 @@ $database = new database();
 $db = $database->getConnection();
 $associazioni = new associazioni($db);
 
+//Filtro id calciatore
+$id_calciatore = isset($_GET['id_calciatore']) ? intval($_GET['id_calciatore']) : null;
 // Filtro per ID squadra
 $id_squadra_filter = isset($_GET['id_squadra']) ? intval($_GET['id_squadra']) : null;
 // Filtro per fuori listone
@@ -22,7 +24,7 @@ $fuori_listone_filter = isset($_GET['fuori_listone']) ? intval($_GET['fuori_list
 $prelazione_filter = isset($_GET['prelazione']) ? intval($_GET['prelazione']) : null;
 
 // Richiama read con o senza filtro
-$stmt = $associazioni->read($id_squadra_filter, $fuori_listone_filter, $prelazione_filter);
+$stmt = $associazioni->read($id_calciatore,$id_squadra_filter, $fuori_listone_filter, $prelazione_filter);
 
 $num = $stmt->rowCount();
 

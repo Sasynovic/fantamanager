@@ -16,7 +16,7 @@ class associazioni
         $this->conn = $db;
     }
 
-    public function read($id_squadra_filter = null, $fuori_listone_filter = null, $prelazione_filter = null)
+    public function read($id_calciatore = null,$id_squadra_filter = null, $fuori_listone_filter = null, $prelazione_filter = null)
     {
         $query = "
             SELECT  
@@ -59,6 +59,10 @@ class associazioni
         if ($prelazione_filter !== null) {
             $conditions[] = "a.prelazione = :prelazione";
             $params[':prelazione'] = $prelazione_filter;
+        }
+        if ($id_calciatore !== null) {
+            $conditions[] = "c.id = :id_calciatore";
+            $params[':id_calciatore'] = $id_calciatore;
         }
 
         if (count($conditions) > 0) {

@@ -1,29 +1,29 @@
 <?php
-session_start();
-
-// Timeout in secondi
-$timeout = 12000;
-
-// Controlla se l'admin è loggato
-if (!isset($_SESSION['admin_logged_in'])) {
-    header("Location: login.php");
-    exit();
-}
-
-// Se esiste il timestamp dell'ultima attività
-if (isset($_SESSION['last_activity'])) {
-    $elapsed_time = time() - $_SESSION['last_activity'];
-    if ($elapsed_time > $timeout) {
-        // Timeout superato: logout
-        session_unset();
-        session_destroy();
-        header("Location: login.php?timeout=1");
-        exit();
-    }
-}
-
-// Aggiorna il timestamp dell'ultima attività
-$_SESSION['last_activity'] = time();
+//session_start();
+//
+//// Timeout in secondi
+//$timeout = 12000;
+//
+//// Controlla se l'admin è loggato
+//if (!isset($_SESSION['admin_logged_in'])) {
+//    header("Location: login.php");
+//    exit();
+//}
+//
+//// Se esiste il timestamp dell'ultima attività
+//if (isset($_SESSION['last_activity'])) {
+//    $elapsed_time = time() - $_SESSION['last_activity'];
+//    if ($elapsed_time > $timeout) {
+//        // Timeout superato: logout
+//        session_unset();
+//        session_destroy();
+//        header("Location: login.php?timeout=1");
+//        exit();
+//    }
+//}
+//
+//// Aggiorna il timestamp dell'ultima attività
+//$_SESSION['last_activity'] = time();
 require_once 'heading.php';
 $nomeSezione = "Associazioni";
 ?>
@@ -31,56 +31,42 @@ $nomeSezione = "Associazioni";
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+    <title>Gestione <?php echo $nomeSezione ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestione <?php echo $nomeSezione?></title>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+        body { font-family: 'Inter', sans-serif; }
+
         #istr {
             background-color: #f0f8ff;
             border-left: 5px solid #007acc;
             padding: 16px 20px;
             margin-bottom: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
             border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-
         }
 
-        #istr p {
-            margin: 0;
-            line-height: 1.6;
-            font-size: 16px;
-        }
-
-        #table table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-            font-family: 'Segoe UI', sans-serif;
+            margin-top: 15px;
         }
 
-        #table th,
-        #table td {
+        th, td {
             border: 1px solid #ccc;
             padding: 10px;
             text-align: center;
         }
 
-        #table th {
-            background-color: #007acc;
-            color: white;
-            text-transform: uppercase;
+        th {
+            background: #007acc;
+            color: #fff;
             font-size: 14px;
         }
 
-        #table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        #table tr:hover {
-            background-color: #eef6ff;
-        }
+        tr:nth-child(even) { background: #f9f9f9; }
+        tr:hover { background: #eef6ff; }
 
         #salva-modifiche {
             margin-top: 20px;
@@ -92,69 +78,70 @@ $nomeSezione = "Associazioni";
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 122, 204, 0.35);
-            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(0,122,204,.35);
+            transition: all .25s;
         }
 
-        /* Hover */
         #salva-modifiche:hover {
-            background: linear-gradient(135deg, #005fa3, #004c82);
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 122, 204, 0.45);
+            box-shadow: 0 6px 16px rgba(0,122,204,.45);
         }
 
-        /* Click */
-        #salva-modifiche:active {
-            transform: translateY(0);
-            box-shadow: 0 3px 8px rgba(0, 122, 204, 0.35);
+        #search-calciatore-btn {
+            padding: 9px 18px;
+            background: #444;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
         }
 
-        /* Disabilitato (se in futuro lo userai) */
-        #salva-modifiche:disabled {
-            background: #b5c7d6;
-            cursor: not-allowed;
-            box-shadow: none;
+        select, input[type="number"] {
+            padding: 8px;
         }
-
     </style>
 </head>
+
 <body>
 
 <div class="app-container">
-    <div class="header">
-        <h1>Gestione <?php echo $nomeSezione?></h1>
-    </div>
+    <h1>Gestione <?php echo $nomeSezione ?></h1>
 
     <div id="istr">
-        <p>
-            <strong>Istruzioni:</strong> Questa pagina ti permette di modificare i valori delle associazioni dell fvm.
-            Scegli l'associazione che desideri modificare dalla tabella sottostante e aggiorna i valori secondo le tue necessità.
-        </p>
+        <strong>Istruzioni:</strong> puoi cercare per squadra oppure direttamente per ID calciatore.
     </div>
 
+    <!-- RICERCA ID CALCIATORE -->
+    <div style="margin-bottom:15px;">
+        <input type="number" id="search-id-calciatore" placeholder="ID calciatore">
+        <button id="search-calciatore-btn">Cerca</button>
+    </div>
+
+    <!-- SELECT -->
     <div>
         <select id="divisione-select">
-            <option value="0" selected>Seleziona Divisione</option>
+            <option value="0">Seleziona Divisione</option>
         </select>
 
         <select id="campionato" disabled>
-            <option value="0" selected>Seleziona Campionato</option>
+            <option value="0">Seleziona Campionato</option>
         </select>
 
         <select id="squadra" disabled>
-            <option value="0" selected>Seleziona Squadra</option>
+            <option value="0">Seleziona Squadra</option>
         </select>
     </div>
 
-    <div id="calciatori-container" style="margin-top:20px; display:none;">
-        <table id="calciatori-table" border="1" width="100%">
+    <!-- TABELLA -->
+    <div id="calciatori-container" style="display:none;">
+        <table id="calciatori-table">
             <thead>
             <tr>
+                <th>Nome squadra</th>
                 <th>Nome</th>
                 <th>Ruolo</th>
                 <th>Squadra</th>
                 <th>Cartellino</th>
-
                 <th>Fuori listone</th>
                 <th>Prelazione</th>
                 <th>Fine prelazione</th>
@@ -163,24 +150,13 @@ $nomeSezione = "Associazioni";
             <tbody></tbody>
         </table>
 
-        <button id="salva-modifiche" style="margin-top:15px;">
-            Salva modifiche
-        </button>
+        <button id="salva-modifiche">Salva modifiche</button>
     </div>
-
-
-
-
-</body>
-</html>
-
+</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        /* =======================
-           ELEMENTI DOM
-        ======================= */
         const divisioneSelect = document.getElementById('divisione-select');
         const campionatoSelect = document.getElementById('campionato');
         const squadraSelect = document.getElementById('squadra');
@@ -189,191 +165,153 @@ $nomeSezione = "Associazioni";
         const calciatoriTableBody = document.querySelector('#calciatori-table tbody');
         const salvaBtn = document.getElementById('salva-modifiche');
 
-        let modifiche = {}; // { id_associazione: { campo: valore } }
+        const searchBtn = document.getElementById('search-calciatore-btn');
+        const searchInput = document.getElementById('search-id-calciatore');
 
-        /* =======================
-           CARICA DIVISIONI
-        ======================= */
-        fetch('https://fantamanagerpro.eu/endpoint/divisione/read.php')
-            .then(res => res.json())
-            .then(data => {
-                data.divisioni.forEach(divisione => {
-                    const option = document.createElement('option');
-                    option.value = divisione.id;
-                    option.textContent = divisione.nome_divisione;
-                    divisioneSelect.appendChild(option);
-                });
-            })
-            .catch(err => console.error('Errore divisioni:', err));
+        let modifiche = {};
 
-        /* =======================
-           DIVISIONE → CAMPIONATI
-        ======================= */
-        divisioneSelect.addEventListener('change', () => {
-            const idDivisione = divisioneSelect.value;
-
-            campionatoSelect.innerHTML = '<option value="0">Seleziona Campionato</option>';
-            squadraSelect.innerHTML = '<option value="0">Seleziona Squadra</option>';
-            campionatoSelect.disabled = true;
-            squadraSelect.disabled = true;
-
-            calciatoriContainer.style.display = 'none';
+        /* =========================
+           RENDER TABELLA
+        ========================= */
+        function renderCalciatori(data) {
             calciatoriTableBody.innerHTML = '';
             modifiche = {};
 
-            if (idDivisione === '0') return;
-
-            fetch(`https://fantamanagerpro.eu/endpoint/competizione/read.php?id_divisione=${idDivisione}`)
-                .then(res => res.json())
-                .then(data => {
-                    data.competizione.forEach(campionato => {
-                        const option = document.createElement('option');
-                        option.value = campionato.id;
-                        option.textContent = campionato.nome_competizione;
-                        campionatoSelect.appendChild(option);
-                    });
-                    campionatoSelect.disabled = false;
-                })
-                .catch(err => console.error('Errore campionati:', err));
-        });
-
-        /* =======================
-           CAMPIONATO → SQUADRE
-        ======================= */
-        campionatoSelect.addEventListener('change', () => {
-            const idCampionato = campionatoSelect.value;
-
-            squadraSelect.innerHTML = '<option value="0">Seleziona Squadra</option>';
-            squadraSelect.disabled = true;
-
-            calciatoriContainer.style.display = 'none';
-            calciatoriTableBody.innerHTML = '';
-            modifiche = {};
-
-            if (idCampionato === '0') return;
-
-            fetch(`https://fantamanagerpro.eu/endpoint/partecipazione/read.php?id_competizione=${idCampionato}`)
-                .then(res => res.json())
-                .then(data => {
-                    data.squadre.forEach(squadra => {
-                        const option = document.createElement('option');
-                        option.value = squadra.id_squadra;
-                        option.textContent = squadra.nome_squadra;
-                        squadraSelect.appendChild(option);
-                    });
-                    squadraSelect.disabled = false;
-                })
-                .catch(err => console.error('Errore squadre:', err));
-        });
-
-        /* =======================
-           SQUADRA → CALCIATORI
-        ======================= */
-        squadraSelect.addEventListener('change', () => {
-            const idSquadra = squadraSelect.value;
-
-            calciatoriTableBody.innerHTML = '';
-            calciatoriContainer.style.display = 'none';
-            modifiche = {};
-
-            if (idSquadra === '0') return;
-
-            fetch(`https://fantamanagerpro.eu/endpoint/associazioni/read.php?id_squadra=${idSquadra}`)
-                .then(res => res.json())
-                .then(data => {
-
-                    data.associazioni.forEach(row => {
-                        const tr = document.createElement('tr');
-
-                        tr.innerHTML = `
-                        <td>${row.nome_calciatore}</td>
-                        <td>${row.ruolo_calciatore}</td>
-                        <td>${row.nome_squadra_calciatore}</td>
-
-                        <td>
-                            <input type="number" value="${row.costo_calciatore}"
-                                   data-id="${row.id}" data-field="costo_calciatore">
-                        </td>
-
-
-
-                        <td>
-                            <input type="checkbox" ${row.fuori_listone ? 'checked' : ''}
-                                   data-id="${row.id}" data-field="fuori_listone">
-                        </td>
-
-                        <td>
-                            <input type="checkbox" ${row.prelazione ? 'checked' : ''}
-                                   data-id="${row.id}" data-field="prelazione">
-                        </td>
-
-                        <td>
-                            <input type="date"
-                                   value="${row.fine_prelazione ? row.fine_prelazione.split(' ')[0] : ''}"
-                                   data-id="${row.id}" data-field="fine_prelazione">
-                        </td>
-                    `;
-
-                        calciatoriTableBody.appendChild(tr);
-                    });
-
-                    calciatoriContainer.style.display = 'block';
-                })
-                .catch(err => console.error('Errore calciatori:', err));
-        });
-
-        /* =======================
-           TRACK MODIFICHE
-        ======================= */
-        calciatoriTableBody.addEventListener('change', (e) => {
-            const input = e.target;
-            const id = input.dataset.id;
-            const field = input.dataset.field;
-
-            if (!id || !field) return;
-
-            if (!modifiche[id]) modifiche[id] = {};
-
-            modifiche[id][field] =
-                input.type === 'checkbox'
-                    ? (input.checked ? 1 : 0)
-                    : input.value;
-        });
-
-        /* =======================
-           SALVA MODIFICHE
-        ======================= */
-        salvaBtn.addEventListener('click', async () => {
-
-            const ids = Object.keys(modifiche);
-            if (ids.length === 0) {
-                alert('Nessuna modifica da salvare');
+            if (!data.associazioni || data.associazioni.length === 0) {
+                alert('Nessun risultato');
+                calciatoriContainer.style.display = 'none';
                 return;
             }
 
-            try {
-                for (const id of ids) {
+            data.associazioni.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td>${row.nome_squadra}</td>
+                <td>${row.nome_calciatore}</td>
+                <td>${row.ruolo_calciatore}</td>
+                <td>${row.nome_squadra_calciatore}</td>
 
-                    await fetch(
-                        `https://fantamanagerpro.eu/endpoint/associazioni/update.php?id=${id}`,
-                        {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(modifiche[id]) // 👈 SOLO campi
-                        }
-                    );
-                }
+                <td>
+                    <input type="number" value="${row.costo_calciatore}"
+                        data-id="${row.id}" data-field="costo_calciatore">
+                </td>
 
-                alert('Modifiche salvate con successo');
-                modifiche = {};
+                <td>
+                    <input type="checkbox" ${row.fuori_listone ? 'checked' : ''}
+                        data-id="${row.id}" data-field="fuori_listone">
+                </td>
 
-            } catch (err) {
-                console.error(err);
-                alert('Errore durante il salvataggio');
+                <td>
+                    <input type="checkbox" ${row.prelazione ? 'checked' : ''}
+                        data-id="${row.id}" data-field="prelazione">
+                </td>
+
+                <td>
+                    <input type="date"
+                        value="${row.fine_prelazione ? row.fine_prelazione.split(' ')[0] : ''}"
+                        data-id="${row.id}" data-field="fine_prelazione">
+                </td>
+            `;
+                calciatoriTableBody.appendChild(tr);
+            });
+
+            calciatoriContainer.style.display = 'block';
+        }
+
+        /* =========================
+           TRACK MODIFICHE
+        ========================= */
+        calciatoriTableBody.addEventListener('change', e => {
+            const el = e.target;
+            const id = el.dataset.id;
+            const field = el.dataset.field;
+            if (!id || !field) return;
+
+            if (!modifiche[id]) modifiche[id] = {};
+            modifiche[id][field] = el.type === 'checkbox' ? (el.checked ? 1 : 0) : el.value;
+        });
+
+        /* =========================
+           SALVA
+        ========================= */
+        salvaBtn.addEventListener('click', async () => {
+            const ids = Object.keys(modifiche);
+            if (!ids.length) return alert('Nessuna modifica');
+
+            for (const id of ids) {
+                await fetch(`https://fantamanagerpro.eu/endpoint/associazioni/update.php?id=${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(modifiche[id])
+                });
             }
+
+            alert('Modifiche salvate');
+            modifiche = {};
+        });
+
+        /* =========================
+           RICERCA ID CALCIATORE
+        ========================= */
+        searchBtn.addEventListener('click', () => {
+            const id = searchInput.value;
+            if (!id) return alert('Inserisci ID');
+
+            fetch(`https://fantamanagerpro.eu/endpoint/associazioni/read.php?id_calciatore=${id}`)
+                .then(r => r.json())
+                .then(renderCalciatori);
+        });
+
+        /* =========================
+           CASCATA SELECT
+        ========================= */
+        fetch('https://fantamanagerpro.eu/endpoint/divisione/read.php')
+            .then(r => r.json())
+            .then(d => d.divisioni.forEach(x => {
+                divisioneSelect.innerHTML += `<option value="${x.id}">${x.nome_divisione}</option>`;
+            }));
+
+        divisioneSelect.addEventListener('change', () => {
+            campionatoSelect.disabled = true;
+            squadraSelect.disabled = true;
+            campionatoSelect.innerHTML = '<option value="0">Seleziona Campionato</option>';
+            squadraSelect.innerHTML = '<option value="0">Seleziona Squadra</option>';
+
+            if (divisioneSelect.value === '0') return;
+
+            fetch(`https://fantamanagerpro.eu/endpoint/competizione/read.php?id_divisione=${divisioneSelect.value}`)
+                .then(r => r.json())
+                .then(d => {
+                    d.competizione.forEach(c =>
+                        campionatoSelect.innerHTML += `<option value="${c.id}">${c.nome_competizione}</option>`
+                    );
+                    campionatoSelect.disabled = false;
+                });
+        });
+
+        campionatoSelect.addEventListener('change', () => {
+            squadraSelect.disabled = true;
+            squadraSelect.innerHTML = '<option value="0">Seleziona Squadra</option>';
+
+            fetch(`https://fantamanagerpro.eu/endpoint/partecipazione/read.php?id_competizione=${campionatoSelect.value}`)
+                .then(r => r.json())
+                .then(d => {
+                    d.squadre.forEach(s =>
+                        squadraSelect.innerHTML += `<option value="${s.id_squadra}">${s.nome_squadra}</option>`
+                    );
+                    squadraSelect.disabled = false;
+                });
+        });
+
+        squadraSelect.addEventListener('change', () => {
+            if (squadraSelect.value === '0') return;
+
+            fetch(`https://fantamanagerpro.eu/endpoint/associazioni/read.php?id_squadra=${squadraSelect.value}`)
+                .then(r => r.json())
+                .then(renderCalciatori);
         });
     });
 </script>
 
+</body>
+</html>
