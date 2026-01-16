@@ -231,9 +231,7 @@ class associazioni
         $timestamp = date('Y-m-d H:i:s');
 
         $query = "UPDATE " . $this->table_name . " 
-                  SET scambiato = 0, 
-                      n_movimenti = 0, 
-                      prelazione = 0, 
+                  SET scambiato = 0
                       timestamp = :timestamp";
 
         $stmt = $this->conn->prepare($query);
