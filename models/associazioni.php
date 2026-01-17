@@ -29,6 +29,8 @@ class associazioni
                 a.prelazione,
                 a.timestamp,
                 a.fine_prelazione,
+                a.sett_giov,
+                a.prestito,
                 
                 s.nome_squadra AS nome_squadra,
                 
@@ -105,6 +107,8 @@ class associazioni
             'scambiato' => PDO::PARAM_INT,
             'n_movimenti' => PDO::PARAM_INT,
             'prelazione' => PDO::PARAM_INT,
+            'sett_giov' => PDO::PARAM_INT,
+            'prestito' => PDO::PARAM_INT,
             'fine_prelazione' => PDO::PARAM_STR,
             'timestamp' => PDO::PARAM_STR
         ];

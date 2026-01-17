@@ -143,6 +143,8 @@ $nomeSezione = "Associazioni";
                 <th>Squadra</th>
                 <th>Cartellino</th>
                 <th>Prelazione</th>
+                <th>Sett. Giovanile</th>
+                <th>Prestito</th>
                 <th>Fine prelazione</th>
             </tr>
             </thead>
@@ -199,6 +201,18 @@ $nomeSezione = "Associazioni";
                     <input type="checkbox" ${row.prelazione ? 'checked' : ''}
                         data-id="${row.id}" data-field="prelazione">
                 </td>
+
+                <td>
+                    <input type="checkbox" ${row.sett_giov ? 'checked' : ''}
+                        data-id="${row.id}" data-field="sett_giov">
+                </td>
+
+                <td>
+                    <input type="checkbox" ${row.prestito ? 'checked' : ''}
+                        data-id="${row.id}" data-field="prestito">
+                </td>
+
+
 
                 <td>
                     <input type="date"
