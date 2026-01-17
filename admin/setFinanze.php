@@ -83,8 +83,8 @@ $nomeSezione = "Finanze Squadra";
                 <p>guadagno_crediti_stadio_cup</p>
                 <p>premi_league</p>
                 <p>premi_cup</p>
-                <p>prequalifiche_uefa_stadio</p>
-                <p>prequalifiche_uefa_premio</p>
+                <p>prequapfiche_uefa_stadio</p>
+                <p>prequapfiche_uefa_premio</p>
                 <p>competizioni_uefa_stadio</p>
                 <p>competizioni_uefa_premio</p>
                 <p>totale_crediti_bilancio <strong>(opzionale)</strong></p>
@@ -160,7 +160,8 @@ $nomeSezione = "Finanze Squadra";
                 'guadagno_crediti_stadio_league', 'guadagno_crediti_stadio_cup',
                 'premi_league', 'premi_cup',
                 'prequalifiche_uefa_stadio', 'prequalifiche_uefa_premio',
-                'competizioni_uefa_stadio', 'competizioni_uefa_premio'];
+                'competizioni_uefa_stadio', 'competizioni_uefa_premio'
+            ];
 
             const optionalCols = ['totale_crediti_bilancio', 'punteggio_ranking'];
 
