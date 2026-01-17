@@ -142,7 +142,6 @@ $nomeSezione = "Associazioni";
                 <th>Ruolo</th>
                 <th>Squadra</th>
                 <th>Cartellino</th>
-                <th>Fuori listone</th>
                 <th>Prelazione</th>
                 <th>Fine prelazione</th>
             </tr>
@@ -197,11 +196,6 @@ $nomeSezione = "Associazioni";
                 </td>
 
                 <td>
-                    <input type="checkbox" ${row.fuori_listone ? 'checked' : ''}
-                        data-id="${row.id}" data-field="fuori_listone">
-                </td>
-
-                <td>
                     <input type="checkbox" ${row.prelazione ? 'checked' : ''}
                         data-id="${row.id}" data-field="prelazione">
                 </td>
@@ -235,20 +229,52 @@ $nomeSezione = "Associazioni";
            SALVA
         ========================= */
         salvaBtn.addEventListener('click', async () => {
-            const ids = Object.keys(modifiche);
-            if (!ids.length) return alert('Nessuna modifica');
+            console.log('CLICK su Salva');
 
-            for (const id of ids) {
-                await fetch(`https://fantamanagerpro.eu/endpoint/associazioni/update.php?id=${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(modifiche[id])
-                });
+            const ids = Object.keys(modifiche);
+            console.log('IDs da salvare:', ids);
+
+            if (!ids.length) {
+                console.warn('Nessuna modifica presente');
+                return alert('Nessuna modifica');
             }
 
+            for (const id of ids) {
+                console.log(`Invio update per ID: ${id}`);
+                console.log('Payload:', modifiche[id]);
+
+                try {
+                    const response = await fetch(
+                        `https://www.fantamanagerpro.eu/endpoint/associazioni/update.php?id=${id}`,
+                        {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(modifiche[id])
+                        }
+                    );
+
+                    console.log(`Response status per ID ${id}:`, response.status);
+
+                    const text = await response.text();
+                    console.log(`Response body per ID ${id}:`, text);
+
+                    if (!response.ok) {
+                        console.error(`Errore HTTP su ID ${id}`, response.status);
+                    }
+
+                } catch (error) {
+                    console.error(`Errore fetch per ID ${id}`, error);
+                }
+            }
+
+            console.log('Tutte le richieste completate');
             alert('Modifiche salvate');
             modifiche = {};
+            window.location.reload();
         });
+
 
         /* =========================
            RICERCA ID CALCIATORE
@@ -257,7 +283,7 @@ $nomeSezione = "Associazioni";
             const id = searchInput.value;
             if (!id) return alert('Inserisci ID');
 
-            fetch(`https://fantamanagerpro.eu/endpoint/associazioni/read.php?id_calciatore=${id}`)
+            fetch(`https://www.fantamanagerpro.eu/endpoint/associazioni/read.php?id_calciatore=${id}`)
                 .then(r => r.json())
                 .then(renderCalciatori);
         });
@@ -265,7 +291,7 @@ $nomeSezione = "Associazioni";
         /* =========================
            CASCATA SELECT
         ========================= */
-        fetch('https://fantamanagerpro.eu/endpoint/divisione/read.php')
+        fetch('https://www.fantamanagerpro.eu/endpoint/divisione/read.php')
             .then(r => r.json())
             .then(d => d.divisioni.forEach(x => {
                 divisioneSelect.innerHTML += `<option value="${x.id}">${x.nome_divisione}</option>`;
@@ -279,7 +305,7 @@ $nomeSezione = "Associazioni";
 
             if (divisioneSelect.value === '0') return;
 
-            fetch(`https://fantamanagerpro.eu/endpoint/competizione/read.php?id_divisione=${divisioneSelect.value}`)
+            fetch(`https://www.fantamanagerpro.eu/endpoint/competizione/read.php?id_divisione=${divisioneSelect.value}`)
                 .then(r => r.json())
                 .then(d => {
                     d.competizione.forEach(c =>
@@ -293,7 +319,7 @@ $nomeSezione = "Associazioni";
             squadraSelect.disabled = true;
             squadraSelect.innerHTML = '<option value="0">Seleziona Squadra</option>';
 
-            fetch(`https://fantamanagerpro.eu/endpoint/partecipazione/read.php?id_competizione=${campionatoSelect.value}`)
+            fetch(`https://www.fantamanagerpro.eu/endpoint/partecipazione/read.php?id_competizione=${campionatoSelect.value}`)
                 .then(r => r.json())
                 .then(d => {
                     d.squadre.forEach(s =>
@@ -306,7 +332,7 @@ $nomeSezione = "Associazioni";
         squadraSelect.addEventListener('change', () => {
             if (squadraSelect.value === '0') return;
 
-            fetch(`https://fantamanagerpro.eu/endpoint/associazioni/read.php?id_squadra=${squadraSelect.value}`)
+            fetch(`https://www.fantamanagerpro.eu/endpoint/associazioni/read.php?id_squadra=${squadraSelect.value}`)
                 .then(r => r.json())
                 .then(renderCalciatori);
         });
