@@ -248,6 +248,27 @@ class associazioni
             return false;
         }
     }
+
+    public function delete($id)
+    {
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        try {
+            if (!$stmt->execute()) {
+                return false;
+            }
+
+            // Verifica se effettivamente è stata eliminata una riga
+            return ($stmt->rowCount() > 0);
+
+        } catch (PDOException $e) {
+            // Log dell'errore (opzionale)
+            error_log("Errore eliminazione: " . $e->getMessage());
+            return false;
+        }
+    }
 }
            
 

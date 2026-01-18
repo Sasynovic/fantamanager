@@ -137,6 +137,7 @@ $nomeSezione = "Associazioni";
         <table id="calciatori-table">
             <thead>
             <tr>
+                <th></th>
                 <th>Nome squadra</th>
                 <th>Nome</th>
                 <th>Ruolo</th>
@@ -186,7 +187,9 @@ $nomeSezione = "Associazioni";
 
             data.associazioni.forEach(row => {
                 const tr = document.createElement('tr');
+                tr.dataset.id = row.id;
                 tr.innerHTML = `
+                <td><button onclick="deleteAssociazione(${row.id})">🗑️</button></td>
                 <td>${row.nome_squadra}</td>
                 <td>${row.nome_calciatore}</td>
                 <td>${row.ruolo_calciatore}</td>
@@ -225,6 +228,41 @@ $nomeSezione = "Associazioni";
 
             calciatoriContainer.style.display = 'block';
         }
+
+        /* =========================
+           DELETE ASSOCIAZIONE
+        ========================= */
+        window.deleteAssociazione = function (id) {
+            if (!confirm('Sei sicuro di voler eliminare questa associazione?')) return;
+
+            fetch(`https://www.fantamanagerpro.eu/endpoint/associazioni/delete.php?id=${id}`, {
+                method: 'DELETE'
+            })
+                .then(r => r.json())
+                .then(res => {
+                    if (!res.success) {
+                        alert(res.message || 'Errore eliminazione');
+                        return;
+                    }
+
+                    // ✅ rimuove la riga dalla tabella
+                    const row = document.querySelector(`tr[data-id="${id}"]`);
+                    if (row) row.remove();
+
+                    // pulizia eventuali modifiche pendenti
+                    delete modifiche[id];
+
+                    // se non ci sono più righe, nasconde la tabella
+                    if (!calciatoriTableBody.children.length) {
+                        calciatoriContainer.style.display = 'none';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Errore di rete');
+                });
+        };
+
 
         /* =========================
            TRACK MODIFICHE
