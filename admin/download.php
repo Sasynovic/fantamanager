@@ -78,7 +78,9 @@ $nomeSezione = "download";
                         "FVM": assoc.fvm,
                         "Età": assoc.eta ?? "N/D",
                         "Numero Movimenti": assoc.n_movimenti ?? "N/D",
-                        "Scambiato": assoc.scambiato === null ? "No" : "Sì"
+                        "Scambiato": assoc.scambiato === 0 ? "No" : "Sì",
+                        "Prestito": assoc.prestito === 0 ? "No" : "Sì",
+                        "Settore Giovanile": assoc.sett_giov === 0 ? "No" : "Sì",
                     }));
                     // Secondo sheet: riepilogo calciatori per reparto per squadra
                     const riepilogo = {};
