@@ -596,7 +596,33 @@ $nomeSezione = "trattative"
                         // 3. Se ufficializzata, processa operazioni e crediti
                         let creditoSquadra1 = 0;
                         let creditoSquadra2 = 0;
+                        let finanzeSquadra1 = 0;
+                        let finanzeSquadra2 = 0;
                         let ArrayOperazioni = [];
+
+                        function fetchFinanzeSquadra(idSquadra) {
+                            return fetch(`../endpoint/squadra/read.php?id_squadra=${idSquadra}`)
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error(`Errore fetch squadra ${idSquadra}: ${response.status}`);
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    if (!data || !Array.isArray(data.squadra) || !data.squadra[0]) {
+                                        throw new Error(`Struttura dati non valida per squadra ${idSquadra}`);
+                                    }
+
+                                    const squadraData = data.squadra[0];
+
+                                    return parseFloat(squadraData.finanze?.credito) || 0;
+                                });
+                        }
+
+                        async function caricaFinanze() {
+                            finanzeSquadra1 = await fetchFinanzeSquadra(idSquadra1);
+                            finanzeSquadra2 = await fetchFinanzeSquadra(idSquadra2);
+                        }
 
                         // 3.1 Recupera le operazioni
                         return fetch(`../endpoint/operazioni/read.php?id_trattativa=${id}`)
@@ -650,6 +676,8 @@ $nomeSezione = "trattative"
                                     }
                                 });
 
+                                caricaFinanze();
+
                                 // 3.2 Recupera i crediti
                                 return fetch(`../endpoint/credito/read.php?id_trattativa=${id}`)
                                     .then(response => {
@@ -671,6 +699,23 @@ $nomeSezione = "trattative"
                                                 if (!credito || typeof credito !== 'object') {
                                                     console.warn('Credito con struttura non valida:', credito);
                                                     return;
+                                                }
+
+                                                if(credito.id_fm === 8) {
+                                                    const saldoTemp = parseFloat(credito.credito) || 0;
+                                                    if (credito.id_squadra === idSquadra1) {
+                                                        finanzeSquadra1 -= saldoTemp;
+                                                            if(finanzeSquadra1 < 0) {
+                                                                console.error('Saldo squadra1 negativo:', finanzeSquadra1);
+                                                                return;
+                                                            }
+                                                    } else if (credito.id_squadra === idSquadra2) {
+                                                        finanzeSquadra2 -= saldoTemp;
+                                                        if(finanzeSquadra2 < 0) {
+                                                            console.error('Saldo squadra1 negativo:', finanzeSquadra2);
+                                                            return;
+                                                        }
+                                                    }
                                                 }
 
                                                 if (credito.id_fm === 10) {
@@ -837,6 +882,45 @@ $nomeSezione = "trattative"
                                                         })
                                                     ];
                                                 }
+
+                                                //aggiorna crediti a bilancio squadra 1
+                                                fetch(`../endpoint/squadra/update_finanze.php?id_squadra=${idSquadra1}`, {
+                                                    method: 'PUT',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({
+                                                        credito: finanzeSquadra1
+                                                    })
+                                                }).then(response => {
+                                                    if (!response.ok) {
+                                                        const error = new Error(`Errore nell'aggiornamento delle finanze della squadra ${idSquadra1}`);
+                                                        error.details = {
+                                                            status: response.status,
+                                                            statusText: response.statusText,
+                                                            url: response.url
+                                                        };
+                                                        throw error;
+                                                    }
+                                                    return response.json();
+                                                }),
+
+                                                    fetch(`../endpoint/squadra/update_finanze.php?id_squadra=${idSquadra2}`, {
+                                                        method: 'PUT',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({
+                                                            credito: finanzeSquadra2
+                                                        })
+                                                    }).then(response => {
+                                                        if (!response.ok) {
+                                                            const error = new Error(`Errore nell'aggiornamento delle finanze della squadra ${idSquadra2}`);
+                                                            error.details = {
+                                                                status: response.status,
+                                                                statusText: response.statusText,
+                                                                url: response.url
+                                                            };
+                                                            throw error;
+                                                        }
+                                                        return response.json();
+                                                    })
 
                                                 // 3.5 Aggiorna le associazioni
                                                 console.log('Preparazione aggiornamento associazioni...');
