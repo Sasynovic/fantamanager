@@ -1312,7 +1312,9 @@
                         credito: credito
                     }));
 
-                    creditiTeam1.forEach(credito => {
+                    creditiTeam1
+                        .filter(credito => parseInt(credito.credito) > 0)
+                        .forEach(credito => {
                         creditiPromises.push(
                             fetch('endpoint/credito/create.php', {
                                 method: 'POST',
@@ -1329,7 +1331,9 @@
                         );
                     });
 
-                    creditiTeam2.forEach(credito => {
+                    creditiTeam2
+                        .filter(credito => parseInt(credito.credito) > 0)
+                        .forEach(credito => {
                         creditiPromises.push(
                             fetch('endpoint/credito/create.php', {
                                 method: 'POST',
