@@ -76,11 +76,15 @@ class credito
                 
                 s.nome_squadra,
                 
-                fm.nome
+                fm.nome,
+                
+                t.descrizione,
+                t.data_creazione
                 
               FROM " . $this->table_name . " c
               LEFT JOIN squadre s ON s.id = c.id_squadra
               LEFT JOIN finestra_mercato fm ON fm.id = c.id_fm
+              LEFT JOIN trattative t ON t.id = c.id_trattativa
               
              
               WHERE 1=1";

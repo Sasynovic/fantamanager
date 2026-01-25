@@ -54,7 +54,8 @@ $nomeSezione = "download";
         <button id="download-presidenti" class="btn btn-primary"> Download presidenti + squadra</button>
         <button id="download-prelazioni" class="btn btn-primary"> Download prelazioni</button>
         <button id="download-sgs" class="btn btn-primary"> Download settore giovanile</button>
-    </div>
+        <button id="download-crediti" class="btn btn-primary">Scarica crediti</button>
+</div>
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -339,5 +340,68 @@ $nomeSezione = "download";
                 alert("Errore durante l'esportazione. Controlla la console.");
             }
         });
+
+        document.getElementById('download-crediti').addEventListener('click', async function () {
+            try {
+                const wb = XLSX.utils.book_new();
+
+                const res = await fetch('https://www.fantamanagerpro.eu/endpoint/credito/read.php');
+                const data = await res.json();
+
+                if (!data.credito || !Array.isArray(data.credito)) {
+                    throw new Error("Struttura JSON non valida");
+                }
+
+                // Raggruppamento per id_fm
+                const gruppi = {
+                    8: { nome: "Subito", dati: [] },
+                    9: { nome: "Gennaio", dati: [] },
+                    10: { nome: "Giugno", dati: [] }
+                };
+
+                data.credito.forEach(c => {
+                    // opzionale: ignora crediti a 0
+                    // if (Number(c.credito) === 0) return;
+
+                    const baseRow = {
+                        "ID Squadra": c.id_squadra,
+                        "Nome Squadra": c.nome_squadra,
+                        "Crediti da dare": c.credito,
+                        "Note": c.note?.replace(/<[^>]*>/g, '').trim() ?? "",
+                        "ID Trattativa": c.id_trattativa
+                    };
+
+                    // id_fm = 8 → aggiungo data creazione
+                    if (c.id_fm === 8) {
+                        baseRow["Data creazione"] = c.data_creazione;
+                    }
+
+                    if (gruppi[c.id_fm]) {
+                        gruppi[c.id_fm].dati.push(baseRow);
+                    }
+                });
+
+                // Ordine fogli: Subito → Gennaio → Giugno
+                [8, 9, 10].forEach(id_fm => {
+                    const gruppo = gruppi[id_fm];
+
+                    if (gruppo.dati.length > 0) {
+                        const sheet = XLSX.utils.json_to_sheet(gruppo.dati);
+                        XLSX.utils.book_append_sheet(wb, sheet, gruppo.nome);
+                    }
+                });
+
+                // Salvataggio file
+                XLSX.writeFile(
+                    wb,
+                    `Crediti_${new Date().toISOString().slice(0, 10)}.xlsx`
+                );
+
+            } catch (error) {
+                console.error("Errore durante l'esportazione crediti:", error);
+                alert("Errore durante l'esportazione. Controlla la console.");
+            }
+        });
+
 
     </script>

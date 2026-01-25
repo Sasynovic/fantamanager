@@ -4,6 +4,7 @@ header("Access-Control-Allow-Origin: *");
 // Gli altri header CORS rimangono invariati
 header("Access-Control-Allow-Methods: GET");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Content-Type: application/json; charset=UTF-8");
 require_once '../../config/database.php';
 require_once '../../models/credito.php';
 
@@ -52,7 +53,9 @@ if ($num > 0) {
             'fm_nome' => $row['nome'],
             'credito' => $row['credito'],
             'id_squadra' => $row['id_squadra'],
-            'nome_squadra' => $row['nome_squadra']
+            'nome_squadra' => $row['nome_squadra'],
+            'note' => $row['descrizione'],
+            'data_creazione' => $row['data_creazione']
         ];
     }
 
